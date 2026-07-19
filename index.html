@@ -340,6 +340,17 @@ main{max-width:1200px;margin:0 auto;padding:1.4rem 1.4rem 4rem}
   background:rgba(169,138,68,.09);border:1px dashed var(--kin);
   border-radius:8px;padding:.55rem .8rem;
 }
+.ext-link{color:var(--ai);text-decoration:underline;text-underline-offset:2px;word-break:break-all}
+.ext-link:hover{color:var(--shu);text-decoration:underline}
+.visit-site{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-family:var(--sans);font-size:.74rem;font-weight:700;
+  color:#fff;background:var(--ai);border-radius:6px;padding:.14rem .6rem;
+  text-decoration:none;margin-left:.3rem;
+}
+.visit-site:hover{background:var(--shu);text-decoration:none}
+.visit-site.search{background:var(--sumi-faint)}
+.visit-site.search:hover{background:var(--shu)}
 
 /* ───── 名店ページ ───── */
 .resto-card{
@@ -2402,6 +2413,28 @@ function searchItems(){
 
 /* ══════════ 描画 ══════════ */
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+/* ドメイン文字列を自動でクリック可能なリンクにする（裏取り済みURLのみデータに入っている） */
+const DOMAIN_RE=/((?:[a-z0-9][a-z0-9\-]*\.)+(?:co\.jp|or\.jp|ne\.jp|com|net|org|jp))(\/[^\s　、。）)]*)?/gi;
+function linkifyText(raw){
+  return esc(raw).replace(DOMAIN_RE,m=>`<a href="https://${m}" target="_blank" rel="noopener" class="ext-link">${m}</a>`);
+}
+function snsHandle(val,base){
+  if(!val)return "—";
+  if(/^[a-zA-Z0-9._]+$/.test(val))return `<a href="https://${base}/${val}" target="_blank" rel="noopener" class="ext-link">@${esc(val)}</a>`;
+  return linkifyText(val);
+}
+function producerUrl(pr){
+  const src=(pr.sns.site||"")+" "+(pr.order.online||"")+" "+(pr.order.wholesale||"");
+  const m=src.match(/((?:[a-z0-9][a-z0-9\-]*\.)+(?:co\.jp|or\.jp|ne\.jp|com|net|org|jp))(\/[^\s　、。）)]*)?/i);
+  return m?("https://"+m[0]):"";
+}
+/* 確認済みURLがあれば直リンク、なければ公式サイトのGoogle検索リンクを返す（全生産者に必ずリンクを付ける） */
+function siteLinkBtn(pr,label){
+  const u=producerUrl(pr);
+  if(u)return `<a href="${u}" target="_blank" rel="noopener" class="visit-site">${label||"公式サイト・通販を開く"} ↗</a>`;
+  const q=encodeURIComponent(pr.name.replace(/（.*?）/g,"")+" "+pr.pref+" 公式");
+  return `<a href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener" class="visit-site search" title="確認済みURLが未登録のため公式サイトを検索します">公式サイトを検索 ↗</a>`;
+}
 function hl(text){
   if(!state.q)return esc(text);
   let out=esc(text);
@@ -2444,7 +2477,7 @@ function renderIngredients(){
         <div class="offer-name">品名：<b>${hl(it.name)}</b>${it.sp?` <span class="mini-tag" style="color:#fff;border-color:var(--shu);background:var(--shu)">一品専門店｜${esc(it.sp)}</span>`:""}${it.mg?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.12)">丸ごと一皿</span>`:""}${it.hero?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.07)">主役級</span>`:""}</div>
         <div class="sec"><span class="sec-label">何が違うか</span><p>${hl(it.d)}</p></div>
         ${pr.restaurants.length?`<div class="sec"><span class="sec-label">使用・関係する店</span><div class="store-tags">${pr.restaurants.map(r=>`<span class="store-tag${r.guide?" guide":""}">${esc(r.name)}</span>`).join("")}</div></div>`:""}
-        <div class="sec"><span class="sec-label">注文方法</span><p>通販：${esc(pr.order.online)}<br>業務用：${esc(pr.order.wholesale)}</p></div>
+        <div class="sec"><span class="sec-label">注文方法</span><p>通販：${linkifyText(pr.order.online)}<br>業務用：${linkifyText(pr.order.wholesale)}</p>${siteLinkBtn(pr)}</div>
         <div class="season-line">旬・時期：<b>${esc(it.se)}</b></div>
         <div class="tag-row">${it.tg.map(t=>`<span class="mini-tag buy">${esc(t)}</span>`).join("")}</div>
         ${it.why&&it.why.length?`<div class="why-hit">一致：${it.why.map(w=>`<span>${esc(w)}</span>`).join("")}</div>`:""}
@@ -2483,10 +2516,11 @@ function producerCardHTML(key,forModal){
       <div class="pc-sec"><h4>どうやって特定したか</h4><p>${esc(pr.discovery)}</p><div style="margin-top:.4rem">${pr.evidence.map(evTag).join("")}</div></div>
       <div class="pc-sec"><h4>使用・関係する店</h4>${pr.restaurants.length?`<ul>${pr.restaurants.map(r=>`<li><b>${esc(r.name)}</b>${r.guide?` <span class="evidence-tag ev-primary" style="font-size:.62rem">ガイド掲載</span>`:""}<br><span style="font-size:.76rem;color:var(--sumi-faint)">${esc(r.note)}</span></li>`).join("")}</ul>`:`<p style="color:var(--sumi-faint)">店舗との紐付けは調査中（生産者起点の候補）</p>`}</div>
       <div class="pc-sec"><h4>注文・仕入れ</h4><ul>
-        <li>一般通販：${esc(pr.order.online)}</li>
-        <li>業務用卸：${esc(pr.order.wholesale)}</li>
+        <li>一般通販：${linkifyText(pr.order.online)}</li>
+        <li>業務用卸：${linkifyText(pr.order.wholesale)}</li>
         ${pr.order.watch&&pr.order.watch!=="—"?`<li>販売監視：${esc(pr.order.watch)}</li>`:""}
-        <li>公式サイト：${esc(pr.sns.site)}／Instagram：${esc(pr.sns.instagram)}／X：${esc(pr.sns.x)}</li></ul></div>
+        <li>公式サイト：${linkifyText(pr.sns.site)}／Instagram：${snsHandle(pr.sns.instagram,"instagram.com")}／X：${snsHandle(pr.sns.x,"x.com")}</li></ul>
+      ${siteLinkBtn(pr)}</div>
     </div>
     <div class="pc-sec" style="margin-top:.9rem"><h4>取扱い食材（${items.length}品）</h4>
       <div class="pc-items">${items.map(i=>`<span class="pc-item-tag" onclick="jumpSearch('${esc(i.g)}')">${esc(i.name)}</span>`).join("")}</div></div>
@@ -2547,7 +2581,7 @@ function openStarList(){
     const pr=PRODUCERS[p];
     return `<div style="margin-bottom:1rem">
       <div style="font-family:var(--serif);font-weight:700;color:var(--shu-deep);font-size:1rem">${esc(pr.name)}<span style="font-size:.74rem;color:var(--sumi-faint)">　${esc(pr.pref)} ${esc(pr.city)}</span></div>
-      <div style="font-size:.76rem;color:var(--sumi-soft);margin:.15rem 0 .3rem">通販：${esc(pr.order.online)}／業務用：${esc(pr.order.wholesale)}</div>
+      <div style="font-size:.76rem;color:var(--sumi-soft);margin:.15rem 0 .3rem">通販：${linkifyText(pr.order.online)}／業務用：${linkifyText(pr.order.wholesale)} ${siteLinkBtn(pr,"公式サイト")}</div>
       ${byP[p].map(e=>`<div class="star-list-item"><b>${esc(e.it.name)}</b><span style="font-size:.74rem;color:var(--sumi-faint)">${esc(e.it.se)}</span><button class="rm" onclick="removeStar('${encodeURIComponent(e.k)}')">はずす</button></div>`).join("")}
     </div>`;
   }).join("");
@@ -2575,6 +2609,8 @@ function copyStarList(){
     byP[p].forEach(e=>lines.push("・"+e.it.name+"（"+e.it.se+"）"));
     lines.push("　通販: "+pr.order.online);
     lines.push("　業務用: "+pr.order.wholesale);
+    const purl=producerUrl(pr);
+    if(purl)lines.push("　公式サイト: "+purl);
     lines.push("");
   });
   lines.push("出典: https://masafumi331.github.io/shokuzai-cho/");
