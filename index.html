@@ -1714,6 +1714,63 @@ RESTAURANTS.push(
 </script>
 
 <script>
+/* 追加リサーチ枠6：DR逆引き続編（2026年7月Web検索で裏取り済み）＋農家未特定ラベル */
+Object.assign(PRODUCERS,{
+dewayasansai:{name:"月山・西川町の山菜（採取者は未特定）",kana:"がっさんのさんさい",pref:"山形県",city:"西村山郡西川町（月山麓）",person:"",rank:"B",
+ summary:"全国屈指の山菜・きのこの宝庫。1918年創業「出羽屋」が山菜料理という一分野を確立した本場。",
+ discovery:"Web検索で裏取り済み（2026年7月）。西川町は全国屈指の山菜・きのこの宝庫とされ、1918年創業の「出羽屋」（Destination Restaurants 2022選出）は日本で最初に山菜料理を確立した専門宿として公知。月山の雪解け水で育つ山菜の質が土台にある。個別の採取者・出荷者は未特定。",
+ diff:"豪雪の月山麓では雪解けとともに山菜が順に出て、鮮度と保存技術（塩蔵・乾燥）の両方が文化として蓄積している。山菜という一素材で宿が100年以上成立している産地。",
+ restaurants:[{name:"山菜料理 出羽屋（山形・西川町）",note:"1918年創業の山菜料理専門宿。DR2022選出。山菜そば発祥の店",guide:true}],
+ order:{online:"産直EC・道の駅・ふるさと納税で山菜加工品の購入可",wholesale:"産地出荷者は要調査",watch:"雪解け（4〜6月）の旬監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["出羽屋の存在と歴史（公式・DR公式で確認）","primary"],["採取者個人は未特定","unverified"]],
+ checks:["採取者・出荷組合の特定"]},
+masuda:{name:"桝田酒造店（満寿泉）",kana:"ますだしゅぞうてん",pref:"富山県",city:"富山市岩瀬",person:"",rank:"A",
+ summary:"北前船の港町・岩瀬を美食の街に変えた「満寿泉」の蔵。御料理ふじ居と同じ町で食×酒×工芸を発信。",
+ discovery:"Web検索で裏取り済み（2026年7月）。ミシュラン北陸二つ星「御料理ふじ居」（DR2023選出）が地元・岩瀬の満寿泉を多数取り揃えることが記事で確認できる。桝田酒造店は岩瀬の街再生プロジェクトを主導し、ふじ居の移転もその一環。",
+ diff:"大吟醸を早くから手がけた蔵として知られ、料理店との結び付きが強い。「街ごと美食化」という生産者と料理人の関係の新しい形を体現している。",
+ restaurants:[{name:"御料理ふじ居（富山・岩瀬）",note:"ミシュラン北陸二つ星・DR2023選出。地元岩瀬の満寿泉を多数提供と記事で確認",guide:true}],
+ order:{online:"公式サイト・取扱酒販店で購入可",wholesale:"酒販店経由",watch:"限定酒の発売監視に好適"},
+ sns:{site:"masuizumi.co.jp（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["ふじ居での提供を記事で確認（一次情報）","primary"],["公式サイト確認済み","primary"]],
+ checks:["業務店向け取引条件"]},
+saysfarm:{name:"SAYS FARM（氷見）",kana:"せいずふぁーむ",pref:"富山県",city:"氷見市",person:"",rank:"B",
+ summary:"魚問屋が立ち上げた氷見の海を望むワイナリー。富山の名店が地元ワインとして採用。",
+ discovery:"Web検索で裏取り済み（2026年7月）。御料理ふじ居が氷見市「SAYS FARM」のワインや果実酒を取り揃えることが記事で確認できる。氷見の魚文化と結び付いたワイナリーとして知られる。",
+ diff:"氷見の海を見下ろす葡萄畑で、魚に合わせる方向のワイン造り。「地魚×地ワイン」という富山湾ならではのペアリングを支える。",
+ restaurants:[{name:"御料理ふじ居（富山・岩瀬）",note:"ワイン・果実酒の取り扱いを記事で確認",guide:true}],
+ order:{online:"公式オンラインショップあり",wholesale:"要問い合わせ",watch:"ヴィンテージ・新酒の発売監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["ふじ居での取り扱いを記事で確認（一次情報）","primary"]],
+ checks:["業務店向け取引条件"]}
+});
+
+ITEMS.push(
+{name:"月山の天然山菜（雪解けの山の幸）",p:"dewayasansai",g:"山菜",c:"山菜・花",al:["さんさい","月山筍","うるい","こごみ","わらび"],tg:["天然物","産地ブランド"],d:"豪雪の月山麓で雪解けとともに順に出る天然山菜。鮮度と塩蔵・乾燥の保存文化が両輪。出羽屋が山菜料理という一分野をこの地で確立した。",se:"4〜6月（雪解け）",hero:true,sp:"出羽屋（山菜料理専門の宿・1918年創業）",mg:false},
+{name:"満寿泉（大吟醸ほか）",p:"masuda",g:"日本酒",c:"酒・飲料",al:["ますいずみ","酒","大吟醸"],tg:["取扱店流通","一般購入可能"],d:"大吟醸を早くから手がけた岩瀬の蔵。御料理ふじ居が地元の酒として多数提供。新政（生酛×木桶）と対照的な吟醸系の代表として比較できる。",se:"通年（限定酒あり）",hero:true},
+{name:"SAYS FARMのワイン",p:"saysfarm",g:"ワイン",c:"酒・飲料",al:["wine","白ワイン","果実酒"],tg:["ワイナリー直販","一般購入可能"],d:"氷見の海を望む畑で「魚に合わせる」方向のワイン造り。地魚×地ワインのペアリングを支える。ドメーヌ・タカヒコ、グレイスと産地比較できる。",se:"ヴィンテージ毎",hero:false}
+);
+
+/* 農家未特定ラベル：どうしても個人・農園名まで特定できていない産地ブランド型エントリ */
+(function(){
+  const UNID=["sanukiasp","senshu","shizuokawasabi","kyotakenoko","jinenjo","ebiimo","yurine","matsutake","tokutani","amaou","higashine","ichida","koori","lafrance","annou","kagayasai","manganji","dadacha","dake","shimonita","kamonasu","horikawa","shogoin","tamogi","shimizu","lelectier","anpo","tsunan","dewayasansai","togahunter"];
+  UNID.forEach(k=>{if(PRODUCERS[k])PRODUCERS[k].unid=true;});
+  ITEMS.forEach(it=>{if(!it.sn)it.sn=seasonsOf(it.se);});
+})();
+
+SYNONYMS.push(
+["満寿泉","ますいずみ","桝田酒造"],
+["でわや","出羽屋","月山"],
+["ふじ居","ふじい","岩瀬"]
+);
+
+RESTAURANTS.push(
+{name:"山菜料理 出羽屋",place:"山形県西村山郡西川町",badge:"一品専門店（山菜）・DR2022",note:"1918年創業。出羽三山の行者をもてなす宿から「山菜料理」という一分野を日本で最初に確立。山菜そば発祥の店。山菜一素材で100年以上成立する最上位事例。",links:["月山の天然山菜（雪解けの山の幸）"]},
+{name:"御料理ふじ居",place:"富山市岩瀬",badge:"ミシュラン北陸二つ星・DR2023",note:"魚・肉・野菜のほぼすべてを富山の生産者から直接仕入れ。地元岩瀬の満寿泉（桝田酒造店）、氷見SAYS FARMのワインと「街ごと美食化」を体現。",links:["満寿泉（大吟醸ほか）","SAYS FARMのワイン"]}
+);
+</script>
+
+<script>
 /* ══════════ 正規化・同義語エンジン ══════════ */
 function norm(s){
   if(!s)return"";
@@ -1844,7 +1901,7 @@ function renderIngredients(){
     const offers=g.items.sort((a,b)=>(PRODUCERS[a.p].rank>PRODUCERS[b.p].rank?1:-1)||((b.score||0)-(a.score||0))).map(it=>{
       const pr=PRODUCERS[it.p];
       return `<div class="offer">${rankSeal(pr.rank)}
-        <div class="offer-head"><span class="offer-producer" onclick="openModal('${it.p}')">${esc(pr.name)}</span><span class="offer-place">${esc(pr.pref)} ${esc(pr.city)}</span></div>
+        <div class="offer-head"><span class="offer-producer" onclick="openModal('${it.p}')">${esc(pr.name)}</span><span class="offer-place">${esc(pr.pref)} ${esc(pr.city)}</span>${pr.unid?`<span class="mini-tag" style="border-style:dashed;color:#7a5a2a;background:rgba(169,138,68,.08)">農家特定できず・EC/市場で購入可</span>`:""}</div>
         <div class="offer-name">品名：<b>${hl(it.name)}</b>${it.sp?` <span class="mini-tag" style="color:#fff;border-color:var(--shu);background:var(--shu)">一品専門店｜${esc(it.sp)}</span>`:""}${it.mg?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.12)">丸ごと一皿</span>`:""}${it.hero?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.07)">主役級</span>`:""}</div>
         <div class="sec"><span class="sec-label">何が違うか</span><p>${hl(it.d)}</p></div>
         ${pr.restaurants.length?`<div class="sec"><span class="sec-label">使用・関係する店</span><div class="store-tags">${pr.restaurants.map(r=>`<span class="store-tag${r.guide?" guide":""}">${esc(r.name)}</span>`).join("")}</div></div>`:""}
@@ -1878,6 +1935,7 @@ function producerCardHTML(key,forModal){
     <div class="pc-head">
       <div><div class="pc-name">${esc(pr.name)}<small>${esc(pr.kana)}${pr.person?"｜"+esc(pr.person):""}</small></div></div>
       <div class="pc-place">${esc(pr.pref)} ${esc(pr.city)}</div>
+      ${pr.unid?`<div class="pc-place" style="border:1px dashed var(--kin);background:rgba(169,138,68,.08);color:#7a5a2a">農家特定できず（産地ブランドとして掲載）・EC/市場で購入可</div>`:""}
       <div class="pc-rank"><span class="seal rank-${pr.rank}">${pr.rank}</span><span class="lbl">掲載判定</span></div>
     </div>
     <div class="pc-summary">${esc(pr.summary)}</div>
