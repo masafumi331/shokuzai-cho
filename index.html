@@ -2379,6 +2379,71 @@ RESTAURANTS.push(
 </script>
 
 <script>
+/* 追加リサーチ枠13：「この農家で買いたい」農作物強化（2026年7月Web検索で裏取り済み） */
+Object.assign(PRODUCERS,{
+karube:{name:"苅部農園／FRESCO（横浜市保土ヶ谷区）",kana:"かるべのうえん",pref:"神奈川県",city:"横浜市保土ヶ谷区西谷町",person:"苅部博之氏（16代）",rank:"B",
+ summary:"16代続く農家が9年かけて自家育種した、世界に一つのピンクの「苅部大根」。シェフの要望が品目を決める。",
+ discovery:"Web検索で裏取り済み（2026年7月）。「世界に一つだけの大根を」と9年間の自家選抜で育種したピンク色の「苅部大根」で公知。イタリアンレストランへ野菜を直接供給し、シェフとの対話からカーボロネロ・黒大根・ミニ白菜など要望品目を栽培。直売所「FRESCO」を運営し、料理人との farm restaurant 構想も報じられている。",
+ diff:"「農家自身が品種を作る」という最上流からの差別化。苅部大根は生食でピンクが映え、サラダ・ピクルスで皿の主役になる。都心から30分の立地で鮮度と対話のしやすさも強み。",
+ restaurants:[{name:"横浜・都内のイタリアンへ直接供給",note:"シェフの要望で品目を開発。個別店名は要確認",guide:false}],
+ order:{online:"直売所FRESCO（fresco-karube.com・確認済み）",wholesale:"農園と直接相談",watch:"苅部大根は秋冬"},
+ sns:{site:"fresco-karube.com（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["自家育種・シェフ供給の取材記事（一次情報）","primary"],["JA横浜・横浜市公式で確認","primary"]],
+ checks:["供給先レストランの具体名"]},
+soga:{name:"曽我農園（新潟市北区）",kana:"そがのうえん",pref:"新潟県",city:"新潟市北区",person:"",rank:"A",
+ summary:"雪国の寒さで旨味を凝縮させる越冬フルーツトマト専門農家。「金筋トマト」はトマト選手権2年連続受賞。",
+ discovery:"Web検索で裏取り済み（2026年7月）。フルーツトマト専門農家として、冬から春にかけてじっくり育てる越冬栽培を確認。おいしさの証である金色の筋が入る「金筋トマト」は野菜ソムリエのトマト選手権で2年連続受賞。公式通販・直売所・トマトジュース/ケチャップの6次化も展開。規格外品の発信でも知られる。",
+ diff:"越冬×水分制限で糖度と酸・旨味を凝縮。「金筋」という見た目の基準を購入者と共有する仕組みが秀逸。徳谷（塩土壌）・アメーラ（かん水制限）と「高糖度トマト3方式」の比較ができる。",
+ restaurants:[],
+ order:{online:"公式オンラインショップあり（sogafarm.jp・確認済み）",wholesale:"要問い合わせ",watch:"越冬トマトは冬〜春。販売終了表示あり＝監視向き"},
+ sns:{site:"sogafarm.jp（確認済み）",instagram:"要確認",x:"pasmal0220（確認済み）"},
+ evidence:[["トマト選手権2年連続受賞（客観的評価）","primary"],["公式通販確認済み","primary"]],
+ checks:["飲食店採用例"]},
+muchachaen:{name:"無茶々園（愛媛県西予市明浜町）",kana:"むちゃちゃえん",pref:"愛媛県",city:"西予市明浜町",person:"70戸超の生産者組織",rank:"A",
+ summary:"1974年、15aの無農薬実験園から50年。段々畑の有機柑橘の草分けで、町の柑橘農家の4割が参加。",
+ discovery:"Web検索で裏取り済み（2026年7月）。1974年に3人の生産者が始めた無農薬柑橘栽培から、現在70戸超・明浜町の柑橘農家の約4割が参加する生産者組織に成長。消費者会員約1万人・取引企業約50社の産直網を確立し、農水省のむらづくり表彰も受けている（公式PDF確認）。",
+ diff:"急峻な石積み段々畑×有機栽培×50年の産直実績という、日本の有機柑橘のパイオニア。温州・伊予柑・ポンカン等の柑橘リレーで冬春の柑橘が途切れない。加工品（ジュース・化粧品yaetoco）まで一貫。",
+ restaurants:[],
+ order:{online:"公式オンラインショップあり（muchachaen.jp・確認済み）",wholesale:"産直・生協・企業取引50社。要問い合わせ",watch:"温州（冬）〜伊予柑（春）の柑橘リレー監視に好適"},
+ sns:{site:"muchachaen.jp（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["農水省むらづくり表彰（公的表彰）","primary"],["50年の産直実績・公式確認","primary"]],
+ checks:["飲食店向け取引条件"]},
+moriyamaen:{name:"もりやま園（青森県弘前市）",kana:"もりやまえん",pref:"青森県",city:"弘前市",person:"",rank:"A",
+ summary:"100年のりんご園が捨てていた摘果りんごを世界初のシードルに。Japan Cidre Awardグランプリ。",
+ discovery:"Web検索で裏取り済み（2026年7月）。弘前で100年以上続くりんご園。摘果りんご（間引きで捨てられる未熟果）を原料にした世界初の「テキカカシードル」で、Japan Cidre Award 2019グランプリ、全国果樹技術経営コンクール農林水産大臣賞（2020）、料理王国100選（2021）、6次化大賞グランプリ（2025）を受賞。",
+ diff:"酸と渋みの強い摘果果実が、辛口で食事に合うシードルになる逆転の発想。ドリンクペアリングの国産カード（新政・タカヒコ・グレイスに続く選択肢）として業態を選ばず使える。りんご本体も100年園の味。",
+ restaurants:[],
+ order:{online:"公式オンラインショップあり（moriyamaen.com・確認済み）・食べチョク",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"moriyamaen.jp（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["Japan Cidre Awardグランプリ・農水大臣賞（客観的評価）","primary"],["公式通販確認済み","primary"]],
+ checks:["業務店向け取引条件"]}
+});
+
+ITEMS.push(
+{name:"苅部大根（自家育種・ピンク）",p:"karube",g:"大根",c:"根菜",al:["ピンク大根","サラダ大根"],tg:["自家育種9年","世界唯一の品種"],d:"16代目が9年かけて選抜した世界に一つのピンク大根。生食で色が映え、サラダ・ピクルスの主役に。",se:"秋〜冬",hero:true},
+{name:"シェフ要望のイタリア野菜（苅部農園）",p:"karube",g:"西洋野菜（多品目）",c:"果菜",al:["カーボロネロ","黒大根","ミニ白菜"],tg:["シェフ要望栽培","直売"],d:"イタリアンのシェフとの対話から品目を決めて栽培。直売所FRESCOで購入可。",se:"通年（季節替わり）"},
+{name:"越冬フルーツトマト「金筋トマト」",p:"soga",g:"トマト",c:"果菜",al:["フルーツトマト","高糖度トマト"],tg:["トマト選手権2年連続受賞","越冬栽培"],d:"雪国の冬をかけて旨味を凝縮。金色の筋がおいしさの証。徳谷・アメーラと高糖度トマト3方式の比較ができる。",se:"冬〜春",hero:true},
+{name:"有機柑橘リレー（温州・伊予柑・ポンカンほか）",p:"muchachaen",g:"柑橘",c:"果物・柑橘",al:["みかん","有機みかん","伊予柑"],tg:["有機の草分け50年","段々畑"],d:"1974年からの有機柑橘。段々畑の潮風と石積みの照り返しで味が乗る。品種リレーで冬〜春の柑橘が途切れない。",se:"冬〜春（品種リレー）",hero:true},
+{name:"テキカカシードル",p:"moriyamaen",g:"シードル",c:"酒・飲料",al:["シードル","りんご酒","cidre"],tg:["世界初","Japan Cidre Awardグランプリ","農水大臣賞"],d:"捨てられていた摘果りんごを原料にした世界初のシードル。辛口で食事に合い、業態を選ばないペアリング候補。",se:"通年",hero:true},
+{name:"りんご（100年園・もりやま園）",p:"moriyamaen",g:"りんご",c:"果物・柑橘",al:["林檎","アップル"],tg:["100年園","一般購入可能"],d:"弘前で100年以上続く園のりんご。木村秋則氏らの「友情のりんご」群と同じ弘前で、栽培思想の比較ができる。",se:"秋〜冬"}
+);
+
+/* 複数名店採用バッジ：無関係な複数の名店・料理人による採用が裏取りできている生産者 */
+(function(){
+  ["kajiya","edomae","takei","tamura","tatemichi","sasue","kyosui","asano","ishiguro","himi"].forEach(k=>{if(PRODUCERS[k])PRODUCERS[k].multi=true;});
+})();
+
+SYNONYMS.push(
+["シードル","りんご酒","cidre","サイダー"],
+["金筋トマト","越冬トマト","フルーツトマト"],
+["苅部大根","ピンク大根","サラダ大根"],
+["有機みかん","柑橘リレー","みかん"]
+);
+
+(function(){ITEMS.forEach(it=>{if(!it.sn)it.sn=seasonsOf(it.se);});})();
+</script>
+
+<script>
 /* ══════════ 正規化・同義語エンジン ══════════ */
 function norm(s){
   if(!s)return"";
@@ -2412,6 +2477,7 @@ const CATS=[
 ["調味料","#8f2b14"],["香辛料・薬味","#b23a20"],["加工品・セット","#8a8070"]];
 const CATCOLOR=Object.fromEntries(CATS);
 const BUYF=[
+["複数名店採用",it=>PRODUCERS[it.p].multi],
 ["一品専門店あり",it=>it.sp],
 ["丸ごと一皿",it=>it.mg],
 ["主役級",it=>it.hero],
@@ -2557,7 +2623,7 @@ function renderIngredients(){
       const pr=PRODUCERS[it.p];
       const sk=encodeURIComponent(it.p+"||"+it.name);
       return `<div class="offer">${rankSeal(pr.rank)}<button class="star-btn ${stars.has(it.p+"||"+it.name)?"on":""}" data-sk="${sk}" onclick="toggleStar(this)" title="仕入れ候補に追加">★</button>
-        <div class="offer-head"><span class="offer-producer" onclick="openModal('${it.p}')">${esc(pr.name)}</span><span class="offer-place">${esc(pr.pref)} ${esc(pr.city)}</span>${pr.unid?`<span class="mini-tag" style="border-style:dashed;color:#7a5a2a;background:rgba(169,138,68,.08)">農家特定できず・EC/市場で購入可</span>`:""}</div>
+        <div class="offer-head"><span class="offer-producer" onclick="openModal('${it.p}')">${esc(pr.name)}</span><span class="offer-place">${esc(pr.pref)} ${esc(pr.city)}</span>${pr.multi?`<span class="mini-tag" style="color:#fff;border-color:var(--midori);background:var(--midori)">複数名店採用</span>`:""}${pr.unid?`<span class="mini-tag" style="border-style:dashed;color:#7a5a2a;background:rgba(169,138,68,.08)">農家特定できず・EC/市場で購入可</span>`:""}</div>
         <div class="offer-name">品名：<b>${hl(it.name)}</b>${it.sp?` <span class="mini-tag" style="color:#fff;border-color:var(--shu);background:var(--shu)">一品専門店｜${esc(it.sp)}</span>`:""}${it.mg?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.12)">丸ごと一皿</span>`:""}${it.hero?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.07)">主役級</span>`:""}</div>
         <div class="sec"><span class="sec-label">何が違うか</span><p>${hl(it.d)}</p></div>
         ${pr.restaurants.length?`<div class="sec"><span class="sec-label">使用・関係する店</span><div class="store-tags">${pr.restaurants.map(r=>`<span class="store-tag${r.guide?" guide":""}">${esc(r.name)}</span>`).join("")}</div></div>`:""}
@@ -2591,6 +2657,7 @@ function producerCardHTML(key,forModal){
     <div class="pc-head">
       <div><div class="pc-name">${esc(pr.name)}<small>${esc(pr.kana)}${pr.person?"｜"+esc(pr.person):""}</small></div></div>
       <div class="pc-place">${esc(pr.pref)} ${esc(pr.city)}</div>
+      ${pr.multi?`<div class="pc-place" style="background:var(--midori);color:#fff;border:none">複数名店採用 — 無関係な複数の名店・料理人による採用を裏取り済み</div>`:""}
       ${pr.unid?`<div class="pc-place" style="border:1px dashed var(--kin);background:rgba(169,138,68,.08);color:#7a5a2a">農家特定できず（産地ブランドとして掲載）・EC/市場で購入可</div>`:""}
       <div class="pc-rank"><span class="seal rank-${pr.rank}">${pr.rank}</span><span class="lbl">掲載判定</span></div>
     </div>
@@ -2752,6 +2819,7 @@ function renderRegions(){
           <span class="nm" onclick="openModal('${k}')">${esc(pr.name)}</span>
           <span class="city">${esc(pr.city)}</span>
           <span class="rank-seal rank-${pr.rank}" style="position:static;width:22px;height:22px;font-size:.68rem;flex:none">${pr.rank}</span>
+          ${pr.multi?`<span class="visit" style="color:#fff;background:var(--midori);border-color:var(--midori)">複数名店採用</span>`:""}
           ${visit?`<span class="visit">直営・訪問先あり</span>`:""}
           ${pr.unid?`<span class="visit" style="color:#7a5a2a;border-color:var(--kin);border-style:dashed;background:rgba(169,138,68,.07)">農家未特定</span>`:""}
           <span class="its">${esc(its)}</span>
