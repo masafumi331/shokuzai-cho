@@ -469,6 +469,39 @@ main{max-width:1200px;margin:0 auto;padding:1.4rem 1.4rem 4rem}
 .pref-restos{margin-top:.5rem;display:flex;flex-wrap:wrap;gap:.35rem;align-items:baseline}
 .pref-restos .lbl{font-family:var(--serif);font-size:.72rem;font-weight:700;color:var(--kin);letter-spacing:.15em}
 
+/* ───── 旬カレンダー ───── */
+.month-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(84px,1fr));
+  gap:.45rem;margin-bottom:1.3rem;
+}
+.month-cell{
+  border:1.5px solid var(--line);border-radius:10px;background:var(--washi-card);
+  padding:.5rem .3rem;text-align:center;cursor:pointer;transition:all .15s;
+}
+.month-cell:hover{border-color:var(--shu)}
+.month-cell.sel{background:var(--sumi);border-color:var(--sumi);color:var(--washi)}
+.month-cell.now:not(.sel){border-color:var(--kin);background:rgba(169,138,68,.08)}
+.month-cell .mn{font-family:var(--serif);font-weight:800;font-size:1.05rem;letter-spacing:.05em}
+.month-cell .mc{font-size:.66rem;opacity:.75}
+.month-cell .now-tag{display:block;font-size:.6rem;color:var(--kin);font-weight:700}
+.month-cell.sel .now-tag{color:#f3c98a}
+.cal-cat{margin-bottom:1rem}
+.cal-cat-title{
+  font-family:var(--serif);font-weight:700;font-size:.85rem;letter-spacing:.15em;
+  display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;
+}
+.cal-cat-title .sw{width:12px;height:12px;border-radius:3px;flex:none}
+.cal-row{
+  display:flex;align-items:baseline;gap:.55rem;flex-wrap:wrap;
+  padding:.4rem .2rem;border-bottom:1px dashed var(--line);font-size:.85rem;
+  background:var(--washi-card);
+}
+.cal-row .inm{font-family:var(--serif);font-weight:700;color:var(--shu-deep);cursor:pointer;border-bottom:1px dashed rgba(178,58,32,.4)}
+.cal-row .inm:hover{color:var(--shu)}
+.cal-row .pnm{font-size:.76rem;color:var(--sumi-soft);cursor:pointer}
+.cal-row .pnm:hover{color:var(--shu-deep)}
+.cal-row .cse{font-size:.7rem;color:var(--sumi-faint)}
+
 /* ───── フッター ───── */
 footer{
   border-top:2px solid var(--sumi);
@@ -523,6 +556,7 @@ footer{
   <button class="tab" data-tab="producers">生産者名鑑<span class="n" id="tabN2"></span></button>
   <button class="tab" data-tab="restaurants">名店から逆引き<span class="n" id="tabN3"></span></button>
   <button class="tab" data-tab="regions">地域から探す<span class="n" id="tabN4"></span></button>
+  <button class="tab" data-tab="calendar">旬カレンダー</button>
 </div>
 
 <main>
@@ -531,6 +565,7 @@ footer{
   <div id="viewProducers" style="display:none"></div>
   <div id="viewRestaurants" style="display:none"></div>
   <div id="viewRegions" style="display:none"></div>
+  <div id="viewCalendar" style="display:none"></div>
 </main>
 
 <div class="modal-back" id="modalBack">
@@ -2305,9 +2340,33 @@ ITEMS.forEach((it,i)=>{
     {t:it.tg.map(norm).join("¶")+"¶"+norm(it.c),w:5,l:"タグ"},
     {t:norm(it.d)+"¶"+norm(pr.diff)+"¶"+norm(pr.summary),w:2,l:"説明文"}
   ];
+  it.months=monthsOf(it.se);
 });
 
-let state={q:"",cat:null,buy:null,season:null,hideUnid:false,tab:"ingredients"};
+let state={q:"",cat:null,buy:null,season:null,hideUnid:false,month:(new Date().getMonth()+1),tab:"ingredients"};
+
+/* 旬テキスト→月集合（1-12） */
+function monthsOf(se){
+  const s=new Set();if(!se)return s;
+  const add=(a,b)=>{let m=a;while(true){s.add(m);if(m===b)break;m=m%12+1;}};
+  if(se.includes("通年"))add(1,12);
+  const t=se.normalize("NFKC");
+  // 「3〜5月」「11月下旬〜12月」のような範囲
+  const rg=[...t.matchAll(/(\d{1,2})月?[〜~-](\d{1,2})月/g)];
+  rg.forEach(m=>{const a=+m[1],b=+m[2];if(a>=1&&a<=12&&b>=1&&b<=12)add(a,b);});
+  if(!rg.length){const ms=[...t.matchAll(/(\d{1,2})月/g)];ms.forEach(m=>{const v=+m[1];if(v>=1&&v<=12)s.add(v);});}
+  if(t.includes("初夏"))add(5,6);
+  else if(t.includes("夏"))add(6,8);
+  if(t.includes("晩秋"))s.add(11);
+  else if(t.includes("秋"))add(9,11);
+  if(t.includes("春"))add(3,5);
+  if(t.includes("冬"))add(12,2);
+  if(t.includes("新茶"))add(4,5);
+  if(t.includes("新米")||t.includes("秋新米"))add(9,10);
+  if(t.includes("雪解け"))add(4,6);
+  if(t.includes("年末"))s.add(12);
+  return s;
+}
 
 function searchItems(){
   const qn=norm(state.q);
@@ -2594,15 +2653,54 @@ function renderRegions(){
   document.getElementById("viewRegions").innerHTML=nav+blocks;
 }
 
+/* ══════════ 旬カレンダー ══════════ */
+function renderCalendar(){
+  const nowM=new Date().getMonth()+1;
+  // 検索・分類・仕入れ・未特定フィルタは適用（時期フィルタのみ月選択に置き換え）
+  const saveSeason=state.season;state.season=null;
+  const base=searchItems();state.season=saveSeason;
+  const counts={};for(let m=1;m<=12;m++)counts[m]=base.filter(it=>it.months.has(m)).length;
+  const grid=Array.from({length:12},(_,i)=>{
+    const m=i+1;
+    return `<div class="month-cell ${state.month===m?"sel":""} ${nowM===m?"now":""}" data-m="${m}">
+      ${nowM===m?`<span class="now-tag">今月</span>`:""}
+      <div class="mn">${m}月</div><div class="mc">${counts[m]}品</div></div>`;
+  }).join("");
+  const sel=base.filter(it=>it.months.has(state.month));
+  const heroN=sel.filter(it=>it.hero||it.sp).length;
+  document.getElementById("resultMeta").innerHTML=`<b>${state.month}月</b>に仕入れられる食材 ${sel.length}品（主役級${heroN}品）${state.q?`｜「${esc(state.q)}」で絞り込み中`:""}`;
+  const byCat={};sel.forEach(it=>{(byCat[it.c]=byCat[it.c]||[]).push(it);});
+  const catBlocks=CATS.filter(([c])=>byCat[c]).map(([c,col])=>{
+    const rows=byCat[c].sort((a,b)=>((b.hero||b.sp)?1:0)-((a.hero||a.sp)?1:0)).map(it=>{
+      const pr=PRODUCERS[it.p];
+      return `<div class="cal-row">
+        <span class="inm" onclick="jumpSearch('${esc(it.g)}')">${esc(it.name)}</span>
+        <span class="pnm" onclick="openModal('${it.p}')">${esc(pr.name)}</span>
+        ${it.sp?`<span class="mini-tag" style="color:#fff;border-color:var(--shu);background:var(--shu)">一品専門店</span>`:""}
+        ${it.hero?`<span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu)">主役級</span>`:""}
+        ${pr.unid?`<span class="mini-tag" style="border-style:dashed;color:#7a5a2a">未特定</span>`:""}
+        <span class="cse">${esc(it.se)}</span>
+      </div>`;
+    }).join("");
+    return `<div class="cal-cat"><div class="cal-cat-title"><span class="sw" style="background:${col}"></span>${esc(c)}（${byCat[c].length}）</div>${rows}</div>`;
+  }).join("");
+  document.getElementById("viewCalendar").innerHTML=
+    `<div class="month-grid">${grid}</div>`+
+    (sel.length?catBlocks:`<div class="no-hit"><span class="big">〇</span>この月の該当食材がありません。フィルタを解除してお試しください。</div>`);
+  document.querySelectorAll(".month-cell").forEach(c=>c.addEventListener("click",()=>{state.month=+c.dataset.m;renderCalendar();}));
+}
+
 /* ══════════ UI配線 ══════════ */
 function render(){
   document.getElementById("viewIngredients").style.display=state.tab==="ingredients"?"":"none";
   document.getElementById("viewProducers").style.display=state.tab==="producers"?"":"none";
   document.getElementById("viewRestaurants").style.display=state.tab==="restaurants"?"":"none";
   document.getElementById("viewRegions").style.display=state.tab==="regions"?"":"none";
+  document.getElementById("viewCalendar").style.display=state.tab==="calendar"?"":"none";
   if(state.tab==="ingredients")renderIngredients();
   else if(state.tab==="producers")renderProducers();
   else if(state.tab==="regions")renderRegions();
+  else if(state.tab==="calendar")renderCalendar();
   else renderRestaurants();
   renderIngredients0Counts();
 }
