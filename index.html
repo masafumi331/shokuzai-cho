@@ -383,6 +383,52 @@ main{max-width:1200px;margin:0 auto;padding:1.4rem 1.4rem 4rem}
 .modal-close:hover{background:var(--shu)}
 .modal .producer-card{margin:0;box-shadow:none;border:none;background:transparent}
 
+/* ───── 地域ビュー ───── */
+.region-nav{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
+.region-nav a{
+  font-family:var(--serif);font-weight:700;font-size:.85rem;
+  color:var(--shu-deep);border:1px solid var(--shu);border-radius:8px;
+  padding:.25rem .8rem;text-decoration:none;background:rgba(178,58,32,.05);
+}
+.region-nav a:hover{background:var(--shu);color:#fff}
+.region-block{margin-bottom:2rem}
+.region-head{
+  display:flex;align-items:center;gap:.8rem;
+  border-bottom:2px solid var(--sumi);padding-bottom:.4rem;margin-bottom:1rem;
+}
+.region-head h2{
+  font-family:var(--serif);font-weight:800;font-size:1.35rem;letter-spacing:.15em;
+}
+.region-head .cnt{font-size:.78rem;color:var(--sumi-faint)}
+.pref-block{
+  background:var(--washi-card);border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--shadow);padding:1rem 1.2rem;margin-bottom:.9rem;
+}
+.pref-title{
+  font-family:var(--serif);font-weight:800;font-size:1.05rem;letter-spacing:.1em;
+  color:var(--shu-deep);margin-bottom:.5rem;
+  display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;
+}
+.pref-title .n{font-size:.72rem;color:var(--sumi-faint);font-weight:500}
+.mini-producer{
+  display:flex;align-items:baseline;gap:.55rem;flex-wrap:wrap;
+  padding:.45rem 0;border-bottom:1px dashed var(--line);font-size:.85rem;
+}
+.mini-producer:last-of-type{border-bottom:none}
+.mini-producer .nm{
+  font-family:var(--serif);font-weight:700;color:var(--shu-deep);cursor:pointer;
+  border-bottom:1px dashed rgba(178,58,32,.4);
+}
+.mini-producer .nm:hover{color:var(--shu)}
+.mini-producer .city{font-size:.72rem;color:var(--sumi-faint)}
+.mini-producer .its{font-size:.76rem;color:var(--sumi-soft)}
+.mini-producer .visit{
+  font-size:.68rem;color:var(--midori);border:1px solid rgba(79,107,74,.35);
+  border-radius:5px;padding:.02rem .4rem;background:rgba(79,107,74,.07);
+}
+.pref-restos{margin-top:.5rem;display:flex;flex-wrap:wrap;gap:.35rem;align-items:baseline}
+.pref-restos .lbl{font-family:var(--serif);font-size:.72rem;font-weight:700;color:var(--kin);letter-spacing:.15em}
+
 /* ───── フッター ───── */
 footer{
   border-top:2px solid var(--sumi);
@@ -436,6 +482,7 @@ footer{
   <button class="tab on" data-tab="ingredients">食材から探す<span class="n" id="tabN1"></span></button>
   <button class="tab" data-tab="producers">生産者名鑑<span class="n" id="tabN2"></span></button>
   <button class="tab" data-tab="restaurants">名店から逆引き<span class="n" id="tabN3"></span></button>
+  <button class="tab" data-tab="regions">地域から探す<span class="n" id="tabN4"></span></button>
 </div>
 
 <main>
@@ -443,6 +490,7 @@ footer{
   <div id="viewIngredients"></div>
   <div id="viewProducers" style="display:none"></div>
   <div id="viewRestaurants" style="display:none"></div>
+  <div id="viewRegions" style="display:none"></div>
 </main>
 
 <div class="modal-back" id="modalBack">
@@ -2091,13 +2139,84 @@ function renderRestaurants(){
     </div>`).join("");
 }
 
+/* ══════════ 地域ビュー ══════════ */
+const REGION_ORDER=["北海道","東北","関東","中部・北陸","近畿","中国","四国","九州・沖縄"];
+const PREF_REGION={
+"北海道":"北海道",
+"青森県":"東北","岩手県":"東北","宮城県":"東北","秋田県":"東北","山形県":"東北","福島県":"東北",
+"茨城県":"関東","栃木県":"関東","群馬県":"関東","埼玉県":"関東","千葉県":"関東","東京都":"関東","神奈川県":"関東",
+"新潟県":"中部・北陸","富山県":"中部・北陸","石川県":"中部・北陸","福井県":"中部・北陸","山梨県":"中部・北陸","長野県":"中部・北陸","岐阜県":"中部・北陸","静岡県":"中部・北陸","愛知県":"中部・北陸",
+"三重県":"近畿","滋賀県":"近畿","京都府":"近畿","大阪府":"近畿","兵庫県":"近畿","奈良県":"近畿","和歌山県":"近畿",
+"鳥取県":"中国","島根県":"中国","岡山県":"中国","広島県":"中国","山口県":"中国",
+"徳島県":"四国","香川県":"四国","愛媛県":"四国","高知県":"四国",
+"福岡県":"九州・沖縄","佐賀県":"九州・沖縄","長崎県":"九州・沖縄","熊本県":"九州・沖縄","大分県":"九州・沖縄","宮崎県":"九州・沖縄","鹿児島県":"九州・沖縄","沖縄県":"九州・沖縄"};
+const PREF_ORDER=Object.keys(PREF_REGION);
+
+function restoPref(place){
+  for(const pf of PREF_ORDER){
+    const short=pf.replace(/[都府県]$/,"");
+    if(place.includes(pf)||place.includes(short))return pf;
+  }
+  return null;
+}
+function renderRegions(){
+  const qn=norm(state.q);
+  const keys=Object.keys(PRODUCERS).filter(k=>{
+    if(!qn)return true;
+    const pr=PRODUCERS[k];
+    return [pr.name,pr.kana,pr.pref,pr.city,pr.person,pr.summary].some(f=>norm(f).includes(qn))
+      ||ITEMS.some(i=>i.p===k&&(norm(i.name).includes(qn)||norm(i.g).includes(qn)));
+  });
+  const byPref={};
+  keys.forEach(k=>{const pf=PRODUCERS[k].pref;(byPref[pf]=byPref[pf]||[]).push(k);});
+  RESTAURANTS.forEach(r=>{const pf=restoPref(r.place);if(pf&&!byPref[pf])byPref[pf]=byPref[pf]||[];});
+  const prefs=PREF_ORDER.filter(pf=>byPref[pf]&&(byPref[pf].length||RESTAURANTS.some(r=>restoPref(r.place)===pf)));
+  document.getElementById("tabN4").textContent=prefs.length;
+  document.getElementById("resultMeta").innerHTML=`<b>${prefs.length}</b>都道府県に生産者・名店あり — 出張先の地域から、寄れる生産者と名店を探せます`;
+  const byRegion={};
+  prefs.forEach(pf=>{const rg=PREF_REGION[pf];(byRegion[rg]=byRegion[rg]||[]).push(pf);});
+  const nav=`<div class="region-nav">${REGION_ORDER.filter(rg=>byRegion[rg]).map(rg=>`<a href="#rg-${rg}">${rg}（${byRegion[rg].length}県）</a>`).join("")}</div>`;
+  const blocks=REGION_ORDER.filter(rg=>byRegion[rg]).map(rg=>{
+    const prefHtml=byRegion[rg].map(pf=>{
+      const producers=(byPref[pf]||[]).sort((a,b)=>(PRODUCERS[a].rank>PRODUCERS[b].rank?1:-1));
+      const rows=producers.map(k=>{
+        const pr=PRODUCERS[k];
+        const its=[...new Set(ITEMS.filter(i=>i.p===k).map(i=>i.g))].slice(0,4).join("・");
+        const visit=pr.restaurants.some(r=>/直営|併設|自店/.test((r.name||"")+(r.note||"")));
+        return `<div class="mini-producer">
+          <span class="nm" onclick="openModal('${k}')">${esc(pr.name)}</span>
+          <span class="city">${esc(pr.city)}</span>
+          <span class="rank-seal rank-${pr.rank}" style="position:static;width:22px;height:22px;font-size:.68rem;flex:none">${pr.rank}</span>
+          ${visit?`<span class="visit">直営・訪問先あり</span>`:""}
+          ${pr.unid?`<span class="visit" style="color:#7a5a2a;border-color:var(--kin);border-style:dashed;background:rgba(169,138,68,.07)">農家未特定</span>`:""}
+          <span class="its">${esc(its)}</span>
+        </div>`;
+      }).join("");
+      const restos=RESTAURANTS.filter(r=>restoPref(r.place)===pf);
+      const restoHtml=restos.length?`<div class="pref-restos"><span class="lbl">名店</span>${restos.map(r=>`<span class="store-tag guide" title="${esc(r.note)}">${esc(r.name)}</span>`).join("")}</div>`:"";
+      return `<div class="pref-block">
+        <div class="pref-title">${esc(pf)}<span class="n">生産者${producers.length}・名店${restos.length}</span></div>
+        ${rows||`<div style="font-size:.78rem;color:var(--sumi-faint)">生産者は未収録（名店のみ）</div>`}
+        ${restoHtml}
+      </div>`;
+    }).join("");
+    return `<div class="region-block" id="rg-${rg}">
+      <div class="region-head"><h2>${rg}</h2><span class="cnt">${byRegion[rg].length}都道府県</span></div>
+      ${prefHtml}
+    </div>`;
+  }).join("");
+  document.getElementById("viewRegions").innerHTML=nav+blocks;
+}
+
 /* ══════════ UI配線 ══════════ */
 function render(){
   document.getElementById("viewIngredients").style.display=state.tab==="ingredients"?"":"none";
   document.getElementById("viewProducers").style.display=state.tab==="producers"?"":"none";
   document.getElementById("viewRestaurants").style.display=state.tab==="restaurants"?"":"none";
+  document.getElementById("viewRegions").style.display=state.tab==="regions"?"":"none";
   if(state.tab==="ingredients")renderIngredients();
   else if(state.tab==="producers")renderProducers();
+  else if(state.tab==="regions")renderRegions();
   else renderRestaurants();
   renderIngredients0Counts();
 }
@@ -2106,6 +2225,9 @@ function renderIngredients0Counts(){
   const saveTab=state.tab;
   document.getElementById("tabN2").textContent=Object.keys(PRODUCERS).length;
   document.getElementById("tabN3").textContent=RESTAURANTS.length;
+  const prefSet=new Set(Object.values(PRODUCERS).map(p=>p.pref));
+  RESTAURANTS.forEach(r=>{const pf=restoPref(r.place);if(pf)prefSet.add(pf);});
+  document.getElementById("tabN4").textContent=prefSet.size;
 }
 function jumpSearch(q){
   state.q=q;state.tab="ingredients";state.cat=null;state.buy=null;state.season=null;
