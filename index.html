@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>食材帖 — 日本の良食材データベース</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --washi:#f5efe3;
+  --washi-deep:#ede4d2;
+  --washi-card:#faf6ec;
+  --sumi:#221d16;
+  --sumi-soft:#4a4234;
+  --sumi-faint:#8a8070;
+  --shu:#b23a20;
+  --shu-deep:#8f2b14;
+  --kin:#a98a44;
+  --midori:#4f6b4a;
+  --ai:#3d5a73;
+  --line:#d9cdb4;
+  --shadow:0 2px 14px rgba(60,45,20,.10);
+  --serif:"Shippori Mincho","Yu Mincho","Hiragino Mincho ProN",serif;
+  --sans:"Zen Kaku Gothic New","Yu Gothic","Hiragino Kaku Gothic ProN",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);
+  background:var(--washi);
+  color:var(--sumi);
+  line-height:1.75;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 15% -10%, rgba(178,58,32,.05), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 95% 5%, rgba(169,138,68,.07), transparent 55%),
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(120,100,60,.014) 2px 4px);
+}
+::selection{background:var(--shu);color:#fff}
+
+/* ───── ヘッダー ───── */
+.site-header{
+  position:relative;
+  padding:2.2rem 1.4rem 1.6rem;
+  max-width:1200px;margin:0 auto;
+}
+.header-inner{display:flex;align-items:flex-end;gap:1.6rem;flex-wrap:wrap}
+.title-block{display:flex;align-items:flex-start;gap:1rem}
+.hanko{
+  width:58px;height:58px;flex:none;
+  background:var(--shu);color:#fff;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-weight:800;font-size:1.35rem;line-height:1.15;
+  writing-mode:vertical-rl;
+  letter-spacing:.1em;
+  box-shadow:2px 3px 0 rgba(143,43,20,.28);
+  transform:rotate(-2deg);
+}
+h1.site-title{
+  font-family:var(--serif);font-weight:800;
+  font-size:clamp(1.7rem,4vw,2.5rem);
+  letter-spacing:.14em;line-height:1.2;
+}
+.site-title small{
+  display:block;font-size:.72rem;font-weight:500;
+  letter-spacing:.32em;color:var(--sumi-faint);margin-top:.35rem;
+}
+.header-note{
+  margin-left:auto;max-width:420px;
+  font-size:.78rem;color:var(--sumi-soft);
+  border-left:3px solid var(--kin);
+  padding-left:.9rem;
+}
+.header-note b{color:var(--shu-deep)}
+
+/* ───── 検索エリア ───── */
+.search-zone{
+  max-width:1200px;margin:0 auto;padding:0 1.4rem 1rem;
+}
+.search-box{
+  position:relative;
+  background:var(--washi-card);
+  border:1.5px solid var(--sumi);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  display:flex;align-items:center;
+  overflow:hidden;
+}
+.search-box:focus-within{border-color:var(--shu);box-shadow:0 0 0 4px rgba(178,58,32,.12)}
+.search-icon{padding:0 .5rem 0 1.1rem;font-size:1.2rem;color:var(--shu)}
+#searchInput{
+  flex:1;border:none;outline:none;background:transparent;
+  font-family:var(--sans);font-size:1.05rem;
+  padding:1.05rem .5rem;color:var(--sumi);
+  min-width:0;
+}
+#searchInput::placeholder{color:#b3a88f;font-size:.92rem}
+.clear-btn{
+  border:none;background:none;cursor:pointer;
+  font-size:1.1rem;color:var(--sumi-faint);
+  padding:0 1.1rem;display:none;
+}
+.clear-btn:hover{color:var(--shu)}
+.search-hint{
+  font-size:.72rem;color:var(--sumi-faint);
+  margin:.5rem .3rem 0;
+}
+.search-hint b{color:var(--sumi-soft)}
+
+/* ───── フィルタ ───── */
+.filter-zone{max-width:1200px;margin:0 auto;padding:.4rem 1.4rem 0}
+.filter-row{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-bottom:.55rem}
+.filter-label{
+  font-family:var(--serif);font-weight:700;font-size:.78rem;
+  color:var(--sumi-soft);letter-spacing:.15em;
+  flex:none;width:4.6em;
+}
+.chip{
+  border:1px solid var(--line);background:var(--washi-card);
+  border-radius:999px;padding:.22rem .8rem;
+  font-family:var(--sans);font-size:.8rem;color:var(--sumi-soft);
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.chip:hover{border-color:var(--shu);color:var(--shu-deep)}
+.chip.on{background:var(--sumi);border-color:var(--sumi);color:var(--washi)}
+.chip.on.shu{background:var(--shu);border-color:var(--shu)}
+.chip .cnt{font-size:.68rem;opacity:.65;margin-left:.15rem}
+
+/* ───── タブ ───── */
+.tab-zone{
+  max-width:1200px;margin:1.1rem auto 0;padding:0 1.4rem;
+  display:flex;gap:0;border-bottom:2px solid var(--sumi);
+}
+.tab{
+  border:none;background:none;cursor:pointer;
+  font-family:var(--serif);font-weight:700;font-size:.95rem;
+  letter-spacing:.12em;color:var(--sumi-faint);
+  padding:.6rem 1.3rem .5rem;
+  border-radius:10px 10px 0 0;
+  position:relative;top:2px;
+  border:2px solid transparent;border-bottom:none;
+  transition:color .15s;
+}
+.tab:hover{color:var(--sumi)}
+.tab.on{
+  background:var(--washi-card);color:var(--shu-deep);
+  border-color:var(--sumi);
+}
+.tab .n{font-size:.7rem;color:var(--kin);margin-left:.25rem;font-family:var(--sans)}
+
+/* ───── メイン ───── */
+main{max-width:1200px;margin:0 auto;padding:1.4rem 1.4rem 4rem}
+.result-meta{
+  font-size:.8rem;color:var(--sumi-soft);
+  margin-bottom:1rem;display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;
+}
+.result-meta b{font-family:var(--serif);font-size:1.05rem;color:var(--shu-deep)}
+.no-hit{
+  text-align:center;padding:3.5rem 1rem;color:var(--sumi-faint);
+  font-family:var(--serif);font-size:1rem;letter-spacing:.1em;
+}
+.no-hit .big{font-size:2rem;display:block;margin-bottom:.6rem}
+
+/* ───── 食材グループカード ───── */
+.group-card{
+  background:var(--washi-card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  margin-bottom:1.15rem;
+  overflow:hidden;
+  animation:rise .35s ease both;
+}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.group-head{
+  display:flex;align-items:center;gap:.9rem;
+  padding:1rem 1.3rem .85rem;
+  cursor:pointer;user-select:none;
+  border-bottom:1px dashed transparent;
+}
+.group-card.open .group-head{border-bottom-color:var(--line)}
+.group-head:hover{background:rgba(169,138,68,.05)}
+.cat-mark{
+  flex:none;width:44px;height:44px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--serif);font-weight:700;font-size:.82rem;
+  color:#fff;writing-mode:vertical-rl;letter-spacing:.05em;line-height:1.05;
+}
+.group-title{flex:1;min-width:0}
+.group-title h3{
+  font-family:var(--serif);font-weight:700;
+  font-size:1.18rem;letter-spacing:.06em;line-height:1.3;
+}
+.group-title h3 mark{background:linear-gradient(transparent 62%,#f3c98a 62%);color:inherit;padding:0}
+.group-sub{font-size:.74rem;color:var(--sumi-faint);margin-top:.1rem;display:flex;gap:.7rem;flex-wrap:wrap}
+.multi-badge{
+  flex:none;
+  font-family:var(--serif);font-size:.72rem;font-weight:700;
+  color:var(--shu-deep);border:1.5px solid var(--shu);
+  border-radius:8px;padding:.18rem .55rem;
+  background:rgba(178,58,32,.06);
+  letter-spacing:.05em;text-align:center;line-height:1.35;
+}
+.multi-badge b{font-size:1rem}
+.gtoggle{
+  flex:none;font-size:.8rem;color:var(--sumi-faint);
+  transition:transform .25s;
+}
+.group-card.open .gtoggle{transform:rotate(180deg)}
+.group-body{display:none;padding:0 1.3rem 1.1rem}
+.group-card.open .group-body{display:block}
+.compare-note{
+  font-size:.75rem;color:var(--ai);
+  padding:.55rem .8rem;margin:.8rem 0 .2rem;
+  background:rgba(61,90,115,.06);border-radius:8px;
+  border-left:3px solid var(--ai);
+}
+.offer-grid{
+  display:grid;gap:.9rem;margin-top:.85rem;
+  grid-template-columns:repeat(auto-fit,minmax(min(430px,100%),1fr));
+}
+.offer{
+  border:1px solid var(--line);border-radius:11px;
+  background:#fffdf6;
+  padding:1rem 1.1rem .95rem;
+  display:flex;flex-direction:column;gap:.55rem;
+  position:relative;
+}
+.offer-head{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap}
+.offer-producer{
+  font-family:var(--serif);font-weight:700;font-size:1.02rem;
+  color:var(--shu-deep);cursor:pointer;
+  border-bottom:1px dashed rgba(178,58,32,.5);
+  letter-spacing:.04em;
+}
+.offer-producer:hover{color:var(--shu)}
+.offer-place{font-size:.74rem;color:var(--sumi-faint)}
+.rank-seal{
+  position:absolute;top:.8rem;right:.9rem;
+  font-family:var(--serif);font-weight:800;font-size:.78rem;
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1.5px solid;
+}
+.rank-A{color:var(--shu-deep);border-color:var(--shu)}
+.rank-B{color:var(--kin);border-color:var(--kin)}
+.rank-C{color:var(--sumi-faint);border-color:var(--sumi-faint)}
+.offer-name{font-size:.85rem;color:var(--sumi-soft)}
+.offer-name b{font-family:var(--serif);font-size:.95rem;color:var(--sumi)}
+.sec{font-size:.83rem}
+.sec-label{
+  font-family:var(--serif);font-weight:700;font-size:.74rem;
+  color:var(--kin);letter-spacing:.2em;display:block;margin-bottom:.15rem;
+}
+.sec p{color:var(--sumi-soft);font-size:.83rem;line-height:1.7}
+.sec p mark{background:linear-gradient(transparent 62%,#f3c98a 62%);color:inherit;padding:0}
+.store-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem}
+.store-tag{
+  font-size:.73rem;background:rgba(79,107,74,.09);color:var(--midori);
+  border:1px solid rgba(79,107,74,.3);border-radius:6px;
+  padding:.1rem .5rem;
+}
+.store-tag.guide{background:rgba(178,58,32,.07);color:var(--shu-deep);border-color:rgba(178,58,32,.3)}
+.tag-row{display:flex;flex-wrap:wrap;gap:.3rem}
+.mini-tag{
+  font-size:.68rem;color:var(--sumi-faint);
+  border:1px solid var(--line);border-radius:5px;
+  padding:.05rem .4rem;background:rgba(217,205,180,.15);
+}
+.mini-tag.buy{color:var(--midori);border-color:rgba(79,107,74,.4);background:rgba(79,107,74,.07)}
+.mini-tag.gyotai{color:var(--ai);border-color:rgba(61,90,115,.35);background:rgba(61,90,115,.06)}
+.season-line{font-size:.74rem;color:var(--sumi-faint)}
+.season-line b{color:var(--sumi-soft)}
+.why-hit{
+  font-size:.68rem;color:var(--ai);margin-top:.1rem;
+  display:flex;gap:.3rem;flex-wrap:wrap;align-items:center;
+}
+.why-hit span{background:rgba(61,90,115,.08);border-radius:4px;padding:.02rem .4rem;border:1px dashed rgba(61,90,115,.35)}
+
+/* ───── 生産者カード ───── */
+.producer-card{
+  background:var(--washi-card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:var(--shadow);
+  margin-bottom:1.2rem;padding:1.3rem 1.5rem;
+  animation:rise .35s ease both;
+}
+.pc-head{display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:.6rem}
+.pc-name{font-family:var(--serif);font-weight:800;font-size:1.3rem;letter-spacing:.05em}
+.pc-name small{display:block;font-size:.72rem;color:var(--sumi-faint);font-weight:500;letter-spacing:.15em}
+.pc-place{
+  font-size:.8rem;color:var(--sumi-soft);
+  background:rgba(217,205,180,.25);border-radius:7px;
+  padding:.25rem .7rem;margin-top:.2rem;
+}
+.pc-rank{margin-left:auto;text-align:right}
+.pc-rank .seal{
+  font-family:var(--serif);font-weight:800;font-size:1rem;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:50%;border:2px solid;
+}
+.pc-rank .lbl{display:block;font-size:.65rem;color:var(--sumi-faint);margin-top:.15rem}
+.pc-summary{
+  font-family:var(--serif);font-size:.98rem;font-weight:600;
+  color:var(--shu-deep);letter-spacing:.03em;
+  margin-bottom:.7rem;padding-left:.8rem;
+  border-left:3px solid var(--shu);
+}
+.pc-grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr))}
+.pc-sec{font-size:.85rem}
+.pc-sec h4{
+  font-family:var(--serif);font-size:.78rem;font-weight:700;
+  color:var(--kin);letter-spacing:.25em;margin-bottom:.3rem;
+  display:flex;align-items:center;gap:.4rem;
+}
+.pc-sec h4::after{content:"";flex:1;height:1px;background:var(--line)}
+.pc-sec p{color:var(--sumi-soft);line-height:1.75;font-size:.84rem}
+.pc-sec ul{list-style:none}
+.pc-sec li{
+  padding-left:1.1em;position:relative;color:var(--sumi-soft);
+  font-size:.84rem;margin-bottom:.2rem;
+}
+.pc-sec li::before{content:"●";position:absolute;left:0;font-size:.5em;top:.7em;color:var(--kin)}
+.pc-items{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.2rem}
+.pc-item-tag{
+  font-size:.76rem;background:rgba(178,58,32,.06);color:var(--shu-deep);
+  border:1px solid rgba(178,58,32,.25);border-radius:6px;
+  padding:.12rem .55rem;cursor:pointer;transition:all .15s;
+}
+.pc-item-tag:hover{background:var(--shu);color:#fff}
+.evidence-tag{
+  font-size:.7rem;border-radius:5px;padding:.06rem .45rem;
+  display:inline-block;margin:.1rem .15rem .1rem 0;
+}
+.ev-primary{background:rgba(79,107,74,.1);color:var(--midori);border:1px solid rgba(79,107,74,.35)}
+.ev-secondary{background:rgba(61,90,115,.08);color:var(--ai);border:1px solid rgba(61,90,115,.3)}
+.ev-unverified{background:rgba(138,128,112,.1);color:var(--sumi-faint);border:1px dashed var(--sumi-faint)}
+.caution-box{
+  margin-top:.8rem;font-size:.76rem;color:#7a5a2a;
+  background:rgba(169,138,68,.09);border:1px dashed var(--kin);
+  border-radius:8px;padding:.55rem .8rem;
+}
+
+/* ───── 名店ページ ───── */
+.resto-card{
+  background:var(--washi-card);border:1px solid var(--line);
+  border-radius:12px;box-shadow:var(--shadow);
+  margin-bottom:1rem;padding:1.1rem 1.3rem;
+  animation:rise .35s ease both;
+}
+.resto-head{display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap}
+.resto-name{font-family:var(--serif);font-weight:800;font-size:1.12rem;letter-spacing:.05em}
+.resto-place{font-size:.76rem;color:var(--sumi-faint)}
+.resto-badge{
+  font-size:.68rem;font-family:var(--serif);font-weight:700;
+  color:var(--shu-deep);border:1px solid var(--shu);border-radius:5px;
+  padding:.05rem .5rem;background:rgba(178,58,32,.05);
+}
+.resto-note{font-size:.83rem;color:var(--sumi-soft);margin:.45rem 0 .3rem;line-height:1.7}
+.resto-links{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.3rem}
+
+/* ───── モーダル ───── */
+.modal-back{
+  position:fixed;inset:0;background:rgba(34,29,22,.55);
+  display:none;align-items:flex-start;justify-content:center;
+  z-index:50;padding:2.2rem 1rem;overflow-y:auto;
+  backdrop-filter:blur(3px);
+}
+.modal-back.show{display:flex}
+.modal{
+  background:var(--washi);border-radius:16px;
+  max-width:860px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  animation:rise .3s ease;
+  position:relative;
+}
+.modal-close{
+  position:absolute;top:.9rem;right:1rem;z-index:2;
+  border:none;background:var(--sumi);color:var(--washi);
+  width:34px;height:34px;border-radius:50%;
+  font-size:1rem;cursor:pointer;
+}
+.modal-close:hover{background:var(--shu)}
+.modal .producer-card{margin:0;box-shadow:none;border:none;background:transparent}
+
+/* ───── フッター ───── */
+footer{
+  border-top:2px solid var(--sumi);
+  background:var(--washi-deep);
+  padding:1.6rem 1.4rem 2.2rem;
+  font-size:.74rem;color:var(--sumi-soft);
+}
+.foot-inner{max-width:1200px;margin:0 auto}
+.foot-inner h5{font-family:var(--serif);letter-spacing:.2em;font-size:.8rem;margin-bottom:.4rem;color:var(--sumi)}
+.foot-inner p{margin-bottom:.35rem;line-height:1.7}
+
+@media (max-width:640px){
+  .header-note{display:none}
+  .tab{padding:.55rem .8rem .45rem;font-size:.85rem;letter-spacing:.05em}
+  .filter-label{width:100%}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="title-block">
+      <div class="hanko">食材帖</div>
+      <div>
+        <h1 class="site-title">食材帖<small>日本の良食材データベース</small></h1>
+      </div>
+    </div>
+    <div class="header-note">
+      良い店から食材を逆引きし、生産者・栽培方法・注文方法まで<b>根拠つき</b>で構造化した仕入れ台帳。素材でメインを張れる食材・飲料・調味料を探すために。
+    </div>
+  </div>
+</header>
+
+<div class="search-zone">
+  <div class="search-box">
+    <span class="search-icon">◎</span>
+    <input id="searchInput" type="text" placeholder="食材名・品種・生産者・産地・使用店・シェフ名で検索（例：リーキ／舞茸／広島 ハーブ／CRAFTALE）" autocomplete="off">
+    <button class="clear-btn" id="clearBtn">✕</button>
+  </div>
+  <div class="search-hint">ひらがな・カタカナ・漢字どれでも可｜<b>同義語対応</b>（椎茸=しいたけ、リーキ=西洋ねぎ=ポロねぎ 等）｜スペース区切りで絞り込み（AND検索）</div>
+</div>
+
+<div class="filter-zone">
+  <div class="filter-row"><span class="filter-label">分　類</span><div id="catChips" style="display:flex;flex-wrap:wrap;gap:.4rem"></div></div>
+  <div class="filter-row"><span class="filter-label">時　期</span><div id="seasonChips" style="display:flex;flex-wrap:wrap;gap:.4rem"></div></div>
+  <div class="filter-row"><span class="filter-label">仕入れ</span><div id="buyChips" style="display:flex;flex-wrap:wrap;gap:.4rem"></div></div>
+</div>
+
+<div class="tab-zone">
+  <button class="tab on" data-tab="ingredients">食材から探す<span class="n" id="tabN1"></span></button>
+  <button class="tab" data-tab="producers">生産者名鑑<span class="n" id="tabN2"></span></button>
+  <button class="tab" data-tab="restaurants">名店から逆引き<span class="n" id="tabN3"></span></button>
+</div>
+
+<main>
+  <div class="result-meta" id="resultMeta"></div>
+  <div id="viewIngredients"></div>
+  <div id="viewProducers" style="display:none"></div>
+  <div id="viewRestaurants" style="display:none"></div>
+</main>
+
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <h5>掲載方針</h5>
+    <p>本データベースは「食材探しGPT.docx」（2026年7月19日時点の調査記録）を基に構築。掲載内容は<b>調査時点の情報</b>であり、使用店の記載は「現在使用中」を保証しません。仕入れ前には生産者・店舗への直接確認を推奨します。</p>
+    <p>判定「A」＝店・生産者・特徴・販売経路が確認済みの公開候補／「B」＝有望だが追加確認が必要な候補です。</p>
+  </div>
+</footer>
+<script>
+const PRODUCERS = {
+kajiya:{name:"梶谷農園",kana:"かじやのうえん",pref:"広島県",city:"三原市",person:"",rank:"A",
+ summary:"「飾りではなく味の展開を作る」ハーブを、料理人の要求に応じて作り分ける日本屈指のハーブ専門農園。",
+ discovery:"東京のミシュラン一つ星「CRAFTALE」（2026年版掲載）が使用していることを、シェフへの取材記事・ミシュラン公式情報・レストラン公式情報の複数情報源で確認。シェフが農園を継続的に訪問し、取引に至った経緯まで取材で確認できる、理想的な「良い店→食材→生産者」の逆引き事例。",
+ diff:"単なる飾り用ハーブではなく、香りや味の強さ・大きさなどを料理人の要求に応じて作り分ける。葉だけでなく茎や根にも強い味と香りがあり、香りの余韻が長いとシェフが評価。料理の飾りではなく「味の展開を作る要素」として使われる。",
+ restaurants:[{name:"CRAFTALE（東京）",note:"ミシュラン一つ星。香りの持続性、葉・茎・根まで味が明確な点を評価",guide:true},{name:"MAISON CACAO",note:"商品開発コラボ実績",guide:false}],
+ order:{online:"公式オンラインショップあり（34商品掲載）。一般向け・レストラン向け両対応",wholesale:"レストラン・カフェ向け商品ページあり",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["取材記事（一次情報）","primary"],["ミシュラン公式情報","primary"],["レストラン公式情報","primary"]],
+ checks:["現在の納入状況の最終確認"]},
+edomae:{name:"江戸前ハーブ",kana:"えどまえはーぶ",pref:"東京都",city:"大田区",person:"村田好平氏",rank:"A",
+ summary:"町工場跡の室内「土耕」栽培。都心の名店へ収穫当日に届く鮮度が武器のマイクロハーブ農園。",
+ discovery:"料理専門媒体の生産者取材から、納入店名、シェフとの出会い、取引開始の経緯まで確認。梶谷農園で学んだ生産者という系譜も確認できる。",
+ diff:"東京・大田区の町工場跡を利用した室内農業だが、水耕ではなく土耕。都内のレストランに近いため鮮度を保った状態で届けられ、品種本来の香りや味の凝縮感が評価されている。",
+ restaurants:[{name:"The Burn（東京）",note:"流通実績を取材記事で確認",guide:false},{name:"sio（東京）",note:"流通実績を取材記事で確認",guide:true},{name:"FARO（東京）",note:"流通実績を取材記事で確認",guide:true},{name:"TATSUMI",note:"流通実績を取材記事で確認",guide:false}],
+ order:{online:"要確認（公式の業務用注文方法を確認中）",wholesale:"業務用の注文方法・ロット・価格は直接確認が必要",watch:"—"},
+ sns:{site:"要確認",instagram:"要確認",x:"要確認"},
+ evidence:[["料理専門媒体の生産者取材（一次情報）","primary"]],
+ checks:["公式の業務用注文方法","現在の納入店","ロット・価格"]},
+mino:{name:"三野農園",kana:"みののうえん",pref:"北海道",city:"虻田郡真狩村",person:"",rank:"A",
+ summary:"オーベルジュ「マッカリーナ」のシェフの要望から産地そのものが生まれた、西洋野菜約30品目の農園。",
+ discovery:"マッカリーナのシェフが「輸入物ではなく地元の西洋野菜を使いたい」と真狩村に働きかけ、複数農家がリーキ栽培を開始。その後も継続した農家が三野農園だったことを、農園公式サイトと複数の取材記事で確認。",
+ diff:"料理人の要望から西洋野菜の生産を始め、料理人が求める規格・品質に対応。リーキは日本の長ねぎと異なり加熱・煮込みで甘味が強くなる。サボイキャベツは葉がしっかりしており、スープを吸っても食感が残るためフレンチ・イタリアンに適する。",
+ restaurants:[{name:"RESTAURANT maccarina／マッカリーナ（北海道真狩村）",note:"産地形成の起点となったオーベルジュ",guide:true}],
+ order:{online:"要確認（一般販売の有無を確認中）",wholesale:"直接取引条件は要確認",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["農園公式サイト（一次情報）","primary"],["複数の取材記事","secondary"]],
+ checks:["現在のマッカリーナへの納入状況","直接取引条件","一般販売の有無","肥料・土づくり・栽培管理の詳細"]},
+takei:{name:"タケイファーム",kana:"たけいふぁーむ",pref:"千葉県",city:"松戸市",person:"",rank:"A",
+ summary:"栽培野菜の約95％をレストランへ直接販売。「日本で入手しにくいが料理人が必要とする野菜」を年間約140種類。",
+ discovery:"生産者公式サイトと店・シェフ紹介記事から使用店を確認。約1,200株規模のアーティチョーク栽培を公式情報で説明。",
+ diff:"料理人との会話から「日本では入手しにくいが料理人が必要とする野菜」を選んで栽培。数量より食べ頃を優先して収穫し、土付きで出荷することで香りや保存性を保つ。翌シーズンの予約販売（例：2027年1月収穫予定のサボイキャベツ）を行うなど販売の仕組みも先進的。",
+ restaurants:[{name:"ブルガリ イル・リストランテ（東京）",note:"使用実績を公式情報・紹介記事で確認",guide:true},{name:"アルマーニ／リストランテ（東京）",note:"使用実績を確認",guide:true},{name:"FURUYA augastronome",note:"使用実績を確認",guide:false},{name:"CONCERTO",note:"使用実績を確認",guide:false}],
+ order:{online:"公式オンラインショップあり。翌シーズン分の予約販売も実施",wholesale:"レストラン直販が主体（約95％）。直接問い合わせ",watch:"予約開始・販売開始の監視に最適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["生産者公式サイト（一次情報）","primary"],["店・シェフ紹介記事","secondary"]],
+ checks:["各店との現在の取引状況"]},
+tamura:{name:"田村きのこ園",kana:"たむらきのこえん",pref:"茨城県",city:"笠間市",person:"",rank:"A",
+ summary:"傘11〜12cm・厚さ3.5cm超。肉料理に近い存在感を出せるジャンボ椎茸「福王しいたけ」の専門農園。",
+ discovery:"使用店（COLK、ホテルメトロポリタン エドモント「FOURGRAINS」、FUJIMARU WINE SHOP ほか茨城県内・東京都内のレストラン）と栽培方法を確認。",
+ diff:"傘が11〜12cm、厚さ3.5cm超になる大型・肉厚の椎茸。ナラやクヌギなどの広葉樹チップに米ぬかやふすまを加えた菌床を使用。肉詰めやローストなど、肉料理に近い存在感を出せる。",
+ restaurants:[{name:"COLK",note:"使用実績を確認",guide:false},{name:"ホテルメトロポリタン エドモント「FOURGRAINS」（東京）",note:"使用実績を確認",guide:false},{name:"FUJIMARU WINE SHOP",note:"使用実績を確認",guide:false}],
+ order:{online:"公式サイトで家庭用販売あり",wholesale:"業務用は直接問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["生産者公式情報（一次情報）","primary"],["使用店情報","secondary"]],
+ checks:["業務用の取引条件"]},
+tatemichi:{name:"citrusfarms たてみち屋",kana:"たてみちや",pref:"広島県",city:"尾道市（生口島）",person:"菅秀和氏",rank:"A",
+ summary:"「レモンは搾るものではなく、食べるフルーツ」。皮ごと食べる前提で香りと甘味・酸味の均衡を追求する柑橘農園。",
+ discovery:"TOKi、KABEAT、Pizza 4P's、「てのしま」林亮平シェフ監修料理、DINING OUT ONOMICHI、Mr. CHEESECAKEなど、多数の店・料理人・ブランドでの使用実績を確認。",
+ diff:"皮ごと食べた際の香り、甘味と酸味のバランスを重視。土壌と樹の健康を優先し、科学的な視点を取り入れた栽培を行う。季節変動が明確で商品展開も複数あるため、旬・予約・収穫開始の追跡にも向く。",
+ restaurants:[{name:"TOKi",note:"使用実績を確認",guide:false},{name:"KABEAT",note:"使用実績を確認",guide:false},{name:"Pizza 4P's",note:"使用実績を確認",guide:false},{name:"てのしま（林亮平シェフ監修料理）",note:"使用実績を確認",guide:false},{name:"DINING OUT ONOMICHI",note:"イベント使用実績",guide:false},{name:"Mr. CHEESECAKE",note:"商品使用実績",guide:false}],
+ order:{online:"販売あり（レモン・柑橘・蜂蜜など複数商品）",wholesale:"直接問い合わせ",watch:"旬・予約・収穫開始通知に好適"},
+ sns:{site:"公式情報あり",instagram:"要確認",x:"要確認"},
+ evidence:[["使用店・ブランドの公式情報","primary"],["取材記事","secondary"]],
+ checks:["現在の販売状況・時期"]},
+hirosaki:{name:"弘前のりんご生産者たち（木村秋則氏ほか）",kana:"ひろさきのりんごせいさんしゃ",pref:"青森県",city:"弘前市",person:"木村秋則氏・中田信雄氏・平戸亮氏・菊地春美氏",rank:"A",
+ summary:"「奇跡のりんご」一人ではなく、考え方を共有する生産者群による「友情のりんご」供給網。",
+ discovery:"弘前市「レストラン山崎」の公式メニュー・オンラインショップ・商品説明に生産者名が明記されている。「奇跡のりんごと友情のりんごの冷製スープ」やフルコース、加工品として使用。",
+ diff:"木村秋則氏の自然栽培りんごの知名度だけでなく、生産量不足の際に木村氏が安全な栽培を目指す別の生産者を紹介し、複数生産者による「友情のりんご」という供給網が形成されている。カリスマ個人ではなく思想を共有する生産者群として紹介できる好例。",
+ restaurants:[{name:"レストラン山崎（青森県弘前市）",note:"冷製スープ・フルコース・加工品に使用。生産者名をメニューに明記",guide:false}],
+ order:{online:"レストラン山崎が冷製スープ・パン・かりんとう等をオンライン販売",wholesale:"生果の一般販売は時期・数量の確認が必要",watch:"収穫期の販売開始監視に向く"},
+ sns:{site:"レストラン山崎公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["レストラン公式メニュー・商品説明（一次情報）","primary"]],
+ checks:["生果の一般販売の時期・数量"]},
+nishizaki:{name:"西崎ファーム",kana:"にしざきふぁーむ",pref:"茨城県",city:"かすみがうら市周辺",person:"",rank:"A",
+ summary:"筑波山東麓で約4,000羽を放し飼い。「シェフと一緒に育てる」を掲げる一貫生産の鴨農場。",
+ discovery:"レストラン炅−kei−などで生産者・食材を取り上げたメニューや紹介実績を確認。",
+ diff:"筑波山東麓の傾斜地で約4,000羽を放し飼いし、ふ化から飼育、処理・加工まで一貫して行う。料理人の意見を飼料や飼育方法に反映させ、「シェフと一緒に育てる」という考え方が明確。",
+ restaurants:[{name:"レストラン炅−kei−（東京）",note:"生産者・食材を取り上げたメニュー・紹介実績",guide:false}],
+ order:{online:"胸肉・レバー・出汁・加工品などの公式オンライン販売あり",wholesale:"直接問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["レストランのメニュー・紹介実績","primary"],["生産者公式情報","primary"]],
+ checks:["業務用の取引条件"]},
+ishiguro:{name:"石黒農場",kana:"いしぐろのうじょう",pref:"岩手県",city:"花巻市",person:"",rank:"A",
+ summary:"温泉床暖房と自家産米飼料で育てる、国内随一のほろほろ鳥専門農場。",
+ discovery:"生産者公式サイトに、石黒農場のほろほろ鳥を提供する全国のレストラン紹介ページがある。レストラン・ホテルへの卸売比率が高い専門農場。",
+ diff:"寒さに弱いほろほろ鳥を岩手で育てるため、温泉を利用した床暖房を導入。自ら生産する米を飼料に使用。国内で専門的・継続的にほろほろ鳥を飼育する希少な農場。",
+ restaurants:[{name:"全国のレストラン・ホテル（公式サイトに提供店紹介ページあり）",note:"卸売比率が高い",guide:false}],
+ order:{online:"一般向けオンラインショップあり（ハム・ソーセージ・燻製も購入可）",wholesale:"レストラン・ホテル向け卸が主体",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["生産者公式サイト（一次情報）","primary"]],
+ checks:["業務用の取引条件・ロット"]},
+ohira:{name:"大平きのこ研究所",kana:"おおひらきのこけんきゅうじょ",pref:"新潟県",city:"南魚沼",person:"",rank:"B",
+ summary:"天然の黒系舞茸「クロフ」を目標に開発された、厚い傘と香り・旨味の大黒舞茸「真」。",
+ discovery:"生産技術と商品の独自性から生産者起点で採用。八海山水系の雪解け水を使用した培地づくりが紹介されている。キリンシティでフリット使用実績があるがチェーン店のため「良店使用実績」としては扱わない。",
+ diff:"天然の黒系舞茸「クロフ」を目標に、厚い傘と香り・旨味を持つ舞茸を開発。八海山水系の雪解け水を使用した培地づくり。業務用1kgと一般向け商品の両方を販売。",
+ restaurants:[],
+ order:{online:"一般向け商品の販売あり",wholesale:"業務用1kg規格あり",watch:"—"},
+ sns:{site:"公式情報あり",instagram:"要確認",x:"要確認"},
+ evidence:[["生産者公式情報","primary"],["商品紹介記事","secondary"]],
+ checks:["独立系名店での使用実績"]},
+recos:{name:"竜王きのこ農園レコズファーム",kana:"れこずふぁーむ",pref:"滋賀県",city:"蒲生郡竜王町",person:"",rank:"B",
+ summary:"加熱しても失われないコリコリ食感。地域から認知が広がった「足太あわび茸」。",
+ discovery:"地域レストランへの試食提供から認知が広がり、現在は公式通販がある。超有名店との強い結び付きは現時点で未確認。",
+ diff:"加熱しても失われにくいコリコリした食感が特徴。地域レストランへの試食提供から認知が広がった。",
+ restaurants:[{name:"地域レストラン（試食提供から認知拡大）",note:"個別店名は追加調査中",guide:false}],
+ order:{online:"公式通販あり",wholesale:"要問い合わせ",watch:"—"},
+ sns:{site:"公式情報あり",instagram:"要確認",x:"要確認"},
+ evidence:[["生産者公式情報","primary"],["地域情報","secondary"]],
+ checks:["有名店との結び付き","業務用条件"]},
+suzuki:{name:"鈴木農場",kana:"すずきのうじょう",pref:"福島県",city:"郡山市",person:"",rank:"A",
+ summary:"シェフが2日に1回通って自ら収穫する、年間300〜400品種の多品種農場。郡山ブランド玉ねぎ「万吉どん」。",
+ discovery:"郡山のイタリア料理店「catoe」の加藤智樹シェフが農場へ2日に1回ほど通い自ら収穫していることを確認。「万吉どん」はムースとして店の代表料理の一つ。",
+ diff:"年間300〜400品種規模の多品種栽培。玉ねぎ「万吉どん」は秋以降の熟成で甘味とうま味が増す。マイクロリーフは料理の味のアクセントとして評価されている。",
+ restaurants:[{name:"catoe（福島県郡山市）",note:"加藤智樹シェフが2日に1回通って自ら収穫。万吉どんのムースが代表料理",guide:false}],
+ order:{online:"公式BASEショップあり（野菜BOX・定期便・米）。一部定期便は売り切れ→再販売監視に好適。購入者はInstagram DMで専用アカウント案内",wholesale:"飲食店取引あり。条件は直接問い合わせ",watch:"定期便の再販売監視に好適"},
+ sns:{site:"BASEショップあり",instagram:"あり（ショップからリンク）",x:"農園公式アカウントは要確認"},
+ evidence:[["シェフの使用実績（取材情報）","primary"],["公式ショップ","primary"]],
+ checks:["業務用取引条件"]},
+ome:{name:"Ome Farm",kana:"おうめふぁーむ",pref:"東京都",city:"青梅市",person:"",rank:"A",
+ summary:"固定種・自家採種を軸に、農薬・化学肥料不使用で江戸東京野菜と西洋野菜を作る都市近郊農園。",
+ discovery:"公式サイトの栽培方針・供給先情報から確認。青梅産野菜を都内のレストランやマルシェへ供給。",
+ diff:"青梅の土地に合う品種を選び、固定種や自家採種を重視。農薬・化学肥料を栽培期間中に使用しない。ルッコラは味が濃い一方でえぐみが少なく、コリアンダーは甘味・香り・歯応えが特徴。",
+ restaurants:[{name:"都内レストラン・マルシェへ供給",note:"個別店名は追加調査中",guide:false},{name:"Ome Farm Kitchen（直営）",note:"直営飲食店",guide:false}],
+ order:{online:"個人宅配は問い合わせフォームから注文",wholesale:"問い合わせ",watch:"現在の宅配内容・発送日は要確認"},
+ sns:{site:"公式サイトあり",instagram:"公式アカウント未特定",x:"公式アカウント未特定"},
+ evidence:[["公式サイト（一次情報）","primary"]],
+ checks:["現在の野菜宅配内容と発送日","供給先レストランの具体名"]},
+tsukuda:{name:"つくだ農園",kana:"つくだのうえん",pref:"京都府",city:"京都市（大原）",person:"",rank:"A",
+ summary:"2009年から有機JAS。京都大原からラグジュアリーホテル・ミシュラン掲載日本料理店へ届く有機野菜。",
+ discovery:"京都市内のラグジュアリーホテル、ミシュラン掲載日本料理店、錦市場の高級青果店などへ配達していると農園公式サイトで説明。",
+ diff:"2009年から有機JAS認証を取得し、すべての圃場で有機栽培。2026年は有機赤しその予約販売も案内されており、季節商品・予約開始検知の実証候補として最適。高島屋オンラインでの野菜セット取り扱い実績もある。",
+ restaurants:[{name:"京都市内ラグジュアリーホテル",note:"配達先（公式サイト記載）",guide:false},{name:"ミシュラン掲載日本料理店（京都）",note:"配達先（公式サイト記載）",guide:true},{name:"錦市場の高級青果店",note:"配達先（公式サイト記載）",guide:false}],
+ order:{online:"公式サイトで有機野菜BOX購入可。有機赤しそは予約販売",wholesale:"公式サイトから問い合わせ",watch:"赤しそ予約開始の監視に好適"},
+ sns:{site:"公式サイト・ショップあり",instagram:"公式アカウント未特定",x:"公式アカウント未特定"},
+ evidence:[["農園公式サイト（一次情報）","primary"],["有機JAS認証","primary"]],
+ checks:["配達先店舗の具体名"]},
+kiredo:{name:"キレド",kana:"きれど",pref:"千葉県",city:"四街道市",person:"",rank:"A",
+ summary:"年間約150種類。日本の古い品種から世界の野菜、通常流通しない「根・葉・花」の部位まで届ける農園。",
+ discovery:"公式サイト・オンラインショップ・SNSから確認。直営店「キレドベジタブルアトリエ」も運営。",
+ diff:"年間約150種類の野菜を栽培し、珍しい野菜とその食べ方を届けることを重視。根、葉、花など通常流通しない部位も扱う。自身の野菜を使った直営店も運営。",
+ restaurants:[{name:"キレドベジタブルアトリエ（直営）",note:"自園野菜を使う直営店",guide:false}],
+ order:{online:"公式オンラインショップで全国発送（野菜・加工品）",wholesale:"飲食店はInstagramのDMから問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"あり",x:"あり"},
+ evidence:[["公式サイト・ショップ（一次情報）","primary"]],
+ checks:["使用レストランの具体名"]},
+noto:{name:"NOTO高農園",kana:"のとたかのうえん",pref:"石川県",city:"七尾市（能登島）",person:"",rank:"A",
+ summary:"能登島の赤土が生む力強い味と香り。星付き店の料理人が評価するレストラン向け多品種農園。",
+ discovery:"レストラン・ホテル向けを中心に多数の品種を生産。赤土による力強い味と香りが特徴とされ、星付き店の料理人からも評価されている。2026年3月にも山菜の収穫投稿があり、公式Instagram上で震災後も生産活動を確認。",
+ diff:"能登島の赤土で有機栽培。赤土による力強い味と香りが特徴。伝統野菜、西洋野菜、ハーブ、エディブルフラワー、能登の山菜まで生産品種が非常に幅広い。",
+ restaurants:[{name:"星付き店を含むレストラン・ホテル",note:"個別店名は追加調査中",guide:true}],
+ order:{online:"公開された公式ECは未確認。定期便利用者の投稿はあり",wholesale:"公式Instagramまたは直接問い合わせ",watch:"—"},
+ sns:{site:"公式ホームページ未確定",instagram:"takafarm／nototakafarm関連を確認",x:"未確認"},
+ evidence:[["公式Instagram","primary"],["紹介記事","secondary"]],
+ checks:["新規注文の受付可否","公式サイトの確定","納入店の具体名"]},
+vegeco:{name:"ファームベジコ",kana:"ふぁーむべじこ",pref:"高知県",city:"高知市",person:"",rank:"A",
+ summary:"冬にゆっくり育てて細胞を締める「冬きゅうり」。2013年野菜ソムリエサミット大賞受賞。",
+ discovery:"東京のレストランや外資系ホテルの料理人が農園を訪問。海外シェフから花付きの極小きゅうりを求められた実績も確認。2013年野菜ソムリエサミット大賞受賞。",
+ diff:"冬にゆっくり生育させることで細胞が締まり、水分を保持しやすく、数日たってもみずみずしさが落ちにくい。冬の寒さにより青臭さが少なく、甘味が出る。",
+ restaurants:[{name:"東京のレストラン・外資系ホテル",note:"料理人が農園を訪問。個別店名は追加調査中",guide:false}],
+ order:{online:"出荷は市場約7割・直販約3割。公式サイトはあるが表示確認に失敗、オンライン注文機能は未確認",wholesale:"電話または公式サイト経由で直接問い合わせ",watch:"—"},
+ sns:{site:"あり（表示要確認）",instagram:"公式アカウント未確認",x:"公式アカウント未確認"},
+ evidence:[["野菜ソムリエサミット大賞（品評会）","primary"],["取材記事","secondary"]],
+ checks:["公式サイトの現況","直販条件"]},
+hisamatsu:{name:"久松農園",kana:"ひさまつのうえん",pref:"茨城県",city:"土浦市",person:"",rank:"A",
+ summary:"注文を受けてから収穫して直送。品種・季節・鮮度を重視する年間100種類以上の露地野菜農園。",
+ discovery:"公式サイト・オンラインショップ・SNS（X: hisamatsufarm）から確認。個人客だけでなく飲食店にも直接販売し、料理人との相互理解を重視。",
+ diff:"品種、季節、鮮度を重視し、注文を受けてから収穫して畑から直接発送する方針。夏はトマト・きゅうり・とうもろこし・枝豆、秋冬は大根・にんじん・小松菜・ほうれん草・サラダかぶなど。",
+ restaurants:[{name:"飲食店への直接販売あり",note:"個別店名は追加調査中",guide:false}],
+ order:{online:"公式オンラインショップで単発S・M・L野菜セットと定期便",wholesale:"問い合わせフォーム",watch:"—"},
+ sns:{site:"公式サイト・ショップあり",instagram:"あり",x:"hisamatsufarm"},
+ evidence:[["公式サイト・ショップ（一次情報）","primary"]],
+ checks:["取引レストランの具体名"]},
+norakura:{name:"のらくら農場",kana:"のらくらのうじょう",pref:"長野県",city:"南佐久郡佐久穂町",person:"",rank:"A",
+ summary:"土壌分析を重ねる「科学的な有機栽培」。うま味の出る野菜づくりで飲食店にも展開。",
+ discovery:"公式ショップの販売情報・栽培方針から確認。商品ごとに販売再開日が明記されるため販売監視との相性がよい。",
+ diff:"土壌分析や知見を積み重ねる「科学的な有機栽培」を掲げ、五味に加えて素材自体にうま味が出るよう栽培。家庭向けから始まり飲食店への出荷にも拡大。",
+ restaurants:[{name:"飲食店への出荷あり",note:"個別店名は追加調査中",guide:false}],
+ order:{online:"公式ショップで6〜12品程度の野菜セット・定期便・単品（サラダケール、じゃがいも、玉ねぎ等）。商品ごとに販売再開日を明記",wholesale:"問い合わせ",watch:"販売再開日が明記され監視に好適"},
+ sns:{site:"公式サイト・ショップあり",instagram:"公式アカウント未確定",x:"公式アカウント未確定"},
+ evidence:[["公式ショップ（一次情報）","primary"]],
+ checks:["納入飲食店の具体名"]},
+kazenoka:{name:"風の丘ファーム",kana:"かぜのおかふぁーむ",pref:"埼玉県",city:"比企郡小川町",person:"",rank:"B",
+ summary:"1984年から有機農業の里・小川町で続く、農薬・化学肥料・除草剤不使用の露地栽培農園。",
+ discovery:"公式オンラインショップ・Instagram（kazenoka.farm）から確認。使用店の具体名と現在の取引関係はもう一段確認が必要。",
+ diff:"農薬、化学肥料、除草剤を使用せず、有機肥料と露地栽培を基本にする。1984年から小川町で有機農業を継続。",
+ restaurants:[],
+ order:{online:"公式オンラインショップで9〜10品または約12品の野菜セット（単発・毎週・隔週、スキップ・休止対応）",wholesale:"農園へ直接問い合わせ",watch:"—"},
+ sns:{site:"公式サイト・ショップあり",instagram:"kazenoka.farm",x:"未確認"},
+ evidence:[["公式ショップ（一次情報）","primary"]],
+ checks:["使用店の具体名","現在の取引関係"]},
+yoroken:{name:"さいたまヨーロッパ野菜研究会",kana:"さいたまよーろっぱやさいけんきゅうかい",pref:"埼玉県",city:"さいたま市",person:"",rank:"A",
+ summary:"農家×料理人×種苗会社の共同体。「シェフが本当に欲しい野菜」約60品目を地域内で生産する供給ネットワーク。",
+ discovery:"公式サイト・Instagram（saitama_yoroken）・Facebookから確認。一つの農園ではなく、優良生産者を探すためのハブとして重要。",
+ diff:"農家、料理人、種苗会社が協力して「シェフが本当に欲しい野菜」を地域内で生産する目的で設立。料理人側の要望から産地を形成した点が特徴。約60品目のヨーロッパ野菜。",
+ restaurants:[{name:"さいたま市内外のイタリアン・フレンチ",note:"研究会と連携する料理人グループ",guide:false}],
+ order:{online:"販売イベント・取扱店を確認",wholesale:"研究会（事務局メール公開）へ問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"saitama_yoroken",x:"未確認"},
+ evidence:[["公式サイト（一次情報）","primary"]],
+ checks:["個別生産農家の特定","飲食店向け発注方法"]},
+iwasaki:{name:"岩崎政利氏（自然農園）",kana:"いわさきまさとし",pref:"長崎県",city:"雲仙市",person:"岩崎政利氏",rank:"B",
+ summary:"不耕起・自家採種で50種類以上の在来野菜を守り続ける、種採り農家の第一人者。",
+ discovery:"雲仙赤紫大根を使用した加工商品の外部販売などから確認。食材としての独自性は非常に高い一方、注文導線の整備が必要。",
+ diff:"有機肥料を使いながら肥料量を抑え、不耕起栽培と自家採種を継続。毎年優良な株から種を採ることで、地域の土地と栽培方法に適応した野菜を守っている。",
+ restaurants:[],
+ order:{online:"生鮮野菜の公式通販は未確認。雲仙赤紫大根の加工品は外部販売あり",wholesale:"農園または地域の流通事業者への確認が必要",watch:"—"},
+ sns:{site:"明確な農園公式サイトは未確認",instagram:"未確認",x:"未確認"},
+ evidence:[["紹介記事・加工品販売情報","secondary"]],
+ checks:["生鮮品の仕入れ経路","公式の連絡窓口"]},
+senshu:{name:"泉州地域の水なす生産者",kana:"せんしゅうみずなす",pref:"大阪府",city:"泉州地域",person:"",rank:"B",
+ summary:"農林水産省GI登録。地域外では同じ特性を保ちにくい、系統選抜と栽培技術の蓄積が生んだ水なす。",
+ discovery:"農林水産省GI（地理的表示）登録情報から特定。地域と品質の結び付きが公的に確認されている。",
+ diff:"水分が非常に多く、皮と果肉が柔らかい。穏やかな甘味がありえぐ味が少ない。他地域では特性が変化しやすく、地域内での優良系統の選抜や栽培技術の改善が品質形成に関係。",
+ restaurants:[],
+ order:{online:"生産者・購入先の個別調査が必要",wholesale:"要調査",watch:"収穫・販売時期の監視候補"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["農林水産省GI登録（公的情報）","primary"]],
+ checks:["高評価店の使用実績","生産者別の違い","購入先","収穫・販売時期"]}
+};
+</script>
+<script>
+/* 追加リサーチ枠：酒・飲料・茶・調味料・香辛料
+   ※docx（食材探しGPT）由来ではなく編集部追加調査。要検証項目は明記 */
+Object.assign(PRODUCERS,{
+aramasa:{name:"新政酒造",kana:"あらまさしゅぞう",pref:"秋田県",city:"秋田市",person:"佐藤祐輔氏（八代目）",rank:"B",
+ summary:"きょうかい6号酵母発祥の蔵。全量生酛・木桶仕込み・秋田県産米への回帰で日本酒の潮流を変えた造り手。",
+ discovery:"編集部追加調査。現存最古の清酒酵母「きょうかい6号」の発祥蔵として公知。生酛造り・木桶仕込み・純米造りへの全面転換で知られ、「No.6」「Colors」シリーズは高級和食店・レストランのペアリングで広く採用されている。",
+ diff:"速醸を廃し全量生酛（伝統的な乳酸発酵）へ転換。木桶仕込みを復活させ、酒米も秋田県産に限定。防腐剤や添加を排した低アルコール・酸のある設計は、料理と合わせる「食中酒」として料理人の評価が高い。",
+ restaurants:[{name:"高級和食店・レストランのペアリング採用多数",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式の直接通販は限定的。特約店経由が基本",wholesale:"特約店制度。飲食店は特約酒販店へ相談",watch:"季節商品（頒布会・限定酒）の発売監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"],["6号酵母発祥は公知の事実","secondary"]],
+ checks:["特約店リスト","飲食店取引条件","にくがとう業態との相性確認"]},
+takahiko:{name:"ドメーヌ・タカヒコ",kana:"どめーぬたかひこ",pref:"北海道",city:"余市郡余市町",person:"曽我貴彦氏",rank:"B",
+ summary:"余市の畑から世界的評価。入手困難の代名詞となったピノ・ノワール「ナナツモリ」。",
+ discovery:"編集部追加調査。国内トップレストランのワインリストで定番となり、国内外で高い評価を得ている日本ワインの代表的生産者として公知。",
+ diff:"ブルゴーニュ品種ピノ・ノワールに絞り、余市の冷涼気候で栽培から醸造まで一貫。野生酵母・低介入の醸造で、出汁や和の食材と合う繊細な酒質が料理人に評価されている。",
+ restaurants:[{name:"国内トップレストランのワインリスト掲載多数",note:"個別店名は要確認",guide:false}],
+ order:{online:"直販は抽選・割当が中心で入手困難",wholesale:"取扱酒販店・インポーター経由。飲食店枠は要相談",watch:"抽選・発売告知の監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["飲食店向け割当の窓口","ヴィンテージごとの入手経路"]},
+grace:{name:"中央葡萄酒（グレイスワイン）",kana:"ぐれいすわいん",pref:"山梨県",city:"甲州市勝沼町",person:"三澤茂計氏・三澤彩奈氏",rank:"B",
+ summary:"甲州ぶどうで日本ワインを世界基準へ。国際コンクール金賞の「キュヴェ三澤 明野甲州」。",
+ discovery:"編集部追加調査。「キュヴェ三澤 明野甲州」が国際的なワインコンクールで日本の甲州として初の金賞を獲得したことで公知。和食との相性で国内外のレストランに採用。",
+ diff:"日本固有品種「甲州」の可能性を追求し、明野の自社畑で垣根栽培を確立。柑橘や出汁と響き合う繊細な酸は、寿司・てんぷらなど和の業態との相性が良いとされる。",
+ restaurants:[{name:"国内外レストランでの採用実績",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式オンラインショップあり",wholesale:"正規取扱店・問い合わせ",watch:"限定キュヴェの発売監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務店向け取引条件"]},
+seiken:{name:"青研",kana:"せいけん",pref:"青森県",city:"弘前市",person:"",rank:"B",
+ summary:"「葉とらず栽培」のりんごを搾ったストレート混濁ジュース。砂糖・香料・酸化防止剤無添加。",
+ discovery:"編集部追加調査。葉を摘まずに養分を実へ蓄えさせる「葉とらず栽培」のりんごを原料にした「葉とらずりんご100」で公知。飲食店のドリンク・デザートやノンアルコールペアリング素材として使いやすい。",
+ diff:"見た目より味を優先する「葉とらず栽培」のりんごを使用し、水・砂糖・香料を加えないストレート混濁製法。品種ごとの味の違いをそのまま生かせる。",
+ restaurants:[],
+ order:{online:"公式・大手ECで購入可",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用ロット・価格"]},
+hoshino:{name:"星野製茶園",kana:"ほしのせいちゃえん",pref:"福岡県",city:"八女市（星野村）",person:"",rank:"A",
+ summary:"GI登録「八女伝統本玉露」の中心産地・星野村の茶園。自然仕立て・わら被覆・手摘みの伝統製法。",
+ discovery:"「八女伝統本玉露」は2015年12月、茶として全国初の地理的表示（GI）保護制度登録（登録第5号・農林水産省）。星野製茶園はその中心産地である星野村の代表的茶園として公知。",
+ diff:"1904年の玉露生産開始以来の「自然仕立て」「わら資材の棚被覆」「手摘み」で生産された生葉のみを原料とする伝統本玉露。全国茶品評会で農林水産大臣賞を長年受賞する八女茶の最高峰。うま味（テアニン）の濃度が突出し、雫茶として一品で主役を張れる。",
+ restaurants:[{name:"高級和食店・日本茶専門店での採用",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式オンラインショップあり（玉露・抹茶・煎茶）",wholesale:"業務用は問い合わせ",watch:"新茶時期（春）の発売監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["農林水産省GI登録第5号（公的情報）","primary"],["全国茶品評会の受賞歴（公的評価）","primary"]],
+ checks:["業務用取引条件"]},
+maruhachi:{name:"丸八製茶場",kana:"まるはちせいちゃじょう",pref:"石川県",city:"加賀市",person:"",rank:"B",
+ summary:"茎を浅く焙じる「献上加賀棒茶」。香ばしさと甘みで食後・ペアリングの定番となった棒ほうじ茶。",
+ discovery:"編集部追加調査。1983年に昭和天皇へ献上された「献上加賀棒茶」で公知。一番茶の茎を浅煎りで焙じる独自製法。ホテル・料理店の食事用茶としての採用が知られる。",
+ diff:"一般的なほうじ茶より浅い焙煎で、茎由来の甘みと澄んだ香ばしさを引き出す。脂の強い肉料理の後口を整える茶として、焼肉・焼き鳥業態との相性が良い。",
+ restaurants:[{name:"ホテル・料理店での採用",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式オンラインショップあり",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件"]},
+yamaroku:{name:"ヤマロク醤油",kana:"やまろくしょうゆ",pref:"香川県",city:"小豆島",person:"山本康夫氏（五代目）",rank:"B",
+ summary:"木桶仕込みを未来へ繋ぐ「木桶職人復活プロジェクト」の蔵。再仕込み醤油「鶴醤」。",
+ discovery:"編集部追加調査。約150年物の木桶で天然醸造を続け、新桶を作る職人を自ら育てる「木桶職人復活プロジェクト」の発起蔵として公知。再仕込み醤油「鶴醤」、淡口の「菊醤」。",
+ diff:"できあがった醤油をもう一度桶に戻して二度仕込む「再仕込み」製法の「鶴醤」は、約4年の歳月をかけたコクと丸み。木桶の蔵付き酵母が生む複雑味は、つけ・かけ・タレのベースで主役を張れる。",
+ restaurants:[],
+ order:{online:"公式オンラインショップあり",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用ロット・価格","飲食店採用例"]},
+iio:{name:"飯尾醸造",kana:"いいおじょうぞう",pref:"京都府",city:"宮津市",person:"",rank:"B",
+ summary:"無農薬の新米を自社と契約棚田で育て、蔵で酒を醸してから酢にする「富士酢」。",
+ discovery:"編集部追加調査。原料の米作りから自社で行う珍しい酢蔵として公知。米酢「富士酢」「富士酢プレミアム」は鮨店・料理店での採用が広く知られる。",
+ diff:"農薬不使用の新米を使い、蔵人が自ら酒を醸し、静置発酵・長期熟成で酢にする一貫製法。米の使用量が多く、酸のカドが取れたうま味の厚い酢。酢飯・酢の物で味の土台そのものを変える。",
+ restaurants:[{name:"鮨店・料理店での採用が広く知られる",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式オンラインショップあり",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件","採用店の具体名"]},
+yokoi:{name:"横井醸造工業",kana:"よこいじょうぞうこうぎょう",pref:"東京都",city:"江東区",person:"",rank:"B",
+ summary:"江戸前鮨の赤シャリを支える酒粕酢「ヨコ井の與兵衛」。熟成粕が生む琥珀色とコク。",
+ discovery:"編集部追加調査。長期熟成させた酒粕を原料とする赤酢の造り手として公知。江戸前鮨の名店で赤シャリ用として広く使われていることで知られる。",
+ diff:"長期熟成した酒粕から造る赤酢は、米酢にないコク・香り・淡い甘みを持ち、砂糖を控えたシャリを組める。「與兵衛」は赤酢の代名詞的存在。",
+ restaurants:[{name:"江戸前鮨の名店での採用が広く知られる",note:"個別店名は要確認",guide:false}],
+ order:{online:"取扱店・ECで購入可",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件"]},
+sumiya:{name:"角谷文治郎商店",kana:"すみやぶんじろうしょうてん",pref:"愛知県",city:"碧南市",person:"",rank:"B",
+ summary:"「みりんは飲める酒」。もち米・米麹・本格焼酎だけで醸す三州三河みりん。",
+ discovery:"編集部追加調査。糖類等を加えず「もち米のリキュール」として醸造する本格みりんの代表的な造り手として公知。料理人の支持が厚い。",
+ diff:"もち米・米こうじ・本格焼酎のみを原料に、醸造で甘みを引き出す本みりん。照り・コク・上品な甘さが、タレ（うなぎ・焼き鳥）や煮切りの品質を底上げする。",
+ restaurants:[],
+ order:{online:"公式・取扱店で購入可",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件"]},
+maruya:{name:"まるや八丁味噌",kana:"まるやはっちょうみそ",pref:"愛知県",city:"岡崎市（八帖町）",person:"",rank:"B",
+ summary:"木桶に石を積み、二夏二冬。大豆と塩だけで熟成させる岡崎伝統の豆味噌。",
+ discovery:"編集部追加調査。岡崎城下の旧八丁村で続く伝統製法（木桶・石積み・長期天然醸造）の豆味噌蔵として公知。",
+ diff:"大豆と塩のみを原料に、木桶で二夏二冬（約2年）天然熟成。濃厚なうま味と渋み・酸味の奥行きは、味噌だれ・土手焼き・肉料理の隠し味で強い個性を発揮する。",
+ restaurants:[],
+ order:{online:"公式・取扱店で購入可",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件"]},
+wajima:{name:"わじまの海塩（美味と健康）",kana:"わじまのかいえん",pref:"石川県",city:"輪島市（舳倉島沖）",person:"",rank:"B",
+ summary:"輪島沖の海水を低温でゆっくり結晶させる非加熱製法。素材に寄り添う柔らかな塩味。",
+ discovery:"編集部追加調査。輪島沖・舳倉島周辺の海水を汲み、加熱せず低温で結晶化させる製法で公知。和食・鮨の料理人による採用が知られる。",
+ diff:"高温で煮詰めないため角の立たない塩味とミネラルの複雑味が残る。塩だけで食べさせるてんぷら・焼肉・焼鳥・鮨の「振り塩」で素材の味を最大化する。",
+ restaurants:[{name:"和食・鮨の料理人による採用が知られる",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式・取扱店で購入可",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式情報あり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件","製造現況"]},
+haryokaku:{name:"原了郭",kana:"はらりょうかく",pref:"京都府",city:"京都市（祇園）",person:"",rank:"B",
+ summary:"1703年創業・製法非公開。香りで食べさせる祇園の「黒七味」。",
+ discovery:"編集部追加調査。元禄16年（1703年）創業、代々一子相伝の製法で作られる「黒七味」で公知。京都の料理店・全国の飲食店で卓上香辛料として採用が知られる。",
+ diff:"唐辛子・山椒・白ごま等を乾煎りし揉み込む独自製法で、赤い七味と異なる焦がし茶色と香りの深さを持つ。うどん・焼き鳥・鍋はもちろん、焼肉・串揚げの仕上げでも香りの主役になれる。",
+ restaurants:[{name:"京都の料理店・全国の飲食店で採用",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式オンラインショップあり",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件"]},
+umaji:{name:"馬路村農業協同組合",kana:"うまじむらのうぎょうきょうどうくみあい",pref:"高知県",city:"安芸郡馬路村",person:"",rank:"B",
+ summary:"人口800人の山村を「ゆずの村」に変えた産地。果汁・皮・ぽん酢まで柚子一本の6次産業。",
+ discovery:"編集部追加調査。柚子加工で村おこしを成功させた代表事例として公知。「ゆずの村」「ぽん酢しょうゆ」などの製品群と柚子果汁・皮素材を展開。",
+ diff:"山間の寒暖差で香りの立つ柚子を、搾汁から加工まで村内一貫で製品化。業務用の果汁・皮素材も展開しており、うなぎ・焼き鳥・鍋・ドリンク（柚子サワー）まで応用が広い。",
+ restaurants:[],
+ order:{online:"公式オンラインショップあり",wholesale:"業務用果汁・原料は問い合わせ",watch:"柚子収穫期（秋冬）の新物監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用原料の規格・価格"]},
+kanja:{name:"かんじゃ山椒園",kana:"かんじゃさんしょうえん",pref:"和歌山県",city:"有田郡有田川町",person:"",rank:"B",
+ summary:"国産山椒の最大産地・有田川町の専門農園。大粒で香り高い「ぶどう山椒」。",
+ discovery:"編集部追加調査。和歌山県は国内で生産・流通する山椒の6〜7割を占める一大産地で、有田川町がその最大産地（有田川町公式情報）。ぶどう山椒は江戸末期の天保年間からこの地で栽培される、房状に大粒の実をつける最高級品種。かんじゃ山椒園は同地の専門農園として公知。",
+ diff:"一般的な山椒より大粒で香りが高く辛味も強い「ぶどう山椒」。実山椒・粉山椒・木の芽と形態が多彩で、うなぎ・焼き鳥・麻辣系まで香りの主役を張れる。",
+ restaurants:[],
+ order:{online:"公式・取扱店で購入可",wholesale:"業務用は問い合わせ",watch:"実山椒（初夏）の出回り監視に好適"},
+ sns:{site:"公式情報あり",instagram:"要確認",x:"要確認"},
+ evidence:[["有田川町公式情報（産地の公的情報）","primary"],["生産者詳細は編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件","品評会・店舗採用実績"]},
+shizuokawasabi:{name:"静岡水わさびの生産者（伊豆・有東木ほか）",kana:"しずおかみずわさび",pref:"静岡県",city:"伊豆市・静岡市（有東木）ほか",person:"",rank:"B",
+ summary:"世界農業遺産「静岡水わさびの伝統栽培」。湧水の畳石式わさび田が育てる本わさび。",
+ discovery:"編集部追加調査。「静岡水わさびの伝統栽培」は2018年に世界農業遺産（GIAHS）認定。有東木はわさび栽培発祥の地とされる。個別生産者の特定と店舗紐付けは今後の調査対象。",
+ diff:"肥料をほとんど使わず湧水の養分で育てる畳石式栽培。すりたての香りと上品な辛みは、鮨・そば・焼肉（わさび焼肉）で薬味の域を超えて主役になれる。",
+ restaurants:[],
+ order:{online:"産地直売・EC・市場流通",wholesale:"産地出荷組合・仲卸へ問い合わせ",watch:"—"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["世界農業遺産認定（公的情報）","primary"],["生産者詳細は編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","高評価店の使用実績"]}
+});
+</script>
+<script>
+/* ITEMS: p=producer, g=グループ名（同じ食材を束ねるキー）, c=分類, al=別名, tg=タグ, d=このお品の特徴, gy=業態提案, se=旬・時期, hero=主役級 */
+const ITEMS=[
+// ── 梶谷農園
+{name:"シェフ向けハーブミックス",p:"kajiya",g:"ハーブ",c:"香味野菜・ハーブ",al:["ハーブ","香草","ミックスハーブ"],tg:["レストラン専用規格","一般購入可能","業務用対応"],d:"料理人の要求に応じて香り・味の強さ・大きさを作り分けるミックス。葉だけでなく茎や根にも味があり、香りの余韻が長い。",gy:["てんぷら","串揚げ","焼肉"],se:"通年（内容は季節替わり）",hero:true},
+{name:"フレッシュハーブ各種",p:"kajiya",g:"ハーブ",c:"香味野菜・ハーブ",al:["ハーブ","香草"],tg:["一般購入可能","業務用対応"],d:"CRAFTALEでは飾りではなく「味の展開を作る要素」として使用。公式オンラインに34商品。",gy:["てんぷら","焼き鳥"],se:"通年"},
+{name:"ベビーリーフ",p:"kajiya",g:"マイクロリーフ・ベビーリーフ",c:"葉菜・茎菜",al:["リーフ","サラダ"],tg:["一般購入可能","業務用対応"],d:"ハーブと同じ思想で味の強さを重視したベビーリーフ。",gy:["焼肉"],se:"通年"},
+{name:"食用花（エディブルフラワー）",p:"kajiya",g:"食用花",c:"山菜・花",al:["エディブルフラワー","花"],tg:["一般購入可能","業務用対応"],d:"香りと味を持つ食用花。皿の彩りと風味を両立。",gy:["寿司","てんぷら"],se:"季節による"},
+{name:"山菜",p:"kajiya",g:"山菜",c:"山菜・花",al:["さんさい"],tg:["一般購入可能","業務用対応"],d:"ハーブ農園が扱う山菜。香りの強さで選抜。",gy:["てんぷら","串揚げ"],se:"春中心"},
+// ── 江戸前ハーブ
+{name:"マイクロハーブ",p:"edomae",g:"ハーブ",c:"香味野菜・ハーブ",al:["ハーブ","マイクロリーフ"],tg:["レストラン専用規格","業務用対応"],d:"町工場跡の室内土耕栽培。収穫当日に都心の店へ届く鮮度で、品種本来の香りと味の凝縮感が評価される。",gy:["寿司","てんぷら"],se:"通年",hero:true},
+{name:"マイクロリーフ",p:"edomae",g:"マイクロリーフ・ベビーリーフ",c:"葉菜・茎菜",al:["リーフ"],tg:["レストラン専用規格","業務用対応"],d:"The Burn・sio・FARO・TATSUMIなどへの流通実績を取材記事で確認。",gy:["寿司"],se:"通年"},
+{name:"香味野菜",p:"edomae",g:"ハーブ",c:"香味野菜・ハーブ",al:["薬味"],tg:["業務用対応"],d:"土耕ならではの味の厚みを持つ香味野菜。",gy:["焼き鳥","うなぎ"],se:"通年"},
+// ── 三野農園
+{name:"リーキ",p:"mino",g:"リーキ",c:"ねぎ・球根類",al:["西洋ねぎ","ポロねぎ","ポワロー","ねぎ"],tg:["西洋野菜","業務用対応"],d:"日本の長ねぎと異なり、加熱・煮込みで甘味が強くなる。マッカリーナのシェフの要望から真狩村で産地化された象徴的品目。",gy:["焼き鳥","串揚げ","焼肉"],se:"秋〜冬",hero:true},
+{name:"サボイキャベツ",p:"mino",g:"サボイキャベツ",c:"葉菜・茎菜",al:["ちりめんキャベツ","キャベツ"],tg:["西洋野菜","業務用対応"],d:"葉がしっかりしており、スープを吸っても食感が残る。フレンチ・イタリアンの煮込みに適する。",gy:["串揚げ"],se:"秋〜冬"},
+{name:"ベルギーエシャロット",p:"mino",g:"エシャロット",c:"ねぎ・球根類",al:["エシャロット"],tg:["西洋野菜","業務用対応"],d:"ソースの土台となる本格エシャロット。国産は希少。",gy:["焼肉"],se:"秋〜冬"},
+{name:"セロリラブ",p:"mino",g:"セロリラブ",c:"根菜",al:["セロリアック","根セロリ"],tg:["西洋野菜","業務用対応"],d:"ピュレやレムラードに使う根セロリ。",gy:["串揚げ"],se:"秋〜冬"},
+{name:"ロマネスコ",p:"mino",g:"ロマネスコ",c:"果菜",al:["カリフラワー"],tg:["西洋野菜","業務用対応"],d:"料理人の規格要求に応えるロマネスコ。",gy:["てんぷら","串揚げ"],se:"秋〜冬"},
+{name:"フェンネル",p:"mino",g:"フェンネル",c:"香味野菜・ハーブ",al:["ウイキョウ","茴香"],tg:["西洋野菜","業務用対応"],d:"魚料理と好相性の香味野菜。",gy:["てんぷら"],se:"夏〜秋"},
+{name:"ビーツ",p:"mino",g:"ビーツ",c:"根菜",al:["ビート","テーブルビート"],tg:["西洋野菜","業務用対応"],d:"北海道の冷涼気候で育つビーツ。",gy:["焼肉"],se:"秋"},
+{name:"西洋野菜 約30品目",p:"mino",g:"西洋野菜（多品目）",c:"果菜",al:["西洋野菜"],tg:["西洋野菜","業務用対応"],d:"マッカリーナとの関係から広がった約30品目の西洋野菜群。",gy:["串揚げ","てんぷら"],se:"夏〜冬"},
+// ── タケイファーム
+{name:"アーティチョーク",p:"takei",g:"アーティチョーク",c:"果菜",al:["朝鮮アザミ","アルティショー"],tg:["西洋野菜","レストラン専用規格","予約販売"],d:"約1,200株規模で栽培。国内では入手しにくい新鮮なアーティチョークを料理人に届ける目的で生産拡大。",gy:["串揚げ","てんぷら"],se:"初夏",hero:true},
+{name:"サボイキャベツ（予約販売）",p:"takei",g:"サボイキャベツ",c:"葉菜・茎菜",al:["ちりめんキャベツ","キャベツ"],tg:["西洋野菜","予約販売"],d:"翌シーズン（例：2027年1月収穫予定）の予約販売を実施。販売開始監視の実証例になる販売方式。",gy:["串揚げ"],se:"冬（予約制）"},
+{name:"プンタレッラ",p:"takei",g:"プンタレッラ",c:"葉菜・茎菜",al:["チコリ","アスパラガスチコリー"],tg:["西洋野菜","レストラン専用規格"],d:"ローマ野菜の代表格。イタリアンの冬サラダに必須。",gy:["てんぷら"],se:"冬"},
+{name:"カーボロネロ",p:"takei",g:"カーボロネロ",c:"葉菜・茎菜",al:["黒キャベツ","ケール"],tg:["西洋野菜"],d:"トスカーナの煮込み用黒キャベツ。",gy:["串揚げ"],se:"冬"},
+{name:"サフラン",p:"takei",g:"サフラン",c:"香辛料・薬味",al:["スパイス"],tg:["希少品"],d:"国産では希少なサフランを栽培。",gy:["串揚げ"],se:"秋",hero:true},
+{name:"オイスターリーフ",p:"takei",g:"オイスターリーフ",c:"香味野菜・ハーブ",al:["牡蠣の葉"],tg:["西洋野菜","希少品","レストラン専用規格"],d:"牡蠣のような風味を持つ希少葉物。",gy:["寿司","てんぷら"],se:"通年少量",hero:true},
+{name:"西洋野菜・マイクロ野菜 年間約140種",p:"takei",g:"西洋野菜（多品目）",c:"果菜",al:["西洋野菜"],tg:["西洋野菜","レストラン専用規格"],d:"栽培野菜の約95％をレストランへ直接販売。数量より食べ頃優先で収穫し土付きで出荷。",gy:["串揚げ","てんぷら"],se:"通年"},
+// ── 田村きのこ園
+{name:"福王しいたけ（ジャンボ椎茸）",p:"tamura",g:"椎茸",c:"きのこ",al:["しいたけ","椎茸","シイタケ","きのこ"],tg:["一般購入可能","業務用対応"],d:"傘11〜12cm・厚さ3.5cm超。広葉樹チップ＋米ぬか・ふすまの菌床。肉詰めやローストなど肉料理に近い存在感。",gy:["焼肉","焼き鳥","串揚げ","てんぷら"],se:"通年",hero:true},
+// ── たてみち屋
+{name:"レモン",p:"tatemichi",g:"レモン",c:"果物・柑橘",al:["檸檬","citrus","柑橘"],tg:["一般購入可能","業務用対応"],d:"「搾るものではなく食べるフルーツ」。皮ごと食べた際の香り、甘味と酸味のバランスを重視。",gy:["焼肉","うなぎ","てんぷら"],se:"冬〜春（グリーンは秋）",hero:true},
+{name:"柑橘各種",p:"tatemichi",g:"柑橘",c:"果物・柑橘",al:["みかん","オレンジ"],tg:["一般購入可能"],d:"生口島の多品種柑橘。",gy:["寿司"],se:"冬〜春"},
+{name:"レモン蜂蜜",p:"tatemichi",g:"蜂蜜",c:"加工品・セット",al:["はちみつ","ハチミツ","ハニー"],tg:["一般購入可能"],d:"レモン畑由来の蜂蜜。",gy:["うなぎ"],se:"季節限定"},
+// ── 弘前りんご
+{name:"自然栽培りんご（木村秋則氏）",p:"hirosaki",g:"りんご",c:"果物・柑橘",al:["林檎","リンゴ","アップル","奇跡のりんご"],tg:["自然栽培","希少品"],d:"無農薬・無肥料の自然栽培りんご。レストラン山崎の「奇跡のりんごと友情のりんごの冷製スープ」に使用。",gy:["寿司","串揚げ"],se:"秋〜冬",hero:true},
+{name:"減農薬栽培りんご（中田信雄氏）",p:"hirosaki",g:"りんご",c:"果物・柑橘",al:["林檎","リンゴ"],tg:["減農薬"],d:"木村氏が紹介した「友情のりんご」供給網の生産者。",gy:[],se:"秋〜冬"},
+{name:"りんご（平戸亮氏）",p:"hirosaki",g:"りんご",c:"果物・柑橘",al:["林檎","リンゴ"],tg:[],d:"友情のりんご供給網の生産者。",gy:[],se:"秋〜冬"},
+{name:"自然栽培りんご（菊地春美氏）",p:"hirosaki",g:"りんご",c:"果物・柑橘",al:["林檎","リンゴ"],tg:["自然栽培"],d:"友情のりんご供給網の生産者。",gy:[],se:"秋〜冬"},
+{name:"りんご加工品（冷製スープ・パン・かりんとう）",p:"hirosaki",g:"りんご加工品",c:"加工品・セット",al:["ジュース","スープ"],tg:["一般購入可能"],d:"レストラン山崎がオンライン販売。",gy:[],se:"通年"},
+// ── 西崎ファーム
+{name:"かすみ鴨（胸肉）",p:"nishizaki",g:"鴨",c:"肉・家禽",al:["かも","カモ","鴨肉","ダック","合鴨"],tg:["一般購入可能","業務用対応"],d:"筑波山東麓の傾斜地で約4,000羽を放し飼い。ふ化から処理・加工まで一貫。料理人の意見を飼料・飼育に反映。",gy:["焼き鳥","焼肉"],se:"通年",hero:true},
+{name:"かすみ鴨レバー",p:"nishizaki",g:"鴨",c:"肉・家禽",al:["レバー","肝"],tg:["一般購入可能"],d:"一貫生産ならではの鮮度のレバー。",gy:["焼き鳥"],se:"通年"},
+{name:"鴨出汁",p:"nishizaki",g:"出汁・スープ",c:"加工品・セット",al:["だし","スープ"],tg:["一般購入可能"],d:"かすみ鴨の出汁。蕎麦・鍋・ラーメンの土台に。",gy:["うなぎ","焼き鳥"],se:"通年"},
+{name:"鴨加工品",p:"nishizaki",g:"鴨",c:"加工品・セット",al:["ハム","スモーク"],tg:["一般購入可能"],d:"公式オンラインで販売。",gy:[],se:"通年"},
+// ── 石黒農場
+{name:"ほろほろ鳥",p:"ishiguro",g:"ほろほろ鳥",c:"肉・家禽",al:["ホロホロ鳥","ホロホロチョウ","パンタード"],tg:["希少品","業務用対応","一般購入可能"],d:"温泉床暖房と自家産米飼料で育てる。国内で専門的・継続的に飼育する希少な農場。全国のレストラン・ホテルへ卸売。",gy:["焼き鳥","串揚げ"],se:"通年",hero:true},
+{name:"ほろほろ鳥 ハム・ソーセージ・燻製",p:"ishiguro",g:"ほろほろ鳥",c:"加工品・セット",al:["ハム","ソーセージ","燻製"],tg:["一般購入可能"],d:"一般向けオンラインショップで購入可。",gy:[],se:"通年"},
+// ── 大平きのこ研究所
+{name:"大黒舞茸「真」",p:"ohira",g:"舞茸",c:"きのこ",al:["まいたけ","マイタケ","舞茸","きのこ"],tg:["一般購入可能","業務用対応"],d:"天然の黒系舞茸「クロフ」を目標に開発。厚い傘と香り・旨味。八海山水系の雪解け水を使った培地。業務用1kg規格あり。",gy:["てんぷら","串揚げ","焼肉"],se:"通年",hero:true},
+// ── レコズファーム
+{name:"足太あわび茸",p:"recos",g:"あわび茸",c:"きのこ",al:["アワビタケ","あわびたけ","エリンギ","きのこ"],tg:["一般購入可能"],d:"加熱しても失われにくいコリコリした食感。地域レストランへの試食提供から認知が拡大。",gy:["串揚げ","焼肉","てんぷら"],se:"通年",hero:true},
+// ── 鈴木農場
+{name:"万吉どん（玉ねぎ）",p:"suzuki",g:"玉ねぎ",c:"ねぎ・球根類",al:["たまねぎ","タマネギ","玉葱","オニオン"],tg:["一般購入可能","業務用対応"],d:"郡山ブランド玉ねぎ。秋以降の熟成で甘味とうま味が増す。catoeではムースとして代表料理に。",gy:["焼肉","串揚げ"],se:"夏収穫・秋以降熟成",hero:true},
+{name:"マイクロリーフ",p:"suzuki",g:"マイクロリーフ・ベビーリーフ",c:"葉菜・茎菜",al:["リーフ"],tg:["業務用対応"],d:"catoeの加藤シェフが料理の味のアクセントとして使用。シェフ自ら2日に1回収穫に通う。",gy:["寿司"],se:"通年"},
+{name:"白ナス",p:"suzuki",g:"なす",c:"果菜",al:["茄子","ナス","なすび"],tg:["一般購入可能"],d:"年間300〜400品種を扱う多品種栽培の一つ。とろける食感の白ナス。",gy:["焼肉","てんぷら"],se:"夏"},
+{name:"縞ナス",p:"suzuki",g:"なす",c:"果菜",al:["茄子","ナス","ゼブラなす"],tg:["一般購入可能"],d:"加熱でとろける縞模様のナス。",gy:["焼肉","てんぷら"],se:"夏"},
+{name:"京まんじゅう",p:"suzuki",g:"なす",c:"果菜",al:["茄子","ナス"],tg:["一般購入可能"],d:"多品種栽培のナス系品目。",gy:["てんぷら"],se:"夏"},
+{name:"とうもろこし",p:"suzuki",g:"とうもろこし",c:"豆・穀果",al:["トウモロコシ","コーン","玉蜀黍"],tg:["一般購入可能"],d:"多品種農場のとうもろこし。",gy:["てんぷら","焼き鳥"],se:"夏"},
+{name:"季節の野菜BOX・定期便",p:"suzuki",g:"野菜セット",c:"加工品・セット",al:["野菜セット","定期便"],tg:["一般購入可能","予約販売"],d:"公式BASEショップ。一部定期便は売り切れ→再販売監視向き。購入者はInstagram DMで専用アカウント案内。",gy:[],se:"通年"},
+{name:"米",p:"suzuki",g:"米",c:"豆・穀果",al:["こめ","ごはん","ライス"],tg:["一般購入可能"],d:"BASEショップで販売。",gy:["寿司","うなぎ"],se:"秋新米"},
+// ── Ome Farm
+{name:"カーリーケール",p:"ome",g:"ケール",c:"葉菜・茎菜",al:["ケール"],tg:["固定種","農薬・化学肥料不使用"],d:"青梅の土地に合う品種を選抜。農薬・化学肥料不使用。",gy:["焼肉"],se:"秋〜春"},
+{name:"レッドロシアンケール",p:"ome",g:"ケール",c:"葉菜・茎菜",al:["ケール"],tg:["固定種","農薬・化学肥料不使用"],d:"サラダ適性の高い赤系ケール。",gy:["焼肉"],se:"秋〜春"},
+{name:"ビーツ",p:"ome",g:"ビーツ",c:"根菜",al:["ビート"],tg:["農薬・化学肥料不使用"],d:"都内レストランへ供給するビーツ。",gy:["焼肉"],se:"初夏・秋"},
+{name:"ルッコラ",p:"ome",g:"ルッコラ",c:"香味野菜・ハーブ",al:["ロケット"],tg:["農薬・化学肥料不使用"],d:"味が濃い一方でえぐみが少ないと農園が説明。",gy:["焼肉","寿司"],se:"春・秋"},
+{name:"固定種コリアンダー",p:"ome",g:"コリアンダー",c:"香味野菜・ハーブ",al:["パクチー","香菜"],tg:["固定種","自家採種"],d:"甘味・香り・歯応えが特徴と説明される固定種。",gy:["焼肉"],se:"春・秋"},
+{name:"後関晩生小松菜",p:"ome",g:"小松菜",c:"葉菜・茎菜",al:["こまつな"],tg:["江戸東京野菜","固定種"],d:"江戸東京野菜の代表格。在来の味の濃さ。",gy:["焼き鳥","うなぎ"],se:"冬",hero:true},
+{name:"寺島ナス",p:"ome",g:"なす",c:"果菜",al:["茄子","ナス"],tg:["江戸東京野菜","固定種","農薬・化学肥料不使用"],d:"江戸東京野菜の小ぶりなナス。味が濃く加熱で真価。",gy:["てんぷら","焼き鳥"],se:"夏",hero:true},
+{name:"赤茎水菜",p:"ome",g:"水菜",c:"葉菜・茎菜",al:["みずな"],tg:["固定種"],d:"彩りと食感を持つ赤茎系水菜。",gy:["焼肉"],se:"冬"},
+// ── つくだ農園
+{name:"有機赤しそ",p:"tsukuda",g:"しそ",c:"香味野菜・ハーブ",al:["紫蘇","シソ","赤紫蘇","大葉"],tg:["有機JAS","予約販売"],d:"大原の名産・赤しその有機栽培。2026年は予約販売を案内。梅仕事・しば漬け・ジュースの原料に。",gy:["うなぎ","寿司"],se:"初夏（予約制）",hero:true},
+{name:"有機野菜BOX",p:"tsukuda",g:"野菜セット",c:"加工品・セット",al:["野菜セット"],tg:["有機JAS","一般購入可能"],d:"全圃場有機栽培。ラグジュアリーホテル・ミシュラン掲載日本料理店への配達実績。",gy:[],se:"通年"},
+{name:"京野菜各種",p:"tsukuda",g:"京野菜",c:"葉菜・茎菜",al:["京野菜"],tg:["有機JAS","京野菜"],d:"大原の気候で育つ有機京野菜。",gy:["うなぎ","てんぷら"],se:"季節による"},
+// ── キレド
+{name:"珍しい野菜 年間約150種",p:"kiredo",g:"西洋野菜（多品目）",c:"果菜",al:["珍しい野菜","西洋野菜"],tg:["一般購入可能","業務用対応"],d:"日本の古い品種から世界の野菜まで年間約150種。飲食店はInstagram DMから問い合わせ。",gy:["串揚げ","てんぷら"],se:"通年"},
+{name:"通常流通しない部位（根・葉・花）",p:"kiredo",g:"希少部位野菜",c:"葉菜・茎菜",al:["間引き菜","花芽"],tg:["希少品","レストラン専用規格"],d:"根・葉・花など通常流通しない部位を届ける。料理の独自性づくりに。",gy:["てんぷら","寿司"],se:"季節による",hero:true},
+{name:"野菜のスープ・調味料",p:"kiredo",g:"加工調味料",c:"加工品・セット",al:["スープ","ソース"],tg:["一般購入可能"],d:"自園野菜の加工品。",gy:[],se:"通年"},
+// ── NOTO高農園
+{name:"カブ類",p:"noto",g:"かぶ",c:"根菜",al:["蕪","カブ"],tg:["有機栽培"],d:"能登島の赤土が生む力強い味と香り。",gy:["寿司","焼き鳥"],se:"秋〜冬"},
+{name:"万願寺とうがらし",p:"noto",g:"とうがらし",c:"果菜",al:["唐辛子","ししとう","甘唐辛子"],tg:["有機栽培"],d:"赤土栽培の万願寺とうがらし。",gy:["焼き鳥","てんぷら","焼肉"],se:"夏"},
+{name:"カリフローレ",p:"noto",g:"カリフラワー",c:"果菜",al:["カリフラワー","スティックカリフラワー"],tg:["西洋野菜"],d:"スティック型カリフラワー。",gy:["串揚げ"],se:"冬"},
+{name:"西洋野菜各種",p:"noto",g:"西洋野菜（多品目）",c:"果菜",al:["西洋野菜"],tg:["西洋野菜","有機栽培"],d:"星付き店の料理人も評価する多品種西洋野菜。",gy:["串揚げ"],se:"通年"},
+{name:"ハーブ",p:"noto",g:"ハーブ",c:"香味野菜・ハーブ",al:["香草"],tg:["有機栽培"],d:"赤土栽培のハーブ。",gy:["てんぷら"],se:"通年"},
+{name:"エディブルフラワー",p:"noto",g:"食用花",c:"山菜・花",al:["食用花","花"],tg:["有機栽培"],d:"レストラン向けの食用花。",gy:["寿司"],se:"季節による"},
+{name:"能登の山菜",p:"noto",g:"山菜",c:"山菜・花",al:["さんさい"],tg:["希少品"],d:"2026年3月にも収穫投稿を確認。能登島の山菜。",gy:["てんぷら","串揚げ"],se:"春"},
+// ── ファームベジコ
+{name:"冬きゅうり",p:"vegeco",g:"きゅうり",c:"果菜",al:["胡瓜","キュウリ"],tg:["受賞歴"],d:"冬にゆっくり生育させ細胞が締まり、日持ちしてもみずみずしい。青臭さが少なく甘味が出る。2013年野菜ソムリエサミット大賞。",gy:["焼肉","寿司"],se:"冬",hero:true},
+{name:"花付き極小きゅうり",p:"vegeco",g:"きゅうり",c:"果菜",al:["胡瓜","花丸きゅうり"],tg:["レストラン専用規格","希少品"],d:"海外シェフから求められた実績のある花付き極小規格。",gy:["寿司","てんぷら"],se:"冬中心",hero:true},
+{name:"ハーブ",p:"vegeco",g:"ハーブ",c:"香味野菜・ハーブ",al:["香草"],tg:[],d:"料理人向けの特殊規格野菜も手掛ける。",gy:[],se:"通年"},
+// ── 久松農園
+{name:"にんじん",p:"hisamatsu",g:"にんじん",c:"根菜",al:["人参","ニンジン","キャロット"],tg:["一般購入可能"],d:"注文を受けてから収穫し畑から直送。秋冬の主力。",gy:["串揚げ"],se:"秋〜冬"},
+{name:"サラダかぶ",p:"hisamatsu",g:"かぶ",c:"根菜",al:["蕪","カブ"],tg:["一般購入可能"],d:"生食できる甘いかぶ。",gy:["寿司","焼肉"],se:"秋〜冬"},
+{name:"トマト",p:"hisamatsu",g:"トマト",c:"果菜",al:["とまと"],tg:["一般購入可能"],d:"夏セットの主力。",gy:["焼肉"],se:"夏"},
+{name:"きゅうり",p:"hisamatsu",g:"きゅうり",c:"果菜",al:["胡瓜","キュウリ"],tg:["一般購入可能"],d:"露地の旬きゅうり。",gy:["焼肉"],se:"夏"},
+{name:"とうもろこし",p:"hisamatsu",g:"とうもろこし",c:"豆・穀果",al:["トウモロコシ","コーン"],tg:["一般購入可能"],d:"朝採り直送のとうもろこし。",gy:["てんぷら"],se:"夏"},
+{name:"枝豆",p:"hisamatsu",g:"枝豆",c:"豆・穀果",al:["えだまめ","エダマメ"],tg:["一般購入可能"],d:"鮮度が命の枝豆を収穫後直送。",gy:["焼き鳥","焼肉"],se:"夏"},
+{name:"プチベール",p:"hisamatsu",g:"プチヴェール",c:"葉菜・茎菜",al:["プチヴェール","芽キャベツ"],tg:["西洋野菜"],d:"非結球芽キャベツ。冬の彩り。",gy:["串揚げ","てんぷら"],se:"冬"},
+{name:"ロマネスコ",p:"hisamatsu",g:"ロマネスコ",c:"果菜",al:["カリフラワー"],tg:["西洋野菜"],d:"冬の造形派野菜。",gy:["串揚げ","てんぷら"],se:"冬"},
+{name:"旬の野菜セット（S/M/L・定期便）",p:"hisamatsu",g:"野菜セット",c:"加工品・セット",al:["野菜セット","定期便"],tg:["一般購入可能"],d:"注文後収穫・直送の年間100種類以上。",gy:[],se:"通年"},
+// ── のらくら農場
+{name:"サラダケール",p:"norakura",g:"ケール",c:"葉菜・茎菜",al:["ケール"],tg:["有機栽培","一般購入可能"],d:"「科学的な有機栽培」で苦味を抑えたサラダ適性ケール。販売再開日が明記され監視向き。",gy:["焼肉"],se:"夏〜秋",hero:true},
+{name:"玉ねぎ",p:"norakura",g:"玉ねぎ",c:"ねぎ・球根類",al:["たまねぎ","タマネギ","玉葱"],tg:["有機栽培","一般購入可能"],d:"「だしの出る玉ねぎ」としてうま味を意識した栽培。",gy:["焼肉","串揚げ"],se:"夏〜冬"},
+{name:"じゃがいも",p:"norakura",g:"じゃがいも",c:"根菜",al:["ジャガイモ","馬鈴薯","ポテト"],tg:["有機栽培","一般購入可能"],d:"標高の寒暖差で育つ高原じゃがいも。",gy:["串揚げ"],se:"秋〜冬"},
+{name:"野菜セット（6〜12品）",p:"norakura",g:"野菜セット",c:"加工品・セット",al:["野菜セット","定期便"],tg:["有機栽培","一般購入可能"],d:"公式ショップで単発・定期便。",gy:[],se:"通年"},
+// ── 風の丘ファーム
+{name:"のらぼう菜",p:"kazenoka",g:"のらぼう菜",c:"葉菜・茎菜",al:["のらぼう","菜の花","なばな"],tg:["農薬・化学肥料不使用"],d:"小川町の春を告げる在来菜花。甘みが強い。",gy:["てんぷら","焼き鳥"],se:"早春",hero:true},
+{name:"新玉ねぎ",p:"kazenoka",g:"玉ねぎ",c:"ねぎ・球根類",al:["たまねぎ","新たま"],tg:["農薬・化学肥料不使用"],d:"露地の新玉ねぎ。",gy:["焼肉"],se:"初夏"},
+{name:"小カブ",p:"kazenoka",g:"かぶ",c:"根菜",al:["蕪","カブ"],tg:["農薬・化学肥料不使用"],d:"やわらかな小カブ。",gy:["寿司"],se:"春・秋"},
+{name:"季節の葉物",p:"kazenoka",g:"葉物野菜",c:"葉菜・茎菜",al:["葉物"],tg:["農薬・化学肥料不使用"],d:"旬で内容が変わる葉物。",gy:[],se:"通年"},
+{name:"大根",p:"kazenoka",g:"大根",c:"根菜",al:["だいこん","ダイコン"],tg:["農薬・化学肥料不使用"],d:"露地の大根。",gy:["うなぎ","焼き鳥"],se:"冬"},
+{name:"ズッキーニ",p:"kazenoka",g:"ズッキーニ",c:"果菜",al:["zucchini"],tg:["農薬・化学肥料不使用"],d:"夏の定番西洋果菜。",gy:["串揚げ","てんぷら"],se:"夏"},
+{name:"野菜セット（9〜12品）",p:"kazenoka",g:"野菜セット",c:"加工品・セット",al:["野菜セット","定期便"],tg:["一般購入可能"],d:"単発・毎週・隔週。スキップ・休止対応。",gy:[],se:"通年"},
+// ── さいたまヨロ研
+{name:"スティッキオ",p:"yoroken",g:"フェンネル",c:"香味野菜・ハーブ",al:["フェンネル","スティックフェンネル"],tg:["西洋野菜"],d:"スティック状に改良されたフェンネル。生食向き。",gy:["寿司","てんぷら"],se:"春・秋"},
+{name:"ゴルゴ（キオッジャビーツ）",p:"yoroken",g:"ビーツ",c:"根菜",al:["ビーツ","渦巻きビーツ","キオッジャ"],tg:["西洋野菜"],d:"切ると渦巻き模様の出るビーツ。皿映えで主役になれる。",gy:["焼肉"],se:"秋〜冬",hero:true},
+{name:"黄・赤ビーツ",p:"yoroken",g:"ビーツ",c:"根菜",al:["ビーツ"],tg:["西洋野菜"],d:"色別に使い分けられるビーツ群。",gy:[],se:"秋〜冬"},
+{name:"フェンネル",p:"yoroken",g:"フェンネル",c:"香味野菜・ハーブ",al:["ウイキョウ"],tg:["西洋野菜"],d:"シェフの要望から生まれた地場フェンネル。",gy:["てんぷら"],se:"春・秋"},
+{name:"カーボロネロ",p:"yoroken",g:"カーボロネロ",c:"葉菜・茎菜",al:["黒キャベツ"],tg:["西洋野菜"],d:"煮込み向きの黒キャベツ。",gy:["串揚げ"],se:"冬"},
+{name:"プンタレッラ",p:"yoroken",g:"プンタレッラ",c:"葉菜・茎菜",al:["チコリ"],tg:["西洋野菜"],d:"ローマの冬野菜を埼玉で。",gy:["てんぷら"],se:"冬"},
+{name:"ヨーロッパ野菜 約60品目",p:"yoroken",g:"西洋野菜（多品目）",c:"果菜",al:["西洋野菜","イタリア野菜"],tg:["西洋野菜","業務用対応"],d:"農家×料理人×種苗会社の共同体が作る「シェフが本当に欲しい野菜」約60品目。",gy:["串揚げ","てんぷら"],se:"通年"},
+// ── 岩崎政利氏
+{name:"雲仙赤紫大根",p:"iwasaki",g:"大根",c:"根菜",al:["だいこん","赤大根","紫大根"],tg:["在来種","自家採種","希少品"],d:"自家採種で守られてきた在来大根。鮮烈な色と味の濃さ。加工品の外部販売あり。",gy:["寿司","うなぎ"],se:"冬",hero:true},
+{name:"在来種の大根各種",p:"iwasaki",g:"大根",c:"根菜",al:["だいこん"],tg:["在来種","自家採種"],d:"毎年優良株から種を採る在来大根群。",gy:[],se:"冬"},
+{name:"在来カブ",p:"iwasaki",g:"かぶ",c:"根菜",al:["蕪","カブ"],tg:["在来種","自家採種"],d:"地域適応した在来カブ。",gy:["寿司"],se:"冬"},
+{name:"自家採種の在来野菜 50種以上",p:"iwasaki",g:"在来野菜（多品目）",c:"葉菜・茎菜",al:["在来種","伝統野菜"],tg:["在来種","自家採種","希少品"],d:"不耕起・自家採種で50種類以上の在来野菜を継承。",gy:[],se:"季節による",hero:true},
+// ── 泉州水なす
+{name:"泉州水なす",p:"senshu",g:"なす",c:"果菜",al:["水なす","水茄子","茄子","ナス"],tg:["GI登録","地域ブランド"],d:"農林水産省GI登録。水分が非常に多く皮と果肉が柔らかい。穏やかな甘味でえぐ味が少ない。他地域では特性が変化しやすい。",gy:["焼肉","寿司","うなぎ"],se:"初夏〜夏",hero:true}
+];
+</script>
+<script>
+/* 追加リサーチ枠アイテム（酒・飲料・茶・調味料・香辛料） */
+ITEMS.push(
+{name:"日本酒 No.6（生酛・木桶）",p:"aramasa",g:"日本酒",c:"酒・飲料",al:["酒","sake","純米酒","ナンバーシックス"],tg:["特約店流通","希少品"],d:"きょうかい6号酵母の発祥蔵が醸す生酛純米の生酒シリーズ。酸のある低アルコール設計で食中酒として料理人の評価が高い。",gy:["寿司","焼き鳥","うなぎ"],se:"通年（限定酒多数）",hero:true},
+{name:"新政 Colors（産土・木桶仕込み）",p:"aramasa",g:"日本酒",c:"酒・飲料",al:["酒","sake","純米酒"],tg:["特約店流通"],d:"秋田県産米・木桶仕込みの純米酒シリーズ。米の品種違いを飲み比べられる。",gy:["寿司","焼肉"],se:"通年",hero:true},
+{name:"ナナツモリ ピノ・ノワール",p:"takahiko",g:"ワイン",c:"酒・飲料",al:["wine","赤ワイン","ピノノワール"],tg:["希少品","抽選販売"],d:"余市の自社畑ピノ・ノワール。出汁・和食材と合う繊細な酒質で国内トップレストランのリスト常連。入手は抽選・割当が中心。",gy:["焼き鳥","うなぎ","焼肉"],se:"ヴィンテージ毎",hero:true},
+{name:"キュヴェ三澤 明野甲州",p:"grace",g:"ワイン",c:"酒・飲料",al:["wine","白ワイン","甲州"],tg:["受賞歴"],d:"日本固有品種・甲州の白。国際コンクール金賞。柑橘と出汁に寄り添う酸で、寿司・てんぷらとのペアリング適性が高い。",gy:["寿司","てんぷら","串揚げ"],se:"ヴィンテージ毎",hero:true},
+{name:"葉とらずりんご100（ストレートジュース）",p:"seiken",g:"りんご加工品",c:"酒・飲料",al:["ジュース","りんごジュース","アップルジュース"],tg:["無添加","一般購入可能"],d:"葉とらず栽培のりんごを水・砂糖・香料無添加でストレート混濁搾り。ノンアルコールペアリングの土台に。",gy:["焼肉","焼き鳥"],se:"通年",hero:true},
+{name:"八女伝統本玉露",p:"hoshino",g:"茶",c:"茶",al:["玉露","お茶","日本茶","緑茶"],tg:["GI登録","受賞歴","一般購入可能"],d:"GI登録第5号（茶で全国初）。自然仕立て・わら被覆・手摘み。雫茶として一品で主役を張れるうま味の濃度。",gy:["寿司","うなぎ"],se:"新茶は春",hero:true},
+{name:"抹茶・煎茶各種",p:"hoshino",g:"茶",c:"茶",al:["抹茶","煎茶","お茶"],tg:["一般購入可能"],d:"八女・星野村の茶。デザートや食後の一杯に。",gy:[],se:"通年"},
+{name:"献上加賀棒茶",p:"maruhachi",g:"茶",c:"茶",al:["ほうじ茶","棒茶","お茶"],tg:["一般購入可能"],d:"一番茶の茎を浅煎りで焙じる棒ほうじ茶。脂の強い肉料理の後口を整える。焼肉・焼き鳥業態と好相性。",gy:["焼肉","焼き鳥","うなぎ"],se:"通年",hero:true},
+{name:"鶴醤（再仕込み醤油）",p:"yamaroku",g:"醤油",c:"調味料",al:["しょうゆ","醬油","再仕込み"],tg:["木桶仕込み","一般購入可能"],d:"約4年かけて二度仕込む再仕込み醤油。コクと丸みでつけ・かけ・タレのベースの主役に。",gy:["焼き鳥","うなぎ","焼肉","寿司"],se:"通年",hero:true},
+{name:"菊醤（木桶仕込み淡口）",p:"yamaroku",g:"醤油",c:"調味料",al:["しょうゆ","淡口"],tg:["木桶仕込み"],d:"素材の色を生かす木桶仕込みのうすくち。",gy:["てんぷら","うなぎ"],se:"通年"},
+{name:"富士酢・富士酢プレミアム",p:"iio",g:"酢",c:"調味料",al:["米酢","お酢","ビネガー"],tg:["無農薬米","一般購入可能"],d:"無農薬新米を自社栽培し、蔵で酒を醸してから静置発酵で酢に。米量の多いうま味の厚い酢で酢飯の土台が変わる。",gy:["寿司"],se:"通年",hero:true},
+{name:"與兵衛（赤酢）",p:"yokoi",g:"酢",c:"調味料",al:["赤酢","粕酢","すし酢"],tg:["業務用対応"],d:"長期熟成酒粕から造る赤酢。江戸前の赤シャリの代名詞的存在。砂糖を控えたシャリ設計が可能。",gy:["寿司"],se:"通年",hero:true},
+{name:"三州三河みりん",p:"sumiya",g:"みりん",c:"調味料",al:["味醂","本みりん"],tg:["一般購入可能"],d:"もち米・米麹・本格焼酎のみで醸す本みりん。うなぎ・焼き鳥のタレ、煮切りの品質を底上げ。",gy:["うなぎ","焼き鳥"],se:"通年",hero:true},
+{name:"八丁味噌（木桶・二夏二冬）",p:"maruya",g:"味噌",c:"調味料",al:["みそ","豆味噌","赤味噌"],tg:["伝統製法"],d:"大豆と塩だけを木桶で約2年天然熟成。味噌だれ・肉料理の隠し味で強い個性。",gy:["串揚げ","焼肉"],se:"通年",hero:true},
+{name:"わじまの海塩",p:"wajima",g:"塩",c:"調味料",al:["しお","海塩","天然塩"],tg:["非加熱製法"],d:"輪島沖の海水を低温結晶させる非加熱製法。振り塩で素材の味を最大化。塩で食べさせる業態に。",gy:["てんぷら","焼き鳥","焼肉","寿司","串揚げ"],se:"通年",hero:true},
+{name:"黒七味",p:"haryokaku",g:"七味・香辛料",c:"香辛料・薬味",al:["七味","しちみ","唐辛子"],tg:["一子相伝","一般購入可能"],d:"1703年創業・製法非公開。乾煎りと揉み込みによる焦がし茶色の七味。仕上げの香りの主役。",gy:["焼き鳥","うなぎ","焼肉","串揚げ"],se:"通年",hero:true},
+{name:"ゆず果汁・ゆず皮（業務用あり）",p:"umaji",g:"ゆず",c:"香辛料・薬味",al:["柚子","ユズ","柚子果汁"],tg:["業務用対応","一般購入可能"],d:"馬路村の柚子を村内一貫加工。果汁・皮・ぽん酢まで。柚子サワーやタレへの応用も広い。",gy:["焼き鳥","うなぎ","焼肉"],se:"新物は秋冬",hero:true},
+{name:"ぽん酢しょうゆ「ゆずの村」",p:"umaji",g:"ぽん酢",c:"調味料",al:["ポン酢","ぽんず"],tg:["一般購入可能"],d:"柚子の村の看板ぽん酢。",gy:["焼肉"],se:"通年"},
+{name:"ぶどう山椒（実山椒・粉山椒）",p:"kanja",g:"山椒",c:"香辛料・薬味",al:["さんしょう","サンショウ","実山椒","木の芽"],tg:["最大産地","一般購入可能"],d:"和歌山県は国産山椒の6〜7割を占め、有田川町が最大産地。大粒で香り高く辛味の強い最高級品種。うなぎに必須、麻辣・焼肉にも。",gy:["うなぎ","焼き鳥","焼肉"],se:"実山椒は初夏",hero:true},
+{name:"本わさび（静岡水わさび）",p:"shizuokawasabi",g:"わさび",c:"香辛料・薬味",al:["ワサビ","山葵"],tg:["世界農業遺産","伝統栽培"],d:"世界農業遺産認定の畳石式栽培。湧水の養分だけで育つ本わさび。すりたての香りは薬味の域を超える。",gy:["寿司","焼肉","うなぎ"],se:"通年",hero:true}
+);
+
+/* 同義語辞書（グループ内の語は相互に検索ヒット） */
+const SYNONYMS=[
+["しいたけ","椎茸","シイタケ","きのこ","茸"],
+["まいたけ","舞茸","マイタケ","きのこ"],
+["あわびたけ","あわび茸","アワビタケ","エリンギ","きのこ"],
+["リーキ","西洋ねぎ","ポロねぎ","ポワロー","ねぎ","長ねぎ"],
+["サボイキャベツ","ちりめんキャベツ","キャベツ"],
+["セロリラブ","セロリアック","根セロリ","セロリ"],
+["ビーツ","ビート","テーブルビート","キオッジャ","ゴルゴ"],
+["アーティチョーク","朝鮮アザミ","アルティショー"],
+["プンタレッラ","チコリ","チコリー"],
+["カーボロネロ","黒キャベツ","ケール"],
+["なす","ナス","茄子","なすび","水なす","水茄子"],
+["きゅうり","キュウリ","胡瓜"],
+["にんじん","ニンジン","人参","キャロット"],
+["かぶ","カブ","蕪"],
+["だいこん","ダイコン","大根"],
+["たまねぎ","タマネギ","玉ねぎ","玉葱","オニオン","新たま"],
+["とうもろこし","トウモロコシ","コーン","玉蜀黍"],
+["えだまめ","エダマメ","枝豆"],
+["じゃがいも","ジャガイモ","馬鈴薯","ポテト","芋"],
+["こまつな","小松菜"],
+["みずな","水菜"],
+["ルッコラ","ロケット"],
+["コリアンダー","パクチー","香菜"],
+["しそ","シソ","紫蘇","大葉","赤しそ","赤紫蘇"],
+["レモン","檸檬","柑橘","シトラス"],
+["りんご","リンゴ","林檎","アップル"],
+["かも","カモ","鴨","ダック","合鴨","鴨肉"],
+["ほろほろ鳥","ホロホロ鳥","ホロホロチョウ","パンタード","鶏"],
+["ハーブ","香草","マイクロハーブ"],
+["マイクロリーフ","ベビーリーフ","リーフ","スプラウト"],
+["食用花","エディブルフラワー","花"],
+["さんさい","山菜"],
+["こめ","米","ごはん","ライス","新米"],
+["フェンネル","ウイキョウ","茴香","スティッキオ"],
+["ロマネスコ","カリフラワー","カリフローレ"],
+["とうがらし","唐辛子","万願寺","ししとう"],
+["エシャロット","ベルギーエシャロット"],
+["のらぼう","のらぼう菜","菜の花","なばな"],
+["ズッキーニ","zucchini"],
+["プチベール","プチヴェール","芽キャベツ"],
+["トマト","とまと"],
+["はちみつ","ハチミツ","蜂蜜","ハニー"],
+["だし","出汁","スープ"],
+["ワイン","wine","ぶどう酒","赤ワイン","白ワイン","ピノノワール","甲州"],
+["日本酒","酒","sake","清酒","純米","生酛"],
+["ジュース","果汁","りんごジュース"],
+["お茶","茶","日本茶","緑茶","玉露","抹茶","煎茶","ほうじ茶","棒茶"],
+["しょうゆ","醤油","醬油","むらさき"],
+["みそ","味噌","豆味噌","赤味噌","八丁味噌"],
+["酢","お酢","米酢","赤酢","粕酢","ビネガー","すし酢"],
+["みりん","味醂","本みりん"],
+["しお","塩","海塩","天然塩"],
+["しちみ","七味","黒七味","唐辛子"],
+["ゆず","柚子","ユズ","ぽん酢","ポン酢"],
+["さんしょう","サンショウ","山椒","実山椒","木の芽","ぶどう山椒"],
+["わさび","ワサビ","山葵","本わさび"],
+["調味料","スパイス","香辛料","薬味"],
+["オイスターリーフ","牡蠣"],
+["サフラン","スパイス"]
+];
+
+/* 名店から逆引き（優先調査対象の店） */
+const RESTAURANTS=[
+{name:"CRAFTALE",place:"東京",badge:"ミシュラン一つ星（2026年版）",note:"梶谷農園のハーブを「味の展開を作る要素」として使用。シェフが農園を継続訪問し取引に至った経緯まで取材記事で確認できる、本データベースの理想的掲載例。",links:["梶谷農園"]},
+{name:"マッカリーナ（RESTAURANT maccarina）",place:"北海道真狩村",badge:"オーベルジュ",note:"シェフが「地元の西洋野菜を使いたい」と村に働きかけ、リーキの産地形成が始まった。三野農園のほか、ゆり根・じゃがいも・乳製品など真狩村一帯の生産者を逆引きできる拠点。",links:["三野農園"]},
+{name:"sio / FARO / The Burn / TATSUMI",place:"東京",badge:"名店群",note:"江戸前ハーブ（大田区）のマイクロハーブの流通実績が取材記事で確認できる。",links:["江戸前ハーブ"]},
+{name:"ブルガリ イル・リストランテ / アルマーニ・リストランテ ほか",place:"東京",badge:"ラグジュアリー",note:"タケイファーム（松戸）のアーティチョークなど西洋野菜の使用実績。",links:["タケイファーム"]},
+{name:"レストラン山崎",place:"青森県弘前市",badge:"地方名店",note:"木村秋則氏の「奇跡のりんご」と、考えを共有する生産者群の「友情のりんご」をメニューに明記。冷製スープ等をオンライン販売。",links:["弘前のりんご生産者たち（木村秋則氏ほか）"]},
+{name:"catoe",place:"福島県郡山市",badge:"地方名店",note:"加藤智樹シェフが鈴木農場へ2日に1回通い自ら収穫。万吉どんのムースが代表料理。",links:["鈴木農場"]},
+{name:"KUROMORI",place:"宮城県気仙沼市",badge:"Destination Restaurant 2026",note:"気仙沼のフカヒレを生産者と共同で追求。フカヒレ加工業者・漁業者・鮫の加工事業者を逆引きすべき最優先店（調査中）。",links:[]},
+{name:"Pesceco",place:"長崎県島原市",badge:"地方名店",note:"地元漁師と雲仙岳麓の有機農家のネットワーク。魚介・葉にんにく・山椒・島原そうめん・天然水。漁師名・農園名の特定を進める価値あり（調査中）。",links:[]},
+{name:"Restaurant UOZEN",place:"新潟県三条市",badge:"地方名店",note:"シェフ自ら猟・漁・自然採取。猟師・内水面漁師・山菜採取者・発酵職人を探す起点（調査中）。",links:[]},
+{name:"ひまわり食堂2",place:"富山県富山市",badge:"Destination Restaurant 2025",note:"富山の料理人連携が強く、農家に県内では珍しいイタリア野菜を作ってもらう例も。農家名の特定で有力西洋野菜候補が増える可能性（調査中）。",links:[]}
+];
+</script>
+<script>
+/* 追加リサーチ枠2：アスパラガス・フルーツ・地域ブランド野菜 ※編集部追加調査・要検証 */
+Object.assign(PRODUCERS,{
+sanukiasp:{name:"さぬきのめざめ生産者（香川県）",kana:"さぬきのめざめ",pref:"香川県",city:"県内各地",person:"",rank:"B",
+ summary:"香川県育成のオリジナル品種。極太でも穂先が締まり、根元までやわらかいアスパラガス。",
+ discovery:"編集部追加調査。香川県農業試験場が育成したオリジナル品種として公知。太くても穂先が開きにくく、春芽・夏芽で長期間出荷できる。個別生産者の特定は今後の調査対象。",
+ diff:"一般品種より大型に育てても穂先が締まり、根元まで皮を剥かずに食べられるやわらかさが特徴とされる。極太規格は一本で皿の主役を張れる。",
+ restaurants:[],
+ order:{online:"産直EC・県内直売所で購入可",wholesale:"産地JA・市場流通。要問い合わせ",watch:"春芽（春）・夏芽（夏〜秋）の出回り監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["香川県育成品種（公的情報）","primary"],["生産者詳細は編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","高評価店の使用実績"]},
+yubari:{name:"夕張市農協（夕張メロン）",kana:"ゆうばりめろん",pref:"北海道",city:"夕張市",person:"",rank:"B",
+ summary:"GI登録第4号。厳格な検査規格と完熟出荷で守られる赤肉メロンの代名詞。",
+ discovery:"編集部追加調査。「夕張メロン」は地理的表示（GI）保護制度の初期登録産品（登録第4号）として公知。産地の検査員による外観・糖度検査を経たものだけが名乗れる。",
+ diff:"火山灰土壌と昼夜の寒暖差で育つ赤肉メロン。産地一元の検査規格と完熟に近づけた出荷管理が品質の均一性を支える。香りの強さととろける果肉で一玉が主役になる。",
+ restaurants:[],
+ order:{online:"農協指定の販売経路・百貨店・ECで購入可",wholesale:"市場流通・要問い合わせ",watch:"初競り〜夏の出荷期監視に好適"},
+ sns:{site:"公式情報あり",instagram:"—",x:"—"},
+ evidence:[["農林水産省GI登録（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["業務用ロット","等級別の仕入れ条件"]},
+crown:{name:"クラウンメロン（静岡・袋井）",kana:"くらうんめろん",pref:"静岡県",city:"袋井市ほか",person:"",rank:"B",
+ summary:"一本の樹に一果だけ残す「一本仕立て」。温室マスクメロンの最高峰ブランド。",
+ discovery:"編集部追加調査。静岡県西部の温室で栽培されるマスクメロンのブランドとして公知。一樹一果の栽培法と等級制度（富士・山・白・雪）で知られる。",
+ diff:"ガラス温室で水や温度を管理し、一本の樹に一果だけを残して養分を集中させる。マスクメロン特有の網目と香り、等級による品質の明確さが強み。",
+ restaurants:[{name:"高級果実店・ホテル・料理店での採用",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式・高級果実店・ECで購入可",wholesale:"市場・専門仲卸経由",watch:"—"},
+ sns:{site:"公式情報あり",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["等級別の業務用仕入れ経路"]},
+amela:{name:"サンファーマーズ（アメーラ）",kana:"あめーら",pref:"静岡県",city:"静岡市ほか",person:"",rank:"B",
+ summary:"水を絞って甘さと凝縮感を引き出す高糖度トマトのパイオニアブランド。",
+ discovery:"編集部追加調査。静岡発の高糖度トマトブランド「アメーラ」として公知。生産法人グループによる統一栽培基準と通年出荷体制を持つ。",
+ diff:"かん水を制限するストレス栽培で糖度と味の濃さを引き出す。小ぶりで皮ごと食べられ、冷菜・サラダで果物のように使える。ミニ規格「アメーラルビンズ」も展開。",
+ restaurants:[{name:"レストラン・ホテルでの採用",note:"個別店名は要確認",guide:false}],
+ order:{online:"百貨店・EC・直販で購入可",wholesale:"市場・専門流通経由",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件"]},
+tokutani:{name:"徳谷地区の塩トマト生産者（高知）",kana:"とくたにとまと",pref:"高知県",city:"高知市徳谷",person:"",rank:"B",
+ summary:"海に近い塩分を含む土壌が生む「徳谷トマト」。市場で高値がつく塩トマトの代名詞。",
+ discovery:"編集部追加調査。高知市徳谷地区の塩分を含む土壌で育つ小玉・高糖度トマトとして公知。市場評価の高さで知られる。個別生産者の特定は今後の調査対象。",
+ diff:"塩分ストレスのかかる土壌で水分吸収が抑えられ、小玉ながら糖度と酸のバランスが凝縮する。産地・土壌そのものが再現困難な希少性を持つ。",
+ restaurants:[],
+ order:{online:"産直EC・高級青果店で購入可",wholesale:"市場・仲卸経由",watch:"冬〜春の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","高評価店の使用実績"]},
+migaki:{name:"GRA（ミガキイチゴ）",kana:"みがきいちご",pref:"宮城県",city:"亘理郡山元町",person:"",rank:"B",
+ summary:"ICT環境制御のハウスで栽培し「食べる宝石」を掲げる、山元町発のいちごブランド。",
+ discovery:"編集部追加調査。震災復興から生まれた農業生産法人GRAのいちごブランドとして公知。ICTによる環境制御と等級別ブランド化（プラチナ等）で知られる。",
+ diff:"温度・湿度・CO2などをデータ管理し、品種を問わず一定基準を満たした果実を等級別に出荷する仕組み。最上位等級は一粒単位で販売される。",
+ restaurants:[{name:"パティスリー・レストランでの採用",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式オンラインショップあり",wholesale:"業務用は問い合わせ",watch:"冬〜春の出荷期監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用取引条件"]},
+amaou:{name:"あまおう生産者（福岡県）",kana:"あまおう",pref:"福岡県",city:"県内各地",person:"",rank:"B",
+ summary:"「あかい・まるい・おおきい・うまい」。福岡県育成・県内限定生産のいちご。",
+ discovery:"編集部追加調査。福岡県が育成し、県内でのみ生産されるいちご品種（品種名：福岡S6号）として公知。大粒で濃い甘さと酸のバランスが特徴。",
+ diff:"県育成品種を県内限定で生産するブランド管理。大粒で果肉がしっかりし、生食・デザートで主役を張れる。",
+ restaurants:[],
+ order:{online:"JA・産直EC・百貨店で購入可",wholesale:"市場流通",watch:"冬〜春の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["福岡県育成品種（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+haruo:{name:"晴王 シャインマスカット（JA晴れの国岡山）",kana:"はれおう",pref:"岡山県",city:"県内各地",person:"",rank:"B",
+ summary:"糖度基準を満たしたシャインマスカットだけが名乗れる岡山の統一ブランド。",
+ discovery:"編集部追加調査。岡山県産シャインマスカットのうち、選果基準（糖度・外観）を満たしたものに付くブランド「晴王」として公知。",
+ diff:"果物王国・岡山の栽培技術と選果基準による品質の安定。皮ごと種なしで食べられ、香りと歯ざわりでデザートの主役になる。",
+ restaurants:[],
+ order:{online:"百貨店・EC・産直で購入可",wholesale:"市場流通",watch:"夏〜秋の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["等級・規格別の仕入れ条件"]},
+higashine:{name:"東根さくらんぼ生産者（山形県東根市）",kana:"ひがしねさくらんぼ",pref:"山形県",city:"東根市",person:"",rank:"B",
+ summary:"GI登録「東根さくらんぼ」。佐藤錦発祥の地が守る赤い宝石。",
+ discovery:"編集部追加調査。「東根さくらんぼ」は地理的表示（GI）保護制度の登録産品として公知。東根市は主力品種「佐藤錦」発祥の地。",
+ diff:"寒暖差のある盆地気候と長年の栽培技術。完熟収穫の佐藤錦は糖度と酸味の均衡がよく、一粒で主役を張れる。",
+ restaurants:[],
+ order:{online:"産直EC・百貨店で購入可",wholesale:"市場流通",watch:"6〜7月の短い旬の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["農林水産省GI登録（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+ichida:{name:"市田柿生産者（長野県南信州）",kana:"いちだがき",pref:"長野県",city:"下伊那郡高森町ほか",person:"",rank:"B",
+ summary:"GI登録の干し柿。天竜川の川霧ともみ込みが生む、白い粉と飴色の果肉。",
+ discovery:"編集部追加調査。「市田柿」は地理的表示（GI）保護制度の登録産品として公知。南信州の在来品種を干し柿に加工する伝統産地。",
+ diff:"小ぶりの在来柿を吊るし、天竜川の川霧による湿度と手作業のもみ込みで、表面に糖の白い粉をまとわせる。もっちりした食感と凝縮した甘みでデザート素材としても使える。",
+ restaurants:[],
+ order:{online:"産直EC・百貨店で購入可（冬季中心）",wholesale:"産地農協・市場流通",watch:"冬の出荷開始監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["農林水産省GI登録（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+aocassis:{name:"あおもりカシスの会（青森市）",kana:"あおもりかしす",pref:"青森県",city:"青森市",person:"",rank:"B",
+ summary:"GI登録第1号。挿し木で受け継がれてきた小粒・高酸味の在来系カシス。",
+ discovery:"編集部追加調査。「あおもりカシス」は地理的表示（GI）保護制度の登録第1号産品として公知。",
+ diff:"導入から数十年、挿し木で受け継がれた系統を農薬に頼らず栽培。小粒で酸味と香りが強く、ソース・デザート・ドリンクで果実の個性が立つ。国産カシス自体が希少。",
+ restaurants:[],
+ order:{online:"冷凍果実・加工品をEC等で購入可",wholesale:"要問い合わせ",watch:"夏の収穫期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["農林水産省GI登録第1号（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["業務用（冷凍・ピューレ）の仕入れ経路"]},
+koori:{name:"桑折町の桃生産者（福島県）",kana:"こおりまちのもも",pref:"福島県",city:"伊達郡桑折町",person:"",rank:"B",
+ summary:"皇室への献上が続く「献上桃の郷」。主力品種あかつきの名産地。",
+ discovery:"編集部追加調査。桑折町は皇室献上桃の産地「献上桃の郷」として公知。主力品種「あかつき」は果肉が緻密で甘みが強い。",
+ diff:"献上規格を支える摘果・剪定・選果の技術蓄積。あかつきは果肉が締まり日持ちと甘さを両立、加熱・コンポートでも崩れにくい。",
+ restaurants:[],
+ order:{online:"産直EC・JAで購入可",wholesale:"市場流通",watch:"7〜8月の旬の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["献上実績（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+ehime28:{name:"紅まどんな（JA全農えひめ）",kana:"べにまどんな",pref:"愛媛県",city:"県内各地",person:"",rank:"B",
+ summary:"ゼリーのような果肉。愛媛県育成「愛媛果試第28号」の統一ブランド柑橘。",
+ discovery:"編集部追加調査。愛媛県が育成した品種「愛媛果試第28号」のうち、JA系統で基準を満たしたものが名乗るブランドとして公知。",
+ diff:"薄い皮と砂じょうの細かさによる「ゼリーのような」食感が最大の特徴。香り高く、デザート・サラダで柑橘を主役にできる。",
+ restaurants:[],
+ order:{online:"百貨店・EC・産直で購入可（冬季）",wholesale:"市場流通",watch:"11〜12月の短い旬の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["愛媛県育成品種（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["等級・規格別の仕入れ条件"]},
+lafrance:{name:"山形のラ・フランス生産者",kana:"らふらんす",pref:"山形県",city:"県内各地",person:"",rank:"B",
+ summary:"国内生産の大半を占める山形の西洋梨。追熟管理で決まる香りととろける果肉。",
+ discovery:"編集部追加調査。ラ・フランスは山形県が国内生産の大半を占めることで公知。県が食べ頃基準・販売開始日の目安を設ける運用でも知られる。",
+ diff:"収穫後の予冷・追熟管理で香りと食感が決まる果物。とろける果肉と芳香はデザートの主役級。追熟状態を指定できる仕入れ先の確保が鍵。",
+ restaurants:[],
+ order:{online:"産直EC・百貨店で購入可（秋冬）",wholesale:"市場流通",watch:"10〜12月の販売開始監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","追熟指定の可否"]},
+annou:{name:"種子島の安納いも生産者（鹿児島県）",kana:"あんのういも",pref:"鹿児島県",city:"西之表市ほか種子島",person:"",rank:"B",
+ summary:"種子島・安納地区由来の在来系さつまいも。貯蔵による糖化でねっとり濃甘。",
+ discovery:"編集部追加調査。安納地区で受け継がれた在来系統に由来するさつまいもとして公知。焼き芋ブームの火付け役的存在。",
+ diff:"収穫後の貯蔵（キュアリング）で澱粉が糖化し、ねっとりした食感と強い甘みになる。焼き芋・デザートで一本が主役を張れる。",
+ restaurants:[],
+ order:{online:"産直EC・JAで購入可",wholesale:"市場流通",watch:"秋の新物・貯蔵後の食べ頃監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","貯蔵条件"]},
+kagayasai:{name:"加賀野菜の生産者（金沢市）",kana:"かがやさい",pref:"石川県",city:"金沢市",person:"",rank:"B",
+ summary:"金沢市の認定ブランド「加賀野菜」。粘りの加賀れんこん、ほくほくの五郎島金時。",
+ discovery:"編集部追加調査。「加賀野菜」は昭和20年以前から金沢で栽培され、現在も主に金沢で栽培される野菜を市の協会が認定するブランドとして公知。",
+ diff:"加賀れんこんはでんぷん質が多く粘りが強い（すりおろしのはす蒸しが郷土の定番）。五郎島金時は砂丘地栽培のほくほく系さつまいも。いずれも料理の主役を張れる個性。",
+ restaurants:[{name:"金沢の料亭・寿司店での使用が知られる",note:"個別店名は要確認",guide:false}],
+ order:{online:"産直EC・市場流通で購入可",wholesale:"金沢市中央卸売市場・産地問い合わせ",watch:"—"},
+ sns:{site:"認定制度の公式情報あり",instagram:"—",x:"—"},
+ evidence:[["金沢市認定ブランド（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+kotokyoto:{name:"こと京都（九条ねぎ）",kana:"こときょうと",pref:"京都府",city:"京都市伏見区",person:"",rank:"B",
+ summary:"九条ねぎ専門の農業法人。栽培から加工・カットまで一貫し、飲食店へ年間供給。",
+ discovery:"編集部追加調査。九条ねぎを専門に栽培・加工し、ラーメン店・飲食店向けに年間供給する京都の農業法人として公知。",
+ diff:"京の伝統野菜・九条ねぎに特化し、周年栽培と業務用カット加工の体制を持つ。ぬめりと甘み、香りの強さが薬味を超えて主役になる。",
+ restaurants:[{name:"ラーメン店・飲食店への供給実績",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式・ECで購入可",wholesale:"業務用の直接取引に対応（要問い合わせ）",watch:"—"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用ロット・価格"]},
+manganji:{name:"万願寺甘とう生産者（京都・舞鶴ほか）",kana:"まんがんじあまとう",pref:"京都府",city:"舞鶴市・綾部市・福知山市",person:"",rank:"B",
+ summary:"GI登録「万願寺甘とう」。肉厚・大型で甘みのある京のブランド甘とうがらし。",
+ discovery:"編集部追加調査。「万願寺甘とう」は地理的表示（GI）保護制度の登録産品として公知。舞鶴発祥の万願寺とうがらしの地域ブランド。",
+ diff:"大型で肉厚、種が少なく甘みがある。焼くだけで一品になる京のブランド野菜。",
+ restaurants:[],
+ order:{online:"産直EC・京都市場で購入可（夏季）",wholesale:"産地農協・市場流通",watch:"夏の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["農林水産省GI登録（公的情報）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+dadacha:{name:"鶴岡のだだちゃ豆生産者（山形県鶴岡市）",kana:"だだちゃまめ",pref:"山形県",city:"鶴岡市（白山地区中心）",person:"",rank:"B",
+ summary:"香りの強い在来茶豆。鶴岡の限られた土地で受け継がれる夏の主役。",
+ discovery:"編集部追加調査。鶴岡市の在来種として代々自家採種で受け継がれてきた茶豆系枝豆として公知。白山地区が本場とされる。",
+ diff:"独特の香ばしい香りと濃い甘みを持つ在来茶豆。産地・系統・収穫適期へのこだわりが味を左右する。茹でるだけで主役になる。",
+ restaurants:[],
+ order:{online:"産直EC・JAで購入可（夏季限定）",wholesale:"市場流通",watch:"7月末〜8月の短い旬の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","系統（早生・本豆）別の時期"]},
+dake:{name:"嶽きみ生産者（青森・岩木山麓）",kana:"だけきみ",pref:"青森県",city:"弘前市（嶽地区）",person:"",rank:"B",
+ summary:"標高と寒暖差が育てる高糖度とうもろこし「嶽きみ」。朝採り直送が基本。",
+ discovery:"編集部追加調査。岩木山麓・嶽高原のブランドとうもろこしとして公知。昼夜の寒暖差による糖度の高さと朝採り直送文化で知られる。",
+ diff:"標高400〜500mの寒暖差で糖を蓄え、生でも食べられる甘さとされる。鮮度低下が速いため朝採り即日発送の仕入れ設計が鍵。",
+ restaurants:[],
+ order:{online:"産直EC・直売所で購入可（夏季限定）",wholesale:"産地直送の予約が中心",watch:"8〜9月の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","直送ロット"]},
+shimonita:{name:"下仁田ねぎ生産者（群馬県下仁田町）",kana:"しもにたねぎ",pref:"群馬県",city:"甘楽郡下仁田町",person:"",rank:"B",
+ summary:"「殿様ねぎ」。加熱でとろけて甘くなる、下仁田周辺でしか本来の姿にならないねぎ。",
+ discovery:"編集部追加調査。江戸への献上史から「殿様ねぎ」と呼ばれる下仁田町の伝統ねぎとして公知。産地外では同じ品質になりにくいとされる。",
+ diff:"太く短い白根は生では辛いが、加熱でとろりと甘くなる。すき焼き・鍋・焼きねぎで冬の主役。産地の土壌・気候と結び付いた典型的な地域食材。",
+ restaurants:[],
+ order:{online:"産直EC・直売所で購入可（晩秋〜冬）",wholesale:"市場流通",watch:"11月〜の出荷開始監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]}
+});
+
+ITEMS.push(
+{name:"さぬきのめざめ 春芽（極太）",p:"sanukiasp",g:"アスパラガス",c:"葉菜・茎菜",al:["アスパラ","グリーンアスパラ"],tg:["県育成品種","一般購入可能"],d:"極太でも穂先が締まり根元までやわらかい香川県育成品種。一本焼きで皿の主役に。",se:"春",hero:true},
+{name:"さぬきのめざめ 夏芽",p:"sanukiasp",g:"アスパラガス",c:"葉菜・茎菜",al:["アスパラ"],tg:["県育成品種"],d:"長期どりできる夏秋芽。みずみずしさが特徴。",se:"夏〜秋"},
+{name:"夕張メロン",p:"yubari",g:"メロン",c:"果物・柑橘",al:["赤肉メロン","マスクメロン"],tg:["GI登録","地域ブランド"],d:"GI登録第4号。産地検査規格と完熟出荷で守られる赤肉メロンの代名詞。",se:"初夏〜夏",hero:true},
+{name:"クラウンメロン",p:"crown",g:"メロン",c:"果物・柑橘",al:["マスクメロン","温室メロン"],tg:["地域ブランド","一般購入可能"],d:"一樹一果の「一本仕立て」で養分を集中させる温室マスクメロンの最高峰。等級制度あり。",se:"通年",hero:true},
+{name:"アメーラ（高糖度トマト）",p:"amela",g:"トマト",c:"果菜",al:["フルーツトマト","高糖度トマト"],tg:["ブランド","一般購入可能"],d:"かん水制限のストレス栽培で糖度と凝縮感を引き出す。果物のように使える。",se:"通年（冬春が充実）",hero:true},
+{name:"アメーラルビンズ",p:"amela",g:"トマト",c:"果菜",al:["ミニトマト"],tg:["ブランド"],d:"一口サイズの高糖度ミニ規格。",se:"通年"},
+{name:"徳谷トマト（塩トマト）",p:"tokutani",g:"トマト",c:"果菜",al:["塩トマト","フルーツトマト"],tg:["希少品","地域ブランド"],d:"海に近い塩分土壌が水分吸収を抑え、小玉に糖度と酸が凝縮。産地土壌ごと再現困難。",se:"冬〜春",hero:true},
+{name:"ミガキイチゴ",p:"migaki",g:"いちご",c:"果物・柑橘",al:["苺","ストロベリー"],tg:["ブランド","一般購入可能"],d:"ICT環境制御と等級別ブランド化。最上位等級は一粒単位で販売。",se:"冬〜春",hero:true},
+{name:"あまおう",p:"amaou",g:"いちご",c:"果物・柑橘",al:["苺","福岡S6号"],tg:["県育成品種","地域ブランド"],d:"福岡県育成・県内限定生産。大粒で濃い甘さと酸のバランス。",se:"冬〜春",hero:true},
+{name:"シャインマスカット「晴王」",p:"haruo",g:"ぶどう",c:"果物・柑橘",al:["マスカット","葡萄"],tg:["地域ブランド"],d:"糖度・外観基準を満たした岡山県産だけが名乗る統一ブランド。皮ごと種なし。",se:"夏〜秋",hero:true},
+{name:"佐藤錦（東根さくらんぼ）",p:"higashine",g:"さくらんぼ",c:"果物・柑橘",al:["桜桃","チェリー"],tg:["GI登録"],d:"GI登録「東根さくらんぼ」。佐藤錦発祥の地の完熟収穫。旬は6〜7月と短い。",se:"初夏",hero:true},
+{name:"市田柿（干し柿）",p:"ichida",g:"柿",c:"果物・柑橘",al:["干し柿","かき"],tg:["GI登録","伝統製法"],d:"川霧の湿度と手もみで糖の白い粉をまとう。もっちり食感の凝縮甘味。",se:"冬",hero:true},
+{name:"あおもりカシス",p:"aocassis",g:"カシス",c:"果物・柑橘",al:["黒すぐり","ベリー"],tg:["GI登録","希少品"],d:"GI登録第1号。挿し木で継がれた在来系。国産カシス自体が希少で、ソース・デザートの主役に。",se:"夏収穫（冷凍は通年）",hero:true},
+{name:"あかつき（献上桃の郷・桑折町）",p:"koori",g:"桃",c:"果物・柑橘",al:["もも","ピーチ"],tg:["地域ブランド"],d:"皇室献上が続く産地の主力品種。緻密な果肉で加熱にも強い。",se:"7〜8月",hero:true},
+{name:"紅まどんな",p:"ehime28",g:"柑橘",c:"果物・柑橘",al:["みかん","愛媛果試第28号","まどんな"],tg:["県育成品種","地域ブランド"],d:"ゼリーのような食感の県育成ブランド柑橘。旬は11〜12月と短い。",se:"初冬",hero:true},
+{name:"ラ・フランス",p:"lafrance",g:"洋梨",c:"果物・柑橘",al:["洋なし","梨","ようなし"],tg:["地域ブランド"],d:"国内生産の大半が山形。追熟管理で香りととろける果肉が決まる。",se:"秋〜冬",hero:true},
+{name:"安納いも",p:"annou",g:"さつまいも",c:"根菜",al:["安納芋","薩摩芋","焼き芋"],tg:["在来種","地域ブランド"],d:"種子島・安納地区由来。貯蔵糖化でねっとり濃甘。焼き芋で一本が主役。",se:"秋掘り・貯蔵後が食べ頃",hero:true},
+{name:"五郎島金時",p:"kagayasai",g:"さつまいも",c:"根菜",al:["さつまいも","金時"],tg:["加賀野菜","地域ブランド"],d:"金沢・砂丘地栽培のほくほく系。加賀野菜認定ブランド。",se:"秋〜冬",hero:true},
+{name:"加賀れんこん",p:"kagayasai",g:"れんこん",c:"根菜",al:["蓮根","レンコン"],tg:["加賀野菜","地域ブランド"],d:"でんぷん質が多く粘りが強い。すりおろしのはす蒸しが郷土の定番。",se:"秋〜冬",hero:true},
+{name:"九条ねぎ（周年・業務用カット対応）",p:"kotokyoto",g:"ねぎ",c:"ねぎ・球根類",al:["九条ねぎ","青ねぎ","葉ねぎ"],tg:["京の伝統野菜","業務用対応"],d:"専門法人による周年栽培と業務用カット加工。ぬめりと甘みが薬味を超える。",se:"通年（冬が最盛）",hero:true},
+{name:"下仁田ねぎ",p:"shimonita",g:"ねぎ",c:"ねぎ・球根類",al:["殿様ねぎ","長ねぎ"],tg:["伝統野菜","地域ブランド"],d:"加熱でとろけて甘くなる殿様ねぎ。産地外では同品質になりにくい。",se:"晩秋〜冬",hero:true},
+{name:"万願寺甘とう",p:"manganji",g:"とうがらし",c:"果菜",al:["万願寺とうがらし","甘とう"],tg:["GI登録","京の伝統野菜"],d:"GI登録。大型・肉厚・種少なめで甘みがあり、焼くだけで一品になる。",se:"夏",hero:true},
+{name:"だだちゃ豆",p:"dadacha",g:"枝豆",c:"豆・穀果",al:["茶豆","えだまめ"],tg:["在来種","自家採種"],d:"香ばしい香りと濃い甘みの在来茶豆。旬は7月末〜8月と短い。",se:"盛夏",hero:true},
+{name:"嶽きみ",p:"dake",g:"とうもろこし",c:"豆・穀果",al:["トウモロコシ","スイートコーン"],tg:["地域ブランド"],d:"岩木山麓の寒暖差で糖を蓄える。朝採り即日発送の設計が鍵。",se:"8〜9月",hero:true}
+);
+
+SYNONYMS.push(
+["アスパラガス","アスパラ","さぬきのめざめ","グリーンアスパラ","ホワイトアスパラ"],
+["メロン","マスクメロン","夕張メロン","クラウンメロン","赤肉メロン"],
+["トマト","とまと","フルーツトマト","塩トマト","アメーラ","ミニトマト","高糖度トマト"],
+["いちご","イチゴ","苺","ストロベリー","あまおう","ミガキイチゴ"],
+["ぶどう","ブドウ","葡萄","マスカット","シャインマスカット","グレープ","晴王"],
+["さくらんぼ","サクランボ","桜桃","チェリー","佐藤錦"],
+["かき","カキ","柿","干し柿","市田柿"],
+["もも","モモ","桃","ピーチ","あかつき"],
+["みかん","ミカン","蜜柑","紅まどんな","まどんな","柑橘"],
+["ようなし","洋梨","洋なし","ラフランス","梨"],
+["カシス","黒すぐり","くろすぐり","ベリー"],
+["さつまいも","サツマイモ","薩摩芋","安納いも","安納芋","五郎島金時","金時","焼き芋","いも"],
+["れんこん","レンコン","蓮根","はす"],
+["ねぎ","九条ねぎ","下仁田ねぎ","青ねぎ","葉ねぎ","殿様ねぎ"],
+["えだまめ","だだちゃ豆","茶豆","枝豆"],
+["とうもろこし","嶽きみ","スイートコーン","コーン"],
+["とうがらし","万願寺甘とう","甘とう","万願寺とうがらし"]
+);
+</script>
+
+<script>
+/* 追加リサーチ枠3：主役級・一品専門店シリーズ ※編集部追加調査 */
+Object.assign(PRODUCERS,{
+kyotakenoko:{name:"京たけのこ生産者（京都・乙訓／塚原）",kana:"きょうたけのこ",pref:"京都府",city:"長岡京市・向日市・京都市西京区塚原",person:"",rank:"B",
+ summary:"軟白の朝掘り筍。「筍だけで会席が成立する」一品専門店文化を支える産地。",
+ discovery:"編集部追加調査。京都・乙訓地域は敷き藁と土入れで軟白化させる伝統的な筍栽培の産地として公知。長岡京の老舗「錦水亭」（明治創業）は自園の朝掘り筍だけで筍会席を成立させており、素材単独で店が成り立つ最強クラスの証拠がある。",
+ diff:"畑のように手入れされた竹林で、地表に出る前に掘る朝掘り白子筍はえぐみが少なく、刺身・焼き・炊きで主役を張る。掘ってからの時間が味を決めるため、産地・鮮度直結の仕入れ設計が鍵。",
+ restaurants:[{name:"錦水亭（京都・長岡京）",note:"明治創業の筍料理専門店。自園の朝掘り筍で筍会席を提供する「一品専門店」の代表例",guide:false}],
+ order:{online:"春の産地直送・百貨店で購入可",wholesale:"産地農協・京都市場経由。要問い合わせ",watch:"3〜5月の短い旬の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["一品専門店の存在（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","朝掘り直送の可否"]},
+jinenjo:{name:"自然薯生産者（静岡ほか）",kana:"じねんじょ",pref:"静岡県",city:"静岡市（丸子）ほか",person:"",rank:"B",
+ summary:"とろろ汁だけで1596年から続く店がある。粘りと香りで主役を張る日本原産の芋。",
+ discovery:"編集部追加調査。東海道・丸子宿の「丁子屋」は慶長元年（1596年）創業のとろろ汁専門店として公知（歌川広重の東海道五十三次にも描かれる）。自然薯という一素材で400年以上店が成立している、本サイトの基準で最強クラスの証拠。",
+ diff:"栽培種の長芋と異なり、日本原産の自然薯は粘りが強く箸で持ち上がるほど。香りも濃く、とろろ・丸焼き・磯辺揚げで主役になる。天然掘りと栽培物（パイプ栽培）で価格・風味が異なる。",
+ restaurants:[{name:"丁子屋（静岡・丸子宿）",note:"慶長元年（1596年）創業のとろろ汁専門店。自然薯一素材で店が成立する代表例",guide:false}],
+ order:{online:"産直EC・道の駅で購入可（秋〜冬）",wholesale:"産地問い合わせ",watch:"晩秋の掘り出し時期の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["一品専門店の存在（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","天然物・栽培物の区別"]},
+ebiimo:{name:"海老芋生産者（静岡県磐田市・京都）",kana:"えびいも",pref:"静岡県",city:"磐田市ほか（発祥は京都）",person:"",rank:"B",
+ summary:"「いもぼう」約300年。曲げて縞を出す手間のかかる高級里芋の頂点。",
+ discovery:"編集部追加調査。京都・円山公園の「いもぼう平野家」は海老芋と棒鱈の炊き合わせ一品で約300年続く専門店として公知。海老芋は京都発祥で、現在は静岡県磐田市が主産地として知られる。",
+ diff:"土寄せを繰り返して海老のような曲がりと縞模様を作る手間のかかる里芋。肉質が緻密で煮崩れしにくく、含め煮・揚げ・田楽で主役になる。",
+ restaurants:[{name:"いもぼう平野家（京都・円山公園）",note:"海老芋×棒鱈「いもぼう」一品で約300年続く専門店",guide:false}],
+ order:{online:"産直EC・百貨店で購入可（秋冬）",wholesale:"産地農協・市場流通",watch:"秋冬の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["一品専門店の存在（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+yurine:{name:"真狩村のゆり根生産者（北海道）",kana:"まっかりむらのゆりね",pref:"北海道",city:"虻田郡真狩村",person:"",rank:"B",
+ summary:"日本一のゆり根産地・真狩村。種球から6年かけて育てる、ほくほくと甘い球根野菜。",
+ discovery:"編集部追加調査。ゆり根は国内生産のほぼすべてが北海道で、真狩村は日本一の産地として公知。docx調査記録でも、同村のオーベルジュ「マッカリーナ」の逆引き対象（リーキ農家・ゆり根・じゃがいも・乳製品）としてゆり根が挙げられている。既収録の三野農園と同じ村で、「真狩ハブ」を構成する。",
+ diff:"畑で3年、植え替えてさらに3年、計6年かけて育てる。鱗片のほくほくした食感と上品な甘みは、一株ロースト・含め煮・かき揚げで主役を張れる。",
+ restaurants:[{name:"マッカリーナ（北海道真狩村）",note:"docx調査記録で真狩村一帯の生産者逆引き拠点として記載。ゆり根も対象",guide:true}],
+ order:{online:"産直EC・市場流通で購入可（秋冬）",wholesale:"産地農協・市場経由",watch:"年末需要期の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["docx調査記録（マッカリーナ逆引き対象）","secondary"],["日本一産地（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定","マッカリーナへの納入農家"]},
+matsutake:{name:"国産松茸の産地（長野・岩手岩泉ほか）",kana:"まつたけ",pref:"長野県",city:"上田市・青木村ほか（岩手県岩泉町も名産地）",person:"",rank:"B",
+ summary:"秋の数週間の「松茸小屋」だけで営業が成立する、香りの王様。",
+ discovery:"編集部追加調査。長野県は国産松茸の主産地で、秋だけ営業する「松茸小屋」文化が公知。岩手県岩泉町も名産地。一素材・一季節で店が成立する典型例。",
+ diff:"人工栽培ができない菌根性きのこで、香り（マツタケオール）は輸入物より国産・採取当日のものが圧倒的とされる。焼き・土瓶蒸し・すき焼きで一本が主役。",
+ restaurants:[{name:"信州の松茸小屋（上田・青木村など）",note:"秋季限定で松茸料理のみで営業が成立する業態",guide:false}],
+ order:{online:"産地直送EC・市場で購入可（9〜10月）",wholesale:"産地市場・仲卸経由",watch:"初物〜最盛期の監視に好適",},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["松茸小屋文化（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["採取者・出荷組合の特定","当日出荷の可否"]},
+jetfarm:{name:"JETFARM（北海道厚真町)",kana:"じぇっとふぁーむ",pref:"北海道",city:"勇払郡厚真町",person:"",rank:"B",
+ summary:"アスパラガス専門農家。極太で筋が少なく旨味の濃いアスパラを公式通販で直送。",
+ discovery:"編集部追加調査（2026年7月、公式サイト・公式通販の存在をWeb検索で確認済み）。北海道厚真町のアスパラガス専門農家で、グリーン・パープルの2色展開や極太規格を公式ショップで販売。",
+ diff:"アスパラ専門ゆえの規格の細かさ（太さ・色）と鮮度直送が強み。極太規格は一本焼き・低温ローストで皿の主役になる。",
+ restaurants:[],
+ order:{online:"公式オンラインショップあり（確認済み）",wholesale:"要問い合わせ",watch:"春〜初夏の販売開始監視に好適"},
+ sns:{site:"公式サイトあり（jetfarm.jp）",instagram:"要確認",x:"要確認"},
+ evidence:[["公式サイト・通販を確認（2026年7月）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["飲食店向け取引条件","使用店の実績"]},
+murakami:{name:"村上農場（北海道上士幌町）",kana:"むらかみのうじょう",pref:"北海道",city:"河東郡上士幌町",person:"",rank:"B",
+ summary:"約30品種のじゃがいもを特別栽培し、品種ごとに最適な熟成・雪下熟成で出荷する十勝の農場。",
+ discovery:"編集部追加調査（2026年7月、公式サイト・オンラインショップと取材記事をWeb検索で確認済み）。約30品種を特別栽培または農薬・化学肥料不使用で育て、貯蔵・熟成で品種ごとの食べ頃を作る。「名だたるシェフを惹きつける」とする取材記事（NIHONMONO）もあり、雪下完熟じゃがいもの販売開始告知も確認。",
+ diff:"50品種以上を研究・食味試験し、品種×熟成の掛け算で味を設計する。雪下・長期熟成で糖度と香りが変わり、丸ごと薪焼き・じゃがいもステーキで主役を張れる。品種比較の一皿も組める。",
+ restaurants:[{name:"シェフの採用実績（取材記事で言及）",note:"個別店名は要確認",guide:false}],
+ order:{online:"公式オンラインショップあり（imomame.jp・確認済み）",wholesale:"要問い合わせ",watch:"雪下完熟の販売開始（春先）監視に好適"},
+ sns:{site:"公式サイトあり",instagram:"要確認",x:"要確認"},
+ evidence:[["公式サイト・通販を確認（2026年7月）","primary"],["取材記事（NIHONMONO）","secondary"]],
+ checks:["飲食店向け取引条件","採用店の具体名"]},
+funagata:{name:"舟形マッシュルーム（山形県舟形町）",kana:"ふながたまっしゅるーむ",pref:"山形県",city:"最上郡舟形町",person:"",rank:"B",
+ summary:"生食できる鮮度と、ステーキになるジャンボ規格。国内有数のマッシュルーム専門生産者。",
+ discovery:"編集部追加調査。山形県舟形町のマッシュルーム専門生産者として公知。ジャンボマッシュルームや生食用の鮮度規格で知られる。",
+ diff:"直径10cmクラスのジャンボ規格は輪切りステーキ・丸ごとローストで主役になる。鮮度の高いものは生食（サラダ・カルパッチョ）も可能で、香りと旨味の濃さが評価される。",
+ restaurants:[],
+ order:{online:"公式・産直ECで購入可",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"公式情報あり",instagram:"要確認",x:"要確認"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["業務用規格・ロット"]},
+kinira:{name:"黄にら生産者（岡山県）",kana:"きにら",pref:"岡山県",city:"岡山市周辺",person:"",rank:"B",
+ summary:"全国シェアの大半を占める岡山特産。遮光栽培が生む黄金色と甘み、一束で主役。",
+ discovery:"編集部追加調査。黄にらは光を遮って軟白栽培するにらで、岡山県が全国生産の大半を占める特産として公知。",
+ diff:"遮光栽培で葉緑素を作らせず、黄金色・柔らかさ・上品な甘みを引き出す。お浸し・雑煮・寿司種（黄にらばら寿司）など、一束を主役に据える料理が郷土に根付く。",
+ restaurants:[],
+ order:{online:"産直EC・市場流通で購入可",wholesale:"岡山市場経由・産地問い合わせ",watch:"—"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["岡山特産（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+tsunan:{name:"雪下にんじん生産者（新潟県津南町）",kana:"ゆきしたにんじん",pref:"新潟県",city:"中魚沼郡津南町",person:"",rank:"B",
+ summary:"雪の下で越冬させて糖度と香りを引き出す、豪雪地帯ならではのにんじん。",
+ discovery:"編集部追加調査。津南町の雪下にんじんは、秋に収穫せず雪の下で越冬させ、春に掘り出す栽培法のブランドとして公知。",
+ diff:"低温ストレスで糖度が上がり、にんじん臭が減って香りが甘くなる。一本ロースト・すりおろしジュースで主役になれる。掘り出し時期（3〜4月）限定。",
+ restaurants:[],
+ order:{online:"産直EC・JAで購入可（春限定）",wholesale:"市場流通",watch:"3〜4月の掘り出し開始監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+kamonasu:{name:"賀茂なす生産者（京都・上賀茂）",kana:"かもなす",pref:"京都府",city:"京都市北区上賀茂ほか",person:"",rank:"B",
+ summary:"直径10cm超の丸なす。田楽という「なすが主役の料理」を持つ京の伝統野菜の代表。",
+ discovery:"編集部追加調査。賀茂なすは上賀茂発祥の京の伝統野菜として公知。肉質が緻密で、味噌田楽・炭火焼きなど、なす自体を中心にした料理が伝統的に成立している。",
+ diff:"果肉が緻密で煮ても焼いても崩れにくく、厚切りステーキ・丸ごと田楽が成立する。既収録の泉州水なす（生食系）・寺島ナス（小型濃厚系）と並べると、なすの主役性の比較ができる。",
+ restaurants:[{name:"京都の料理店・料亭での田楽使用",note:"個別店名は要確認",guide:false}],
+ order:{online:"産直EC・京都市場で購入可（夏季）",wholesale:"産地農協・市場流通",watch:"夏の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["京の伝統野菜（公的認定制度）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+horikawa:{name:"堀川ごぼう生産者（京都）",kana:"ほりかわごぼう",pref:"京都府",city:"京都市ほか",person:"",rank:"B",
+ summary:"中に詰め物をして炊く、京料理でごぼうが主役になる唯一無二の太物。",
+ discovery:"編集部追加調査。堀川ごぼうは聚楽第の堀跡で育ったと伝わる京の伝統野菜として公知。直径5〜6cmに育て、中心の空洞に海老や鶏を詰めて炊く料理が確立している。",
+ diff:"2年がかりで太く育て、中心部の空洞を生かした射込み（詰め物）料理でごぼう自体が皿の主役になる。香りが強く、味を含みやすい。",
+ restaurants:[],
+ order:{online:"冬季に京都市場・産直で購入可",wholesale:"市場流通・要問い合わせ",watch:"11〜12月の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["京の伝統野菜（公的認定制度）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+shogoin:{name:"聖護院かぶ生産者（京都）",kana:"しょうごいんかぶ",pref:"京都府",city:"京都市・亀岡市ほか",person:"",rank:"B",
+ summary:"かぶら蒸し・千枚漬けの主役。きめ細かな肉質の日本最大級のかぶ。",
+ discovery:"編集部追加調査。聖護院かぶは京の伝統野菜として公知。千枚漬けの原料であり、かぶら蒸しなど、かぶが主役の京料理を支える。",
+ diff:"日本最大級の丸かぶで、肉質が緻密で甘い。すりおろして蒸す「かぶら蒸し」は野菜が主役の冬の代表料理。既収録のNOTO高農園・久松農園・岩崎氏の在来カブと産地比較ができる。",
+ restaurants:[],
+ order:{online:"冬季に京都市場・産直で購入可",wholesale:"市場流通",watch:"冬の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["京の伝統野菜（公的認定制度）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+tamogi:{name:"たもぎ茸生産者（北海道）",kana:"たもぎたけ",pref:"北海道",city:"道内各地",person:"",rank:"B",
+ summary:"「幻のきのこ」と呼ばれた北海道特産の黄色いきのこ。出汁が濃く、香りで主役。",
+ discovery:"編集部追加調査。たもぎ茸は北海道で親しまれてきた特産きのこで、鮮やかな黄色と強い出汁で公知。近年は施設栽培で流通が安定。",
+ diff:"旨味成分が豊富で「出汁の出るきのこ」として味噌汁・鍋・パスタの主役になる。黄色い見た目のインパクトも強い。",
+ restaurants:[],
+ order:{online:"産直EC・道内流通で購入可",wholesale:"要問い合わせ",watch:"—"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["北海道特産（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+tamatama:{name:"完熟きんかん「たまたま」（宮崎県）",kana:"たまたま",pref:"宮崎県",city:"県内各地",person:"",rank:"B",
+ summary:"糖度基準を満たした樹上完熟だけが名乗れる、皮ごと主役のブランド金柑。",
+ discovery:"編集部追加調査。宮崎県のハウス栽培きんかんのうち、開花から一定日数以上の樹上完熟・糖度16度以上などの基準を満たすものが「たまたま」を名乗るブランドとして公知。",
+ diff:"皮ごと生食できる完熟金柑。ブランド基準による品質の均一性が強みで、デザート・前菜・肉料理の付け合わせで一粒が主役になる。",
+ restaurants:[],
+ order:{online:"百貨店・EC・産直で購入可（冬〜早春）",wholesale:"市場流通",watch:"1〜3月の出荷期監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["ブランド基準（公的出荷基準）","primary"],["編集部追加調査・要検証","unverified"]],
+ checks:["等級別の仕入れ条件"]},
+shimizu:{name:"清水白桃生産者（岡山県）",kana:"しみずはくとう",pref:"岡山県",city:"岡山市一宮ほか",person:"",rank:"B",
+ summary:"「白桃の女王」。袋がけ栽培が生む白い果皮ととろける果肉の最高級桃。",
+ discovery:"編集部追加調査。清水白桃は岡山市一宮地区発祥の白桃の最高級品種として公知。袋がけによる白い果皮と繊細な栽培で知られる。",
+ diff:"一玉ずつ袋がけして直射日光を避け、白く上品な果皮と繊細な甘みを作る。既収録の桑折町あかつき（緻密・加熱向き）と対照的な、とろける系の主役桃。",
+ restaurants:[],
+ order:{online:"百貨店・EC・産直で購入可（7月中心）",wholesale:"市場流通",watch:"7月の短い旬の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+lelectier:{name:"ル レクチエ生産者（新潟県）",kana:"るれくちえ",pref:"新潟県",city:"新潟市南区（旧白根）ほか",person:"",rank:"B",
+ summary:"「西洋梨の貴婦人」。40日以上の追熟で香りが開く新潟特産の西洋梨。",
+ discovery:"編集部追加調査。ル レクチエは新潟県（旧白根市周辺）が国内主産地の西洋梨として公知。収穫後40日前後の追熟を経て出荷される。",
+ diff:"追熟で黄金色に変わり、芳香ととろける果肉が完成する。山形ラ・フランスと並べて「西洋梨の産地比較」ができる。出荷は11月下旬〜12月と短い。",
+ restaurants:[],
+ order:{online:"産直EC・百貨店で購入可（初冬）",wholesale:"市場流通",watch:"11月下旬の販売解禁監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]},
+anpo:{name:"あんぽ柿生産者（福島県伊達市）",kana:"あんぽがき",pref:"福島県",city:"伊達市梁川町（五十沢）",person:"",rank:"B",
+ summary:"発祥の地・五十沢。とろけるゼリー状の半生干し柿。",
+ discovery:"編集部追加調査。あんぽ柿は福島県伊達市梁川町五十沢発祥の半生干し柿として公知。硫黄燻蒸により鮮やかなオレンジ色ととろける食感を保つ。",
+ diff:"完全に乾かす市田柿（もっちり系）と対照的に、水分を残したゼリー状の食感。柿のグループで「干し柿の二大系統」比較ができる。デザート素材として一個が主役。",
+ restaurants:[],
+ order:{online:"産直EC・百貨店で購入可（冬季）",wholesale:"産地農協・市場流通",watch:"冬の出荷開始監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["発祥地（公知の事実）","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["個別生産者の特定"]}
+});
+</script>
+
+<script>
+/* 主役級アイテム sp=一品専門店の証拠, mg=丸ごと一皿 */
+ITEMS.push(
+{name:"京たけのこ（朝掘り白子筍）",p:"kyotakenoko",g:"たけのこ",c:"山菜・花",al:["筍","竹の子","白子筍"],tg:["伝統栽培","希少品"],d:"敷き藁と土入れで軟白化させた朝掘り筍。えぐみが少なく刺身・焼き・炊きで主役。錦水亭が筍だけで会席を成立させる。",se:"3〜5月",hero:true,sp:"錦水亭（筍会席）",mg:true},
+{name:"自然薯",p:"jinenjo",g:"自然薯・山芋",c:"根菜",al:["山芋","とろろ","じねんじょ"],tg:["日本原産","希少品"],d:"箸で持ち上がる粘りと濃い香り。丁子屋が1596年からとろろ汁一品で営業。丸焼き・磯辺揚げでも主役。",se:"晩秋〜冬",hero:true,sp:"丁子屋（とろろ汁・1596年創業）",mg:true},
+{name:"海老芋",p:"ebiimo",g:"海老芋・里芋",c:"根菜",al:["えび芋","里芋","さといも"],tg:["伝統栽培","高級食材"],d:"土寄せで海老の曲がりと縞を作る高級里芋。緻密で煮崩れず、いもぼう・含め煮・揚げで主役。",se:"秋〜冬",hero:true,sp:"いもぼう平野家（約300年）",mg:false},
+{name:"ゆり根",p:"yurine",g:"ゆり根",c:"ねぎ・球根類",al:["百合根","ゆりね"],tg:["希少品","地域ブランド"],d:"種球から6年かけて育てる真狩村のゆり根。ほくほくと甘く、一株ロースト・含め煮・かき揚げで主役。",se:"秋〜冬（年末最盛）",hero:true,mg:true},
+{name:"国産松茸",p:"matsutake",g:"松茸",c:"きのこ",al:["マツタケ","きのこ"],tg:["天然物","希少品"],d:"人工栽培不可の香りの王様。松茸小屋は秋の数週間この一素材で営業が成立する。焼き・土瓶蒸しで主役。",se:"9〜10月",hero:true,sp:"信州の松茸小屋（秋季限定営業）",mg:true},
+{name:"極太グリーンアスパラ",p:"jetfarm",g:"アスパラガス",c:"葉菜・茎菜",al:["アスパラ","グリーンアスパラ"],tg:["専門農家","一般購入可能"],d:"アスパラ専門農家の極太規格。筋が少なく旨味が濃い。一本焼き・低温ローストで皿の主役。公式通販確認済み。",se:"春〜初夏",hero:true,mg:true},
+{name:"パープルアスパラ",p:"jetfarm",g:"アスパラガス",c:"葉菜・茎菜",al:["紫アスパラ","アスパラ"],tg:["専門農家","希少品"],d:"甘みが強くアントシアニンを含む紫規格。グリーンとの2色使いで皿が組める。",se:"春〜初夏"},
+{name:"雪下完熟じゃがいも",p:"murakami",g:"じゃがいも",c:"根菜",al:["ジャガイモ","馬鈴薯","ポテト"],tg:["熟成","特別栽培","一般購入可能"],d:"雪の下で越冬熟成させ糖度と香りを引き出す。丸ごと薪焼き・じゃがいもステーキで主役。販売開始告知あり＝監視向き。",se:"春先（雪解け後）",hero:true,mg:true},
+{name:"熟成じゃがいも（約30品種）",p:"murakami",g:"じゃがいも",c:"根菜",al:["ジャガイモ","品種じゃがいも"],tg:["熟成","特別栽培","一般購入可能"],d:"約30品種を特別栽培し、品種ごとに最適な貯蔵・熟成で出荷。品種比較の一皿が組める。",se:"秋〜春（品種で異なる）",hero:true},
+{name:"ジャンボマッシュルーム",p:"funagata",g:"マッシュルーム",c:"きのこ",al:["きのこ"],tg:["専門生産者","一般購入可能"],d:"直径10cmクラス。輪切りステーキ・丸ごとローストで主役。鮮度の高いものは生食も可能。",se:"通年",hero:true,mg:true},
+{name:"黄にら",p:"kinira",g:"にら",c:"葉菜・茎菜",al:["黄ニラ","にら","韮"],tg:["岡山特産","軟白栽培"],d:"遮光栽培の黄金色と上品な甘み。お浸し・ばら寿司など一束を主役に据える郷土料理を持つ。",se:"通年（冬〜春が充実）",hero:true},
+{name:"雪下にんじん",p:"tsunan",g:"にんじん",c:"根菜",al:["人参","雪中にんじん"],tg:["雪中熟成","地域ブランド"],d:"雪の下で越冬し糖度が上がり、にんじん臭が減る。一本ローストで主役。掘り出しは3〜4月限定。",se:"3〜4月",hero:true,mg:true},
+{name:"賀茂なす",p:"kamonasu",g:"なす",c:"果菜",al:["茄子","丸なす"],tg:["京の伝統野菜"],d:"直径10cm超・緻密な肉質の丸なす。味噌田楽・厚切りステーキという「なすが主役の料理」を持つ。",se:"夏",hero:true,mg:true},
+{name:"堀川ごぼう",p:"horikawa",g:"ごぼう",c:"根菜",al:["牛蒡","ゴボウ"],tg:["京の伝統野菜","希少品"],d:"2年がかりで直径5〜6cmに育て、中心の空洞に詰め物をして炊く。ごぼうが主役になる唯一無二の京野菜。",se:"11〜12月",hero:true,mg:true},
+{name:"聖護院かぶ",p:"shogoin",g:"かぶ",c:"根菜",al:["蕪","大かぶ"],tg:["京の伝統野菜"],d:"日本最大級の丸かぶ。すりおろして蒸す「かぶら蒸し」は野菜が主役の冬の京料理。千枚漬けの原料。",se:"冬",hero:true,mg:true},
+{name:"加賀太きゅうり",p:"kagayasai",g:"きゅうり",c:"果菜",al:["太きゅうり","胡瓜"],tg:["加賀野菜","地域ブランド"],d:"瓜のように太い加賀野菜。あんかけ・含め煮など加熱で主役になる珍しいきゅうり。",se:"初夏〜夏",mg:true},
+{name:"源助だいこん",p:"kagayasai",g:"大根",c:"根菜",al:["だいこん","源助"],tg:["加賀野菜","地域ブランド"],d:"肉質が緻密で煮崩れしにくく味がしみる。おでん・ふろふきで大根が主役になる加賀野菜。",se:"秋〜冬",hero:true,mg:true},
+{name:"たもぎ茸",p:"tamogi",g:"たもぎ茸",c:"きのこ",al:["タモギタケ","きのこ"],tg:["北海道特産"],d:"鮮やかな黄色と濃い出汁。「出汁の出るきのこ」として味噌汁・鍋・パスタの主役に。",se:"通年（施設栽培）"},
+{name:"完熟きんかん「たまたま」",p:"tamatama",g:"きんかん",c:"果物・柑橘",al:["金柑","キンカン"],tg:["ブランド基準","樹上完熟"],d:"糖度16度以上・樹上完熟の基準を満たしたものだけのブランド。皮ごと一粒が主役。",se:"1〜3月",hero:true},
+{name:"清水白桃",p:"shimizu",g:"桃",c:"果物・柑橘",al:["白桃","はくとう","もも"],tg:["最高級品種","袋がけ栽培"],d:"袋がけが生む白い果皮ととろける果肉の「白桃の女王」。あかつき（緻密系）との比較ができる。",se:"7月中心",hero:true},
+{name:"ル レクチエ",p:"lelectier",g:"洋梨",c:"果物・柑橘",al:["洋なし","ルレクチェ"],tg:["地域ブランド","追熟"],d:"収穫後40日前後の追熟で芳香ととろける果肉が完成。ラ・フランスとの産地比較ができる。出荷は初冬の短期間。",se:"11月下旬〜12月",hero:true},
+{name:"あんぽ柿",p:"anpo",g:"柿",c:"果物・柑橘",al:["干し柿","半生干し柿"],tg:["発祥地","伝統製法"],d:"水分を残したゼリー状の半生干し柿。市田柿（もっちり系）と「干し柿二大系統」の比較ができる。",se:"冬",hero:true}
+);
+
+/* 既収録アイテムへの主役バッジ付与（品名完全一致） */
+(function(){
+  const MG=new Set(["福王しいたけ（ジャンボ椎茸）","大黒舞茸「真」","アーティチョーク","リーキ","サボイキャベツ","サボイキャベツ（予約販売）","セロリラブ","万吉どん（玉ねぎ）","玉ねぎ","下仁田ねぎ","泉州水なす","冬きゅうり","加賀れんこん","安納いも","五郎島金時","嶽きみ","万願寺甘とう","ロマネスコ","九条ねぎ（周年・業務用カット対応）"]);
+  ITEMS.forEach(it=>{if(MG.has(it.name))it.mg=true;});
+})();
+
+/* 季節エンジン：se文字列から春夏秋冬を導出 */
+function seasonsOf(se){
+  const s=new Set();if(!se)return s;
+  if(se.includes("通年")){["春","夏","秋","冬","通年"].forEach(x=>s.add(x));}
+  ["春","夏","秋","冬"].forEach(k=>{if(se.includes(k))s.add(k);});
+  const ms=se.match(/\d+/g);
+  if(ms){ms.map(Number).forEach(m=>{
+    if(m>=3&&m<=5)s.add("春");else if(m>=6&&m<=8)s.add("夏");
+    else if(m>=9&&m<=11)s.add("秋");else if(m===12||m===1||m===2)s.add("冬");});}
+  if(se.includes("新茶"))s.add("春");
+  if(se.includes("新米"))s.add("秋");
+  return s;
+}
+ITEMS.forEach(it=>{it.sn=seasonsOf(it.se);});
+
+SYNONYMS.push(
+["たけのこ","タケノコ","筍","竹の子","京たけのこ","白子筍","朝掘り"],
+["じねんじょ","自然薯","山芋","やまいも","とろろ","長芋"],
+["えびいも","海老芋","えび芋","里芋","さといも"],
+["ゆりね","ゆり根","百合根"],
+["まつたけ","マツタケ","松茸"],
+["マッシュルーム","ジャンボマッシュルーム","きのこ"],
+["にら","ニラ","韮","黄にら","黄ニラ"],
+["ごぼう","ゴボウ","牛蒡","堀川ごぼう"],
+["きんかん","キンカン","金柑","たまたま"],
+["はくとう","白桃","清水白桃","もも","桃"],
+["ルレクチエ","ルレクチェ","洋梨","洋なし"],
+["あんぽ柿","干し柿","柿","かき"],
+["たもぎ","たもぎ茸","タモギタケ"],
+["アスパラ","アスパラガス","パープルアスパラ","紫アスパラ","極太アスパラ"],
+["じゃがいも","ジャガイモ","馬鈴薯","ポテト","雪下","熟成じゃがいも"]
+);
+
+RESTAURANTS.push(
+{name:"錦水亭",place:"京都府長岡京市",badge:"一品専門店（筍）",note:"明治創業。自園の朝掘り京たけのこだけで筍会席を成立させる。「素材単独で店が成り立つ」本サイト最上位基準の代表例。",links:["京たけのこ"]},
+{name:"丁子屋",place:"静岡市駿河区（丸子宿）",badge:"一品専門店（自然薯）",note:"慶長元年（1596年）創業のとろろ汁専門店。東海道の名物として広重の浮世絵にも描かれる。自然薯一素材で400年以上。",links:["自然薯"]},
+{name:"いもぼう平野家",place:"京都市（円山公園）",badge:"一品専門店（海老芋）",note:"海老芋と棒鱈の炊き合わせ「いもぼう」一品で約300年続く。",links:["海老芋"]},
+{name:"信州の松茸小屋",place:"長野県（上田・青木村など）",badge:"季節一品業態（松茸）",note:"秋の数週間、松茸料理だけで営業が成立する業態。産地直結仕入れの逆引き先として重要。",links:["国産松茸"]}
+);
+</script>
+
+<script>
+/* 追加リサーチ枠4：Destination Restaurants逆引き（2026年7月Web検索で裏取り済み） */
+Object.assign(PRODUCERS,{
+sasue:{name:"サスエ前田魚店",kana:"さすえまえだうおてん",pref:"静岡県",city:"焼津市",person:"前田尚毅氏（五代目）",rank:"A",
+ summary:"魚の「仕立て屋」。成生・日本料理FUJI・温石ら焼津の名店5軒が毎日仕入れる世界的鮮魚店。",
+ discovery:"Web検索で裏取り済み（2026年7月）。天ぷら「成生」、日本料理FUJI、茶懐石 温石、シンプルズ、馳走西健一の5店が毎日仕入れることが複数の取材記事で確認できる。2021年に仏ガイドのテロワール賞を受賞。漁師と料理人をつなぎ、調理法を想定して魚を仕立てる手法で「駿河前」という美食圏を作った。",
+ diff:"卸ではなく「仕立て屋」。どの店で・どう調理されるかを想定し、締め方・血抜き・温度・熟成を魚ごとに変えて納品する。魚の状態管理そのものが差別化要素で、店の看板料理（成生の天ぷら等）の品質を根幹で支える。",
+ restaurants:[{name:"成生（静岡・天ぷら）",note:"世界が食べに来る天ぷら店。開業以来サスエと二人三脚",guide:true},{name:"日本料理FUJI（静岡）",note:"毎日仕入れ",guide:false},{name:"茶懐石 温石（焼津）",note:"毎日仕入れ。出会いが店の転機と語られる",guide:false},{name:"シンプルズ",note:"毎日仕入れ",guide:false},{name:"馳走西健一",note:"毎日仕入れ",guide:false}],
+ order:{online:"公式サイトあり（店頭小売も人気）",wholesale:"飲食店との直接取引が本業。要相談",watch:"—"},
+ sns:{site:"sasue-maeda.com（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["複数の取材記事で使用店を確認（一次情報）","primary"],["仏ガイド テロワール賞2021","primary"]],
+ checks:["新規飲食店の取引可否"]},
+ishiwata:{name:"石渡商店",kana:"いしわたしょうてん",pref:"宮城県",city:"気仙沼市",person:"",rank:"A",
+ summary:"ふかひれ一筋60年超。日本のサメ水揚げ8割を占める気仙沼で、KUROMORIの全フカヒレを加工。",
+ discovery:"Web検索で裏取り済み（2026年7月）。Destination Restaurant of the Year 2026「気仙沼KUROMORI」のフカヒレは全量気仙沼港産で、加工は地元の石渡商店が担うことが報道（朝日新聞ほか）で確認できる。docxで「最優先逆引き対象」とされていたKUROMORIの仕入れ元が特定できた。",
+ diff:"気仙沼は日本のサメ水揚げの約8割を占める産地。60年以上ふかひれ専業で、姿煮用の大判からスープまで加工段階を一貫管理。産地・加工・専門店（KUROMORI）が一本の線でつながる、本サイトの理想形。",
+ restaurants:[{name:"気仙沼KUROMORI（フカヒレ料理専門店）",note:"Destination Restaurant of the Year 2026。フカヒレは全量気仙沼港産・石渡商店加工と報道で確認",guide:true}],
+ order:{online:"公式オンラインショップあり（確認済み）",wholesale:"業務用は問い合わせ",watch:"—"},
+ sns:{site:"ishiwatashoten.co.jp（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["報道記事でKUROMORIとの関係を確認（一次情報）","primary"],["公式オンラインショップ確認済み","primary"]],
+ checks:["業務用の規格・価格"]},
+tonoya:{name:"とおの屋 要（佐々木要太郎氏）",kana:"とおのやよう",pref:"岩手県",city:"遠野市",person:"佐々木要太郎氏",rank:"A",
+ summary:"無農薬・無肥料の在来米「遠野1号」を自家栽培し、どぶろくと発酵料理に昇華する1日1組のオーベルジュ。",
+ discovery:"Web検索で裏取り済み（2026年7月）。1922年育成の在来品種「遠野1号」を無農薬・無肥料で自家栽培し、どぶろく特区の免許で醸造。料理通信等の取材多数。スペインの世界的レストランMugaritzでも提供される。米糠まで使う醸造酒「権化」シリーズ（Peat/Maro/Mokushura、木桶・水酛）も展開。",
+ diff:"生産者と料理人と醸造家が同一人物という完全一体型。栽培から醸造・料理まで思想が貫通しており、「米という一素材」で宿・酒・料理が成立する。どぶろくは酒販店経由で購入可能。",
+ restaurants:[{name:"とおの屋 要（自店）",note:"1日1組のオーベルジュ。Mugaritz（スペイン）への輸出実績も取材で確認",guide:false}],
+ order:{online:"どぶろく・権化は取扱酒販店で購入可",wholesale:"酒販店経由・要相談",watch:"限定醸造の発売監視に好適"},
+ sns:{site:"公式情報あり",instagram:"要確認",x:"要確認"},
+ evidence:[["料理通信ほか取材記事（一次情報）","primary"],["酒販店での販売確認","secondary"]],
+ checks:["取扱酒販店リスト"]},
+aidafarm:{name:"villa aida／aida farm（小林寛司氏）",kana:"ゔぃらあいーだ",pref:"和歌山県",city:"岩出市",person:"小林寛司氏",rank:"A",
+ summary:"Destination Restaurant of the Year 2022。約100品種の自家菜園から毎朝「一番おいしいもの」だけを収穫して皿にする。",
+ discovery:"Web検索で裏取り済み（2026年7月）。隣接する自家菜園で年間約100品種の野菜・ハーブを栽培し、毎朝シェフ自ら畑を見て当日の料理を決めるスタイルが多数の取材で確認できる。DRY2022、ミシュラン二つ星（2021）、Asia's 50 Best 14位。",
+ diff:"「畑とレストランの両立」による真のfarm-to-table。流通を介さないため、味のピークで収穫でき、品種選定も味基準。シェフが栽培する野菜の水準を測る基準点として、本サイトの野菜生産者評価の参照にもなる。",
+ restaurants:[{name:"villa aida（自店）",note:"DRY2022・ミシュラン二つ星・Asia's 50 Best 14位",guide:true}],
+ order:{online:"villa AiDAのBASEショップあり（加工品等・確認済み）",wholesale:"—（自店使用が基本）",watch:"—"},
+ sns:{site:"villa-aida.jp（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["取材記事多数（一次情報）","primary"],["公式サイト・ショップ確認済み","primary"]],
+ checks:["加工品の販売内容"]},
+tokuyama:{name:"徳山鮓（徳山浩明氏）と余呉の猟師",kana:"とくやまずし",pref:"滋賀県",city:"長浜市余呉",person:"徳山浩明氏",rank:"A",
+ summary:"発酵博士・小泉武夫氏に薫陶を受けた鮒鮓の到達点と、地元猟師の冬眠前ツキノワグマ。",
+ discovery:"Web検索で裏取り済み（2026年7月）。京都の料亭で修業後、発酵学者・小泉武夫氏の薫陶を受け、チーズのように旨味の凝縮した鮒鮓を確立したことが複数の取材で確認できる。熊鍋は余呉湖周辺の山の冬眠前ツキノワグマを猟期（11〜2月）に地元猟師から仕入れ、自ら解体・加工する。",
+ diff:"鮒鮓＝琵琶湖の在来魚×米×乳酸発酵という「地域一体型の発酵食」。熊は個体の質を店主が見極めて自家解体する完全な産地直結。発酵と狩猟という2つの「再現不能な地域資源」で店が成立している。",
+ restaurants:[{name:"徳山鮓（自店・余呉湖畔のオーベルジュ）",note:"鮒鮓と熊鍋が看板。全国の料理人が食べに訪れる",guide:false}],
+ order:{online:"鮒鮓の販売は公式サイト要確認",wholesale:"—",watch:"熊は猟期（11〜2月）限定"},
+ sns:{site:"tokuyamazushi.com（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["取材記事多数（一次情報）","primary"]],
+ checks:["鮒鮓の通販可否"]},
+togahunter:{name:"利賀村・富山の契約猟師（L'évo納入）",kana:"とがむらのりょうし",pref:"富山県",city:"南砺市利賀村",person:"",rank:"B",
+ summary:"L'évoに熊・猪を直接届ける信頼された地元猟師網。獲れたてを即解体・熟成庫へ。",
+ discovery:"Web検索で裏取り済み（2026年7月）。ミシュラン二つ星のオーベルジュL'évo（谷口英司シェフ）は、信頼する地元猟師が獲ったジビエを新鮮なまま受け取り、素早く解体して熟成庫で管理することが取材記事で確認できる。猟師個人の特定は今後の課題。",
+ diff:"内臓の状態で個体の健康を見極められる鮮度での受け渡しが前提。ジビエの品質は「腕のいい猟師×即処理×熟成管理」で決まることを示す好例。",
+ restaurants:[{name:"L'évo（富山・利賀村）",note:"ミシュラン二つ星のオーベルジュ。自家菜園・山菜採取・ジビエ熟成を一貫",guide:true}],
+ order:{online:"—（店との直接関係のみ）",wholesale:"—",watch:"猟期（秋冬）"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["取材記事（一次情報）","primary"],["猟師個人は未特定","unverified"]],
+ checks:["猟師・処理施設の特定"]}
+});
+
+ITEMS.push(
+{name:"駿河湾の仕立て鮮魚",p:"sasue",g:"鮮魚",c:"魚介",al:["魚","さかな","太刀魚","鯵","駿河湾"],tg:["仕立て（神経締め・血抜き）","業務用対応"],d:"調理法を想定して締め方・血抜き・温度を魚ごとに変える「仕立て」。成生の天ぷら、FUJI・温石の椀種の品質を根幹で支える。",se:"通年（魚種は季節替わり）",hero:true},
+{name:"気仙沼産ふかひれ",p:"ishiwata",g:"ふかひれ",c:"魚介",al:["フカヒレ","鱶鰭","サメ","吉切鮫"],tg:["日本一の産地","一般購入可能","業務用対応"],d:"日本のサメ水揚げ約8割の気仙沼港産を60年超の専業技術で加工。KUROMORIの姿煮の主役。",se:"通年",hero:true,sp:"気仙沼KUROMORI（フカヒレ料理専門店・DRY2026）",mg:true},
+{name:"どぶろく（遠野1号・水酛）",p:"tonoya",g:"どぶろく",c:"酒・飲料",al:["濁酒","日本酒","酒"],tg:["自家栽培米","無農薬・無肥料","木桶仕込み"],d:"無農薬・無肥料の自家栽培在来米「遠野1号」を水酛で醸す。レシピ完成に12年。Mugaritz（スペイン）でも提供。",se:"通年（限定醸造あり）",hero:true},
+{name:"醸造酒「権化」シリーズ",p:"tonoya",g:"どぶろく",c:"酒・飲料",al:["権化","ごんげ","酒"],tg:["木桶仕込み","希少品"],d:"米と米糠を使う独自醸造酒（Peat/Maro/Mokushura）。業界に衝撃を与えた「新しい酒」と評される。",se:"限定醸造",hero:true},
+{name:"在来米「遠野1号」",p:"tonoya",g:"米",c:"豆・穀果",al:["こめ","古代米","在来種"],tg:["在来種","無農薬・無肥料","自家栽培"],d:"1922年育成の在来品種を無農薬・無肥料で栽培。どぶろく・発酵料理の母体。",se:"秋新米",hero:true},
+{name:"aida farmの野菜・ハーブ（約100品種）",p:"aidafarm",g:"シェフの自家菜園野菜",c:"葉菜・茎菜",al:["自家菜園","ハーブ","イタリア野菜"],tg:["farm to table","味基準の品種選定"],d:"毎朝シェフが畑を見て「一番おいしいもの」だけを収穫し当日の皿を決める。流通ゼロの鮮度と味基準の品種選定。",se:"通年（内容は日替わり）",hero:true},
+{name:"鮒鮓",p:"tokuyama",g:"鮒鮓",c:"魚介",al:["鮒寿司","ふなずし","なれずし","発酵食品"],tg:["発酵","伝統製法","希少品"],d:"琵琶湖の在来魚×米×乳酸発酵。チーズのように旨味が凝縮した徳山鮓の看板。発酵の頂点として全国の料理人が学びに来る。",se:"通年（仕込みは夏）",hero:true,sp:"徳山鮓（余呉・発酵オーベルジュ）"},
+{name:"余呉の熊（冬眠前ツキノワグマ）",p:"tokuyama",g:"熊・ジビエ",c:"ジビエ",al:["熊","クマ","ツキノワグマ","熊鍋"],tg:["天然物","猟期限定"],d:"余呉湖周辺の山の冬眠前ツキノワグマを地元猟師から。店主自ら解体・加工し個体の質を見極める。「伝説の熊鍋」と評される。",se:"11〜2月（猟期）",hero:true,mg:false},
+{name:"熊・猪ジビエ（利賀村）",p:"togahunter",g:"熊・ジビエ",c:"ジビエ",al:["熊","猪","イノシシ","ジビエ"],tg:["天然物","熟成","猟期限定"],d:"信頼された地元猟師から獲れたてを受け取り、即解体して熟成庫で管理。内臓で個体の健康を見極められる鮮度が前提。",se:"秋〜冬（猟期）",hero:true}
+);
+
+/* 既存データへのパッチ */
+(function(){
+  // 松茸producerに柚木元を追加（裏取り済み：秋は松茸が主役・食べログアワード2024 Gold）
+  PRODUCERS.matsutake.restaurants.push({name:"柚木元（長野・飯田）",note:"「日本一の松茸」と評される地物松茸を秋の主役に据える日本料理店（食べログアワード2024 Gold受賞）",guide:true});
+  PRODUCERS.matsutake.evidence.push(["柚木元の松茸使用（取材・番組で確認）","secondary"]);
+  // KUROMORIの逆引き完了を反映
+  const k=RESTAURANTS.find(r=>r.name==="KUROMORI");
+  if(k){k.note="Destination Restaurant of the Year 2026。フカヒレは全量気仙沼港産・石渡商店（ふかひれ専業60年超）加工と報道で確認。docxの『最優先逆引き』が完了した事例。";k.links=["気仙沼産ふかひれ"];}
+  // 新規アイテムの季節タグ
+  ITEMS.forEach(it=>{if(!it.sn)it.sn=seasonsOf(it.se);});
+})();
+
+SYNONYMS.push(
+["ふかひれ","フカヒレ","鱶鰭","サメ","鮫","姿煮"],
+["ジビエ","熊","クマ","ツキノワグマ","猪","イノシシ","鹿","シカ","狩猟"],
+["どぶろく","濁酒","権化","水酛"],
+["ふなずし","鮒鮓","鮒寿司","なれずし","発酵食品","発酵"],
+["鮮魚","魚","さかな","魚介","神経締め","血抜き","仕立て"],
+["自家菜園","ファームトゥテーブル","farmtotable","シェフの畑"]
+);
+
+RESTAURANTS.push(
+{name:"成生／日本料理FUJI／茶懐石 温石（駿河前・焼津圏）",place:"静岡県静岡市・焼津市",badge:"サスエ前田魚店の仕入れ網",note:"世界が食べに来る天ぷら「成生」をはじめ5店がサスエ前田魚店から毎日仕入れる。魚屋を核に美食圏が形成された「駿河前」の代表例。",links:["サスエ前田魚店"]},
+{name:"L'évo（レヴォ）",place:"富山県南砺市利賀村",badge:"ミシュラン二つ星・DR2021",note:"自家菜園・山菜/きのこ採取・契約猟師のジビエ熟成を一貫する前衛的地方料理のオーベルジュ。谷口英司シェフ。",links:["利賀村・富山の契約猟師（L'évo納入）"]},
+{name:"villa aida",place:"和歌山県岩出市",badge:"DR of the Year 2022・二つ星",note:"約100品種の自家菜園から毎朝収穫して皿を決めるfarm-to-tableの到達点。Asia's 50 Best 14位。",links:["villa aida／aida farm（小林寛司氏）"]},
+{name:"とおの屋 要",place:"岩手県遠野市",badge:"生産者=料理人=醸造家",note:"無農薬・無肥料の在来米「遠野1号」自家栽培からどぶろく醸造・発酵料理まで一人で貫く1日1組のオーベルジュ。",links:["どぶろく（遠野1号・水酛）"]},
+{name:"柚木元",place:"長野県飯田市",badge:"食べログアワード2024 Gold",note:"春は山菜と熊の花山椒鍋、秋は「日本一」と評される地物松茸、冬は熊・猪。南信州の山の幸で四季が組まれる日本料理店。",links:["国産松茸"]},
+{name:"徳山鮓",place:"滋賀県長浜市余呉",badge:"発酵オーベルジュ",note:"小泉武夫氏に薫陶を受けた鮒鮓と、地元猟師の冬眠前ツキノワグマの熊鍋。発酵と狩猟という再現不能な地域資源で成立。",links:["鮒鮓"]}
+);
+</script>
+
+<script>
+/* 追加リサーチ枠5：実名農家の特定・TV出演農家（2026年7月Web検索で裏取り済み） */
+Object.assign(PRODUCERS,{
+asano:{name:"エコファーム・アサノ（浅野悦男氏）",kana:"えこふぁーむあさの",pref:"千葉県",city:"八街市",person:"浅野悦男氏",rank:"A",
+ summary:"「伝説の農家」。取引レストラン100店以上、世界の三つ星シェフが巡礼する シェフズガーデン。",
+ discovery:"Web検索で裏取り済み（2026年7月）。飲食店向けに年間100品目以上の野菜・ハーブ・草花を出荷し、取引レストランは100店舗以上。アラン・パッサール、ピエール・ガニェール、レネ・レゼピら世界的シェフが畑を訪れることが複数の取材記事で確認できる。2023年ゴ・エ・ミヨ「テロワール賞」受賞。",
+ diff:"既成概念にとらわれない独学の土壌管理と、シェフとの対話から品目を決める「シェフズガーデン」方式の草分け。花・草・未熟果まで「料理人が欲しいもの」を作る。料理人にとって畑自体が発想源になっている。",
+ restaurants:[{name:"取引レストラン100店以上（都内フレンチ・イタリアン中心）",note:"個別店名は多数。アラン・パッサール、ピエール・ガニェール、レネ・レゼピらが来訪と記事で確認",guide:true}],
+ order:{online:"飲食店向け直接取引が基本",wholesale:"直接相談（新規は要問い合わせ）",watch:"—"},
+ sns:{site:"取材記事多数",instagram:"要確認",x:"要確認"},
+ evidence:[["料理王国・東洋経済ほか取材記事多数（一次情報）","primary"],["ゴ・エ・ミヨ テロワール賞2023（公的評価）","primary"]],
+ checks:["新規取引の可否"]},
+inoue:{name:"井上農場（山形県庄内・鶴岡）",kana:"いのうえのうじょう",pref:"山形県",city:"鶴岡市",person:"井上馨氏・貴利氏",rank:"A",
+ summary:"アル・ケッチァーノのリゾット米とレストラン専用野菜を育てる、庄内・地産地消の中核農場。",
+ discovery:"Web検索で裏取り済み（2026年7月）。地産地消のリーディングシェフ・奥田政行氏（アル・ケッチァーノ）の店で提供されるリゾットは井上農場の米で、多くの野菜をレストラン専用に栽培していることが取材記事で確認できる。農薬・化学肥料を使わず、ステビアや海藻エキスを用いた栽培。",
+ diff:"「レストラン専用栽培」という店と農場の直結モデル。庄内には約70種の在来野菜が残るとされ、奥田シェフと生産者たちの関係が「食の都・庄内」を形成している。",
+ restaurants:[{name:"アル・ケッチァーノ（山形・鶴岡）",note:"奥田政行シェフ。リゾット米・専用野菜の使用を取材記事で確認",guide:true}],
+ order:{online:"要確認",wholesale:"直接問い合わせ",watch:"—"},
+ sns:{site:"要確認",instagram:"要確認",x:"要確認"},
+ evidence:[["取材記事で使用を確認（一次情報）","primary"]],
+ checks:["一般販売の有無","新規取引の可否"]},
+shimosato:{name:"霜里農場（金子美登氏・埼玉県小川町）",kana:"しもさとのうじょう",pref:"埼玉県",city:"比企郡小川町",person:"金子美登氏",rank:"B",
+ summary:"日本の有機農業を切り拓いた第一人者の農場。NHK「プロフェッショナル 仕事の流儀」出演。",
+ discovery:"Web検索で裏取り済み（2026年7月）。NHK「プロフェッショナル 仕事の流儀」で「農家 金子美登の仕事 命の農場で、土に生きる」として特集されたことが公式DVDで確認できる。小川町を日本有数の有機農業の里に育てた中心人物で、既収録の風の丘ファームと同じ町。",
+ diff:"1970年代から有機農業を実践し、研修生を全国に輩出。土づくり・自給エネルギー・地域循環まで含めた農場運営の思想が、小川町全体の有機農業文化を作った。",
+ restaurants:[],
+ order:{online:"要確認",wholesale:"地元流通・提携が中心。要確認",watch:"—"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["NHKプロフェッショナル出演（公式DVDで確認）","primary"],["現在の営農状況は要確認","unverified"]],
+ checks:["現在の営農・販売状況"]}
+});
+
+/* 黄にら：実名農家へアップグレード（裏取り済み） */
+PRODUCERS.kinira={name:"アーチファーム（植田輝義氏「黄ニラ大使」）",kana:"あーちふぁーむ うえだてるよし",pref:"岡山県",city:"岡山市北区牟佐・玉柏地区",person:"植田輝義氏",rank:"A",
+ summary:"全身黄色の「黄ニラ大使」。県生産の約9割を担う名産地・牟佐で黄ニラとパクチーを周年栽培。",
+ discovery:"Web検索で裏取り済み（2026年7月）。岡山県は黄ニラの全国生産量の約7割を占め、岡山市北部の牟佐・玉柏地区が県生産量の約9割を担う。植田輝義氏は約3.5haで黄ニラ・パクチーを周年栽培するアーチファーム代表で、「黄ニラ大使」として日経ほか多数の媒体で紹介されている。",
+ diff:"旭川の恵みによる肥沃な土壌と水はけの良さが産地の基盤。遮光栽培の黄金色・柔らかさ・上品な甘みで、お浸し・ばら寿司など一束を主役に据える料理が成立する。",
+ restaurants:[{name:"東京・岡山の飲食店イベントでの採用",note:"個別店名は要確認",guide:false}],
+ order:{online:"取扱店・産直で購入可",wholesale:"アーチファームへ直接問い合わせ",watch:"—"},
+ sns:{site:"取材記事多数",instagram:"要確認",x:"要確認"},
+ evidence:[["日経ほか取材記事で確認（一次情報）","primary"]],
+ checks:["業務用の取引条件"]};
+
+ITEMS.push(
+{name:"シェフズガーデンの野菜・ハーブ・草花（年間100品目超）",p:"asano",g:"シェフの畑野菜",c:"葉菜・茎菜",al:["ハーブ","エディブルフラワー","未熟果","伝説の農家"],tg:["シェフズガーデン","レストラン専用規格","メディア出演多数"],d:"シェフとの対話から品目を決める草分け的シェフズガーデン。花・草・未熟果まで「料理人が欲しいもの」を作る。世界の三つ星シェフが畑を訪れる。",se:"通年（内容は季節替わり）",hero:true},
+{name:"レストラン専用野菜（井上農場）",p:"inoue",g:"シェフの畑野菜",c:"葉菜・茎菜",al:["専用栽培","庄内野菜"],tg:["レストラン専用規格","農薬・化学肥料不使用"],d:"アル・ケッチァーノ専用に栽培される野菜群。店と農場の直結モデルの代表例。",se:"通年（季節替わり）",hero:true},
+{name:"リゾット用の米（井上農場）",p:"inoue",g:"米",c:"豆・穀果",al:["こめ","リゾット米"],tg:["農薬・化学肥料不使用"],d:"アル・ケッチァーノのリゾットに使われる米。海藻エキス等を用いた無農薬栽培。",se:"秋新米",hero:false},
+{name:"小川町の有機野菜（霜里農場)",p:"shimosato",g:"有機野菜（多品目）",c:"葉菜・茎菜",al:["有機野菜","オーガニック"],tg:["有機農業のパイオニア","メディア出演"],d:"日本の有機農業の第一人者の農場。NHKプロフェッショナル出演。研修生を全国に輩出し小川町の有機文化を作った。",se:"通年（季節替わり）"},
+{name:"岡山パクチー",p:"kinira",g:"コリアンダー",c:"香味野菜・ハーブ",al:["パクチー","香菜","コリアンダー"],tg:["周年栽培"],d:"黄ニラ大使のアーチファームが黄ニラと並行して周年栽培。Ome Farmの固定種コリアンダーと比較できる。",se:"通年"}
+);
+
+/* TV出演情報の追記（裏取り済みのみ） */
+(function(){
+  PRODUCERS.hirosaki.summary="「奇跡のりんご」一人ではなく、考え方を共有する生産者群による「友情のりんご」供給網。木村秋則氏はNHKプロフェッショナル出演で全国区に。";
+  PRODUCERS.hirosaki.evidence.push(["NHKプロフェッショナル 仕事の流儀 出演（公式DVDで確認）","primary"]);
+  PRODUCERS.aidafarm.summary="Destination Restaurant of the Year 2022・情熱大陸出演。約100品種の自家菜園から毎朝「一番おいしいもの」だけを収穫して皿にする。";
+  PRODUCERS.aidafarm.evidence.push(["情熱大陸出演（「野菜の魔術師」として紹介・記事確認）","primary"]);
+  ITEMS.forEach(it=>{if(!it.sn)it.sn=seasonsOf(it.se);});
+})();
+
+SYNONYMS.push(
+["プロフェッショナル","情熱大陸","テレビ出演","メディア出演","TV"],
+["アルケッチァーノ","アルケッチャーノ","アルケッチアーノ","アル・ケッチァーノ"],
+["シェフズガーデン","シェフの畑","レストラン専用"],
+["パクチー","コリアンダー","香菜"],
+["有機","オーガニック","有機農業","有機JAS"]
+);
+
+RESTAURANTS.push(
+{name:"アル・ケッチァーノ",place:"山形県鶴岡市",badge:"地産地消のリーディング店",note:"奥田政行シェフ。庄内に残る約70種の在来野菜と生産者ネットワークで「食の都・庄内」を形成。リゾット米・専用野菜は井上農場。",links:["井上農場（山形県庄内・鶴岡）"]}
+);
+</script>
+
+<script>
+/* ══════════ 正規化・同義語エンジン ══════════ */
+function norm(s){
+  if(!s)return"";
+  s=s.normalize("NFKC").toLowerCase();
+  s=s.replace(/[ァ-ヶ]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0x60)); // カタカナ→ひらがな
+  s=s.replace(/[ー−\-・、。「」（）()\s　/／|｜]/g,"");
+  return s;
+}
+const SYN_N=SYNONYMS.map(g=>g.map(norm));
+function expand(tok){
+  const out=new Set([tok]);
+  for(const g of SYN_N){
+    if(g.some(w=>w===tok||w.includes(tok)||(tok.includes(w)&&w.length>=2))){
+      // 展開語の長さ制限：短い同義語（例「ねぎ」「茶」）への展開が広がりすぎるのを防ぐ
+      g.forEach(w=>{
+        if(w===tok)return out.add(w);
+        if(w.length<2)return;               // 1文字語は直接入力時のみ有効
+        if(tok.length>=4&&w.length<3)return; // 長い語からごく短い語への展開を抑制
+        out.add(w);
+      });
+    }
+  }
+  return [...out];
+}
+
+/* ══════════ カテゴリ・業態・仕入れ定義 ══════════ */
+const CATS=[
+["葉菜・茎菜","#4f6b4a"],["根菜","#8a6b3a"],["ねぎ・球根類","#6b7f3a"],["果菜","#b25b2a"],
+["豆・穀果","#a98a44"],["香味野菜・ハーブ","#3a7d5f"],["山菜・花","#7a5a8a"],["きのこ","#7a5a3a"],
+["果物・柑橘","#c2762a"],["肉・家禽","#a33a3a"],["ジビエ","#7a4a2a"],["魚介","#31708e"],["酒・飲料","#3d5a73"],["茶","#4a7a4a"],
+["調味料","#8f2b14"],["香辛料・薬味","#b23a20"],["加工品・セット","#8a8070"]];
+const CATCOLOR=Object.fromEntries(CATS);
+const BUYF=[
+["一品専門店あり",it=>it.sp],
+["丸ごと一皿",it=>it.mg],
+["主役級",it=>it.hero],
+["通販あり",it=>/あり|購入可|BASE|販売|EC/.test(PRODUCERS[it.p].order.online)&&!/未確認|限定的|要確認/.test(PRODUCERS[it.p].order.online)],
+["業務用対応",it=>it.tg.includes("業務用対応")||/卸|業務用|問い合わせ|特約/.test(PRODUCERS[it.p].order.wholesale)],
+["予約・限定",it=>it.tg.some(t=>/予約|抽選|特約|希少/.test(t))||/予約|抽選|監視/.test(PRODUCERS[it.p].order.watch||"")]];
+
+/* ══════════ 検索インデックス ══════════ */
+ITEMS.forEach((it,i)=>{
+  it.id=i;
+  const pr=PRODUCERS[it.p];
+  it.docs=[
+    {t:norm(it.name),w:10,l:"品名"},
+    {t:norm(it.g),w:9,l:"食材名"},
+    {t:it.al.map(norm).join("¶"),w:9,l:"別名"},
+    {t:norm(it.variety||""),w:8,l:"品種"},
+    {t:norm(pr.name)+"¶"+norm(pr.kana),w:7,l:"生産者"},
+    {t:norm(pr.pref)+"¶"+norm(pr.city)+"¶"+norm(pr.person||""),w:6,l:"産地"},
+    {t:pr.restaurants.map(r=>norm(r.name)).join("¶"),w:6,l:"使用店"},
+    {t:pr.restaurants.map(r=>norm(r.note)).join("¶"),w:3,l:"使用店情報"},
+    {t:it.tg.map(norm).join("¶")+"¶"+norm(it.c),w:5,l:"タグ"},
+    {t:norm(it.d)+"¶"+norm(pr.diff)+"¶"+norm(pr.summary),w:2,l:"説明文"}
+  ];
+});
+
+let state={q:"",cat:null,buy:null,season:null,tab:"ingredients"};
+
+function searchItems(){
+  const qn=norm(state.q);
+  let list=ITEMS.filter(it=>
+    (!state.cat||it.c===state.cat)&&
+    (!state.season||it.sn.has(state.season))&&
+    (!state.buy||BUYF.find(b=>b[0]===state.buy)[1](it)));
+  if(!qn){list.forEach(it=>{it.score=0;it.why=[]});return list;}
+  const toks=norm(state.q)?state.q.trim().split(/[\s　]+/).map(norm).filter(Boolean):[];
+  const res=[];
+  for(const it of list){
+    let total=0;const why=new Set();let ok=true;
+    for(const tok of toks){
+      const terms=expand(tok);
+      let best=0,bl=null,syn=false;
+      for(const d of it.docs){
+        for(const tm of terms){
+          if(tm&&d.t.includes(tm)){
+            let s=d.w+(tm===tok?0:-1); // 同義語経由は僅かに減点
+            if(d.t===tm||d.t.split("¶").includes(tm))s+=3; // 完全一致ボーナス
+            if(s>best){best=s;bl=d.l;syn=(tm!==tok);}
+          }
+        }
+      }
+      if(best===0){ok=false;break;}
+      total+=best;if(bl)why.add(bl+(syn?"（同義語）":""));
+    }
+    if(ok){it.score=total;it.why=[...why];res.push(it);}
+  }
+  return res;
+}
+
+/* ══════════ 描画 ══════════ */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function hl(text){
+  if(!state.q)return esc(text);
+  let out=esc(text);
+  const toks=state.q.trim().split(/[\s　]+/).filter(Boolean);
+  for(const t of toks){
+    if(t.length<1)continue;
+    try{out=out.replace(new RegExp("("+t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","gi"),"<mark>$1</mark>");}catch(e){}
+  }
+  return out;
+}
+function catMark(c){
+  const col=CATCOLOR[c]||"#8a8070";
+  return `<div class="cat-mark" style="background:${col}">${esc(c.slice(0,4))}</div>`;
+}
+function rankSeal(r){return `<div class="rank-seal rank-${r}" title="掲載判定 ${r}">${r}</div>`;}
+
+function renderIngredients(){
+  const hits=searchItems();
+  const groups=new Map();
+  for(const it of hits){
+    if(!groups.has(it.g))groups.set(it.g,{items:[],score:0});
+    const g=groups.get(it.g);g.items.push(it);g.score=Math.max(g.score,it.score||0);
+  }
+  const arr=[...groups.entries()].sort((a,b)=>b[1].score-a[1].score||a[0].localeCompare(b[0],"ja"));
+  document.getElementById("tabN1").textContent=`${arr.length}`;
+  const meta=document.getElementById("resultMeta");
+  const nProd=new Set(hits.map(h=>h.p)).size;
+  meta.innerHTML=state.tab==="ingredients"?`<b>${arr.length}</b>食材（${hits.length}品・${nProd}生産者）${state.q?`「${esc(state.q)}」の検索結果`:"全件表示"}`:"";
+  const el=document.getElementById("viewIngredients");
+  if(!arr.length){el.innerHTML=`<div class="no-hit"><span class="big">〇</span>該当する食材が見つかりません。<br>同義語（例：椎茸→しいたけ）でも検索できます。条件を減らしてお試しください。</div>`;return;}
+  el.innerHTML=arr.map(([gname,g],gi)=>{
+    const multi=new Set(g.items.map(i=>i.p)).size;
+    const prefs=[...new Set(g.items.map(i=>PRODUCERS[i.p].pref))];
+    const open=state.q||arr.length<=6||multi>1?"open":"";
+    const offers=g.items.sort((a,b)=>(PRODUCERS[a.p].rank>PRODUCERS[b.p].rank?1:-1)||((b.score||0)-(a.score||0))).map(it=>{
+      const pr=PRODUCERS[it.p];
+      return `<div class="offer">${rankSeal(pr.rank)}
+        <div class="offer-head"><span class="offer-producer" onclick="openModal('${it.p}')">${esc(pr.name)}</span><span class="offer-place">${esc(pr.pref)} ${esc(pr.city)}</span></div>
+        <div class="offer-name">品名：<b>${hl(it.name)}</b>${it.sp?` <span class="mini-tag" style="color:#fff;border-color:var(--shu);background:var(--shu)">一品専門店｜${esc(it.sp)}</span>`:""}${it.mg?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.12)">丸ごと一皿</span>`:""}${it.hero?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.07)">主役級</span>`:""}</div>
+        <div class="sec"><span class="sec-label">何が違うか</span><p>${hl(it.d)}</p></div>
+        ${pr.restaurants.length?`<div class="sec"><span class="sec-label">使用・関係する店</span><div class="store-tags">${pr.restaurants.map(r=>`<span class="store-tag${r.guide?" guide":""}">${esc(r.name)}</span>`).join("")}</div></div>`:""}
+        <div class="sec"><span class="sec-label">注文方法</span><p>通販：${esc(pr.order.online)}<br>業務用：${esc(pr.order.wholesale)}</p></div>
+        <div class="season-line">旬・時期：<b>${esc(it.se)}</b></div>
+        <div class="tag-row">${it.tg.map(t=>`<span class="mini-tag buy">${esc(t)}</span>`).join("")}</div>
+        ${it.why&&it.why.length?`<div class="why-hit">一致：${it.why.map(w=>`<span>${esc(w)}</span>`).join("")}</div>`:""}
+      </div>`;
+    }).join("");
+    return `<div class="group-card ${open}" style="animation-delay:${Math.min(gi*0.03,0.4)}s">
+      <div class="group-head" onclick="this.parentElement.classList.toggle('open')">
+        ${catMark(g.items[0].c)}
+        <div class="group-title"><h3>${hl(gname)}</h3>
+          <div class="group-sub"><span>${esc(g.items[0].c)}</span><span>${prefs.map(esc).join("・")}</span></div></div>
+        ${multi>1?`<div class="multi-badge"><b>${multi}</b>生産者<br>比較可</div>`:""}
+        <span class="gtoggle">▼</span>
+      </div>
+      <div class="group-body">
+        ${multi>1?`<div class="compare-note">この食材は複数の生産者が手掛けています。産地・栽培思想・注文方法を並べて比較できます。</div>`:""}
+        <div class="offer-grid">${offers}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function producerCardHTML(key,forModal){
+  const pr=PRODUCERS[key];
+  const items=ITEMS.filter(i=>i.p===key);
+  const evTag=e=>`<span class="evidence-tag ev-${e[1]==="primary"?"primary":e[1]==="secondary"?"secondary":"unverified"}">${esc(e[0])}</span>`;
+  return `<div class="producer-card">
+    <div class="pc-head">
+      <div><div class="pc-name">${esc(pr.name)}<small>${esc(pr.kana)}${pr.person?"｜"+esc(pr.person):""}</small></div></div>
+      <div class="pc-place">${esc(pr.pref)} ${esc(pr.city)}</div>
+      <div class="pc-rank"><span class="seal rank-${pr.rank}">${pr.rank}</span><span class="lbl">掲載判定</span></div>
+    </div>
+    <div class="pc-summary">${esc(pr.summary)}</div>
+    <div class="pc-grid">
+      <div class="pc-sec"><h4>何が違うのか</h4><p>${esc(pr.diff)}</p></div>
+      <div class="pc-sec"><h4>どうやって特定したか</h4><p>${esc(pr.discovery)}</p><div style="margin-top:.4rem">${pr.evidence.map(evTag).join("")}</div></div>
+      <div class="pc-sec"><h4>使用・関係する店</h4>${pr.restaurants.length?`<ul>${pr.restaurants.map(r=>`<li><b>${esc(r.name)}</b>${r.guide?` <span class="evidence-tag ev-primary" style="font-size:.62rem">ガイド掲載</span>`:""}<br><span style="font-size:.76rem;color:var(--sumi-faint)">${esc(r.note)}</span></li>`).join("")}</ul>`:`<p style="color:var(--sumi-faint)">店舗との紐付けは調査中（生産者起点の候補）</p>`}</div>
+      <div class="pc-sec"><h4>注文・仕入れ</h4><ul>
+        <li>一般通販：${esc(pr.order.online)}</li>
+        <li>業務用卸：${esc(pr.order.wholesale)}</li>
+        ${pr.order.watch&&pr.order.watch!=="—"?`<li>販売監視：${esc(pr.order.watch)}</li>`:""}
+        <li>公式サイト：${esc(pr.sns.site)}／Instagram：${esc(pr.sns.instagram)}／X：${esc(pr.sns.x)}</li></ul></div>
+    </div>
+    <div class="pc-sec" style="margin-top:.9rem"><h4>取扱い食材（${items.length}品）</h4>
+      <div class="pc-items">${items.map(i=>`<span class="pc-item-tag" onclick="jumpSearch('${esc(i.g)}')">${esc(i.name)}</span>`).join("")}</div></div>
+    ${pr.checks.length?`<div class="caution-box">仕入れ前の要確認事項：${pr.checks.map(esc).join("／")}</div>`:""}
+  </div>`;
+}
+
+function renderProducers(){
+  const keys=Object.keys(PRODUCERS).sort((a,b)=>(PRODUCERS[a].rank>PRODUCERS[b].rank?1:-1));
+  document.getElementById("tabN2").textContent=keys.length;
+  const qn=norm(state.q);
+  const filtered=qn?keys.filter(k=>{
+    const pr=PRODUCERS[k];
+    return [pr.name,pr.kana,pr.pref,pr.city,pr.person,pr.summary,pr.diff].some(f=>norm(f).includes(qn))
+      ||ITEMS.some(i=>i.p===k&&(norm(i.name).includes(qn)||norm(i.g).includes(qn)));
+  }):keys;
+  document.getElementById("resultMeta").innerHTML=`<b>${filtered.length}</b>生産者 ${state.q?`「${esc(state.q)}」で絞り込み`:"（判定A→B順）"}`;
+  document.getElementById("viewProducers").innerHTML=filtered.length?filtered.map(k=>producerCardHTML(k)).join(""):`<div class="no-hit"><span class="big">〇</span>該当する生産者がいません</div>`;
+}
+
+function renderRestaurants(){
+  document.getElementById("tabN3").textContent=RESTAURANTS.length;
+  document.getElementById("resultMeta").innerHTML=`名店・注目店から食材と生産者を逆引きする（docx調査記録より）`;
+  document.getElementById("viewRestaurants").innerHTML=RESTAURANTS.map(r=>`
+    <div class="resto-card">
+      <div class="resto-head"><span class="resto-name">${esc(r.name)}</span><span class="resto-place">${esc(r.place)}</span><span class="resto-badge">${esc(r.badge)}</span></div>
+      <div class="resto-note">${esc(r.note)}</div>
+      ${r.links.length?`<div class="resto-links">${r.links.map(l=>`<span class="pc-item-tag" onclick="jumpSearch('${esc(l)}')">${esc(l)} →</span>`).join("")}</div>`:`<div style="font-size:.72rem;color:var(--sumi-faint)">仕入れ先の特定は今後の調査対象</div>`}
+    </div>`).join("");
+}
+
+/* ══════════ UI配線 ══════════ */
+function render(){
+  document.getElementById("viewIngredients").style.display=state.tab==="ingredients"?"":"none";
+  document.getElementById("viewProducers").style.display=state.tab==="producers"?"":"none";
+  document.getElementById("viewRestaurants").style.display=state.tab==="restaurants"?"":"none";
+  if(state.tab==="ingredients")renderIngredients();
+  else if(state.tab==="producers")renderProducers();
+  else renderRestaurants();
+  renderIngredients0Counts();
+}
+function renderIngredients0Counts(){
+  // タブ件数は常時更新
+  const saveTab=state.tab;
+  document.getElementById("tabN2").textContent=Object.keys(PRODUCERS).length;
+  document.getElementById("tabN3").textContent=RESTAURANTS.length;
+}
+function jumpSearch(q){
+  state.q=q;state.tab="ingredients";state.cat=null;state.buy=null;state.season=null;
+  document.getElementById("searchInput").value=q;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab==="ingredients"));
+  buildChips();closeModal();render();
+  window.scrollTo({top:0,behavior:"smooth"});
+  document.getElementById("clearBtn").style.display="block";
+}
+function openModal(key){
+  document.getElementById("modalBody").innerHTML=producerCardHTML(key,true);
+  document.getElementById("modalBack").classList.add("show");
+  document.body.style.overflow="hidden";
+}
+function closeModal(){
+  document.getElementById("modalBack").classList.remove("show");
+  document.body.style.overflow="";
+}
+document.getElementById("modalBack").addEventListener("click",e=>{if(e.target.id==="modalBack")closeModal();});
+document.getElementById("modalClose").addEventListener("click",closeModal);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+
+function buildChips(){
+  const cc=document.getElementById("catChips");
+  cc.innerHTML=CATS.map(([c])=>{
+    const n=ITEMS.filter(i=>i.c===c).length;
+    return `<button class="chip ${state.cat===c?"on":""}" data-cat="${esc(c)}">${esc(c)}<span class="cnt">${n}</span></button>`;
+  }).join("");
+  cc.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{state.cat=state.cat===b.dataset.cat?null:b.dataset.cat;buildChips();render();}));
+  const sc=document.getElementById("seasonChips");
+  sc.innerHTML=["春","夏","秋","冬","通年"].map(s=>{
+    const n=ITEMS.filter(i=>i.sn.has(s)).length;
+    return `<button class="chip shu ${state.season===s?"on shu":""}" data-season="${s}">${s}<span class="cnt">${n}</span></button>`;
+  }).join("");
+  sc.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{state.season=state.season===b.dataset.season?null:b.dataset.season;buildChips();render();}));
+  const bc=document.getElementById("buyChips");
+  bc.innerHTML=BUYF.map(([n])=>`<button class="chip ${state.buy===n?"on":""}" data-buy="${n}">${n}</button>`).join("");
+  bc.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{state.buy=state.buy===b.dataset.buy?null:b.dataset.buy;buildChips();render();}));
+}
+
+const si=document.getElementById("searchInput");
+let deb;
+si.addEventListener("input",()=>{
+  clearTimeout(deb);
+  deb=setTimeout(()=>{
+    state.q=si.value;
+    document.getElementById("clearBtn").style.display=si.value?"block":"none";
+    render();
+  },120);
+});
+document.getElementById("clearBtn").addEventListener("click",()=>{si.value="";state.q="";document.getElementById("clearBtn").style.display="none";render();si.focus();});
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  state.tab=t.dataset.tab;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x===t));
+  render();
+}));
+
+buildChips();
+render();
+</script>
+</body>
+</html>
