@@ -383,6 +383,46 @@ main{max-width:1200px;margin:0 auto;padding:1.4rem 1.4rem 4rem}
 .modal-close:hover{background:var(--shu)}
 .modal .producer-card{margin:0;box-shadow:none;border:none;background:transparent}
 
+/* ───── 仕入れ候補リスト ───── */
+.star-btn{
+  position:absolute;top:.8rem;right:3.1rem;
+  border:1.5px solid var(--kin);background:none;border-radius:50%;
+  width:30px;height:30px;cursor:pointer;font-size:.95rem;line-height:1;
+  color:var(--kin);transition:all .15s;
+}
+.star-btn:hover{transform:scale(1.15)}
+.star-btn.on{background:var(--kin);color:#fff}
+.float-star{
+  position:fixed;bottom:1.4rem;right:1.4rem;z-index:40;
+  background:var(--sumi);color:var(--washi);
+  border:none;border-radius:999px;
+  padding:.7rem 1.3rem;cursor:pointer;
+  font-family:var(--serif);font-weight:700;font-size:.92rem;letter-spacing:.08em;
+  box-shadow:0 6px 20px rgba(34,29,22,.35);
+  display:none;align-items:center;gap:.45rem;
+}
+.float-star:hover{background:var(--shu)}
+.float-star .n{
+  background:var(--kin);color:#fff;border-radius:50%;
+  width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-family:var(--sans);
+}
+.star-list-item{
+  display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;
+  padding:.55rem 0;border-bottom:1px dashed var(--line);font-size:.86rem;
+}
+.star-list-item .rm{
+  border:1px solid var(--line);background:none;border-radius:6px;
+  cursor:pointer;font-size:.72rem;color:var(--sumi-faint);padding:.1rem .5rem;
+}
+.star-list-item .rm:hover{color:var(--shu);border-color:var(--shu)}
+.copy-btn{
+  font-family:var(--serif);font-weight:700;
+  border:1.5px solid var(--sumi);background:var(--washi-card);border-radius:9px;
+  padding:.45rem 1.1rem;cursor:pointer;font-size:.85rem;letter-spacing:.08em;
+}
+.copy-btn:hover{background:var(--sumi);color:var(--washi)}
+
 /* ───── 地域ビュー ───── */
 .region-nav{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.2rem}
 .region-nav a{
@@ -2102,6 +2142,113 @@ SYNONYMS.push(
 </script>
 
 <script>
+/* 追加リサーチ枠11：魚介ブランド・DR続編（片折/たかむら）・未特定農家の特定（2026年7月Web検索で裏取り済み） */
+Object.assign(PRODUCERS,{
+akashiura:{name:"明石浦漁業協同組合（昼網）",kana:"あかしうらぎょきょう",pref:"兵庫県",city:"明石市",person:"",rank:"A",
+ summary:"日本でも珍しい「昼網」— 11時のセリは活魚が基準。明石海峡の急流が育てる鯛と蛸。",
+ discovery:"Web検索で裏取り済み（2026年7月）。明石浦漁協は11時からセリを行い、水揚げ直後の魚を活きたまま販売する「昼網」で公知。約100種が四季を通じて水揚げされ、活け締め・血抜き・神経抜きの「明石浦じめ」で鮮度を管理。明石・神戸の鮨店・料理店が昼網の魚を当日提供する。",
+ diff:"「その日の昼に揚がった魚をその日の夜に出せる」という時間設計そのものが価値。急流で身が締まった明石鯛・明石だこは、歯応えと旨味で寿司・天ぷらの主役になる。",
+ restaurants:[{name:"明石・神戸の鮨店・料理店（昼網仕入れ）",note:"昼網の魚を当日提供する店多数。昼網鮨ツアーも開催",guide:false}],
+ order:{online:"市場・仲買経由。産直EC取扱いあり",wholesale:"明石浦漁協の仲買経由",watch:"桜鯛（春）・蛸（夏）の旬監視に好適"},
+ sns:{site:"akashiura.or.jp（確認済み）",instagram:"—",x:"—"},
+ evidence:[["漁協公式・取材記事で確認（一次情報）","primary"]],
+ checks:["県外飲食店への流通経路"]},
+himi:{name:"ひみ寒ぶり（氷見魚ブランド対策協議会）",kana:"ひみかんぶり",pref:"富山県",city:"氷見市（氷見漁港）",person:"",rank:"A",
+ summary:"判定委員会が「宣言」で漁期を管理し、1本ずつ販売証明書を付ける寒ぶりブランドの最高峰。",
+ discovery:"Web検索で裏取り済み（2026年7月）。氷見魚ブランド対策協議会（生産者・漁協・仲買の代表で構成）が魚体を判定して「ひみ寒ぶり宣言」を出し、期間中に氷見漁港でセリにかけられた定置網のぶりのみが名乗れる。1本ごとに販売証明書を発行し青い統一箱で出荷。金沢「片折」の店主は氷見出身で、毎日氷見・能登へ自ら仕入れに向かうことが記事で確認できる。",
+ diff:"痩せた個体を除外する判定と証明書制度は、ブランド管理の全国模範。富山湾の定置網は魚へのストレスが少なく、脂と身のキレが両立する。ぶりしゃぶ・刺身・照り焼きで冬の主役。",
+ restaurants:[{name:"片折（金沢）",note:"超予約困難の日本料理店。店主が毎日氷見・能登へ自ら仕入れ（記事確認）",guide:true},{name:"御料理ふじ居（富山・岩瀬）",note:"富山湾の魚を直接仕入れ（既収録）",guide:true}],
+ order:{online:"氷見の鮮魚店・産直ECで購入可（販売証明書つき）",wholesale:"氷見漁港の仲買経由",watch:"「ひみ寒ぶり宣言」（例年11月末〜）の監視に好適"},
+ sns:{site:"きときとひみどっとこむ等で公式情報",instagram:"—",x:"—"},
+ evidence:[["ブランド判定・証明書制度（公的運用）","primary"],["片折の仕入れ（記事確認）","primary"]],
+ checks:["仲買・鮮魚店の選定"]},
+sekiaji:{name:"佐賀関漁協（関さば・関あじ）",kana:"さがのせきぎょきょう",pref:"大分県",city:"大分市佐賀関",person:"",rank:"B",
+ summary:"一本釣り＋活け越し＋面買い。ブランド魚の元祖「関さば・関あじ」。",
+ discovery:"編集部追加調査。豊予海峡（速吸の瀬戸）の急流で育つさば・あじを一本釣りし、活け込んで出荷する佐賀関漁協のブランドとして公知。魚に触れず目視で値決めする「面買い」など独自の品質管理で、ブランド魚の先駆けとされる。",
+ diff:"急流で身が締まり、一本釣り×活け越しでストレスと傷を排除。さばを刺身で出せる品質管理が価値の核。ごまさば・りゅうきゅうなど郷土料理でも主役。",
+ restaurants:[],
+ order:{online:"漁協直販・取扱店で購入可",wholesale:"佐賀関漁協経由",watch:"秋〜冬（脂ののる時期）の監視に好適"},
+ sns:{site:"公式情報あり",instagram:"—",x:"—"},
+ evidence:[["ブランドの公知性・漁協の品質管理","secondary"],["編集部追加調査・要検証","unverified"]],
+ checks:["県外への出荷条件"]},
+hinai:{name:"比内地鶏の生産者（秋田県北部）",kana:"ひないじどり",pref:"秋田県",city:"大館市・北秋田市周辺",person:"",rank:"B",
+ summary:"日本三大地鶏。DR2021「日本料理たかむら」の幻の一品「首皮焼き」を支える秋田の地鶏。",
+ discovery:"Web検索で裏取り済み（2026年7月）。日本三大地鶏のひとつとされる比内地鶏は、DR2021選出「日本料理たかむら」（秋田・江戸料理）で使用され、一羽から一枚しか取れない「首皮焼き」は完全事前予約の幻の逸品と紹介されている。個別生産農場は未特定。",
+ diff:"放し飼いで長期飼育される比内地鶏は、歯応えと濃い旨味、上質な脂が特徴。焼き（首皮・正肉）ときりたんぽ鍋の出汁で主役を張る。",
+ restaurants:[{name:"日本料理たかむら（秋田）",note:"DR2021選出の江戸料理店。首皮焼きは一羽から一枚の幻の逸品（記事確認）",guide:true}],
+ order:{online:"産直EC・秋田県内流通で購入可",wholesale:"銘柄流通あり。要問い合わせ",watch:"—"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["たかむらでの使用（記事確認）","primary"],["個別農場は未特定","unverified"]],
+ checks:["個別生産農場の特定"],unid:true},
+junsai:{name:"三種町のじゅんさい（秋田）",kana:"じゅんさい",pref:"秋田県",city:"山本郡三種町",person:"",rank:"B",
+ summary:"生産日本一・三種町。小舟で一芽ずつ手摘みする初夏の宝石。",
+ discovery:"編集部追加調査。秋田県三種町はじゅんさいの生産日本一として公知。日本料理たかむらの冷製すり流し椀でも、新鮮なじゅんさいの食感が秋田らしさとして紹介されている。個別の摘み手・生産者は未特定。",
+ diff:"沼に小舟を浮かべ一芽ずつ手摘みする生のじゅんさいは、瓶詰と別物のぷるぷるした食感。椀・酢の物・鍋で初夏の主役になる。",
+ restaurants:[{name:"日本料理たかむら（秋田）",note:"冷製枝豆のすり流し椀にじゅんさい（記事確認）",guide:true}],
+ order:{online:"産直EC・ふるさと納税で生じゅんさいを購入可（初夏）",wholesale:"産地出荷組合経由",watch:"生じゅんさい（5〜8月）の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["生産日本一（公知の事実）","secondary"],["たかむらでの使用（記事確認）","primary"]],
+ checks:["摘み手・出荷者の特定"],unid:true}
+});
+
+/* 未特定農家の特定アップグレード（裏取り済み） */
+PRODUCERS.kamonasu={name:"上賀茂特産野菜研究会（京賀茂なす）",kana:"かみがもとくさんやさいけんきゅうかい",pref:"京都府",city:"京都市北区上賀茂",person:"16生産者",rank:"A",
+ summary:"GI登録「京賀茂なす」。上賀茂神社境内の集荷場から老舗料理店へ。固定種を自家採種で守る16軒。",
+ discovery:"Web検索で裏取り済み（2026年7月）。「京賀茂なす」は地理的表示（GI）保護制度の登録産品（登録第165号ページで確認）。JA京都市上賀茂支部の16生産者による上賀茂特産野菜研究会が、上賀茂神社境内の集荷施設「グリーンハウス」で週3回共同出荷。1992年から保存圃場で固定種を自家採種し、初物は神社へ奉納、多くは京都の老舗料理店へ出荷される。",
+ diff:"大玉で艶のある伝統の特性を、自家採種と選抜で維持。等級（優・秀）選別で京都市中央卸売市場へ。肉質が緻密で田楽・厚切りステーキが成立する「なすが主役の料理」を持つ。",
+ restaurants:[{name:"京都の老舗料理店",note:"出荷先の中心と公式情報で確認",guide:false}],
+ order:{online:"夏季に京都市場・産直で購入可",wholesale:"JA京都市・京都市中央卸売市場経由",watch:"夏の出荷期監視に好適"},
+ sns:{site:"JA京都市公式で確認",instagram:"—",x:"—"},
+ evidence:[["GI登録（公的情報）","primary"],["研究会・出荷体制（JA公式で確認）","primary"]],
+ checks:["個別生産者名の公開範囲"]};
+PRODUCERS.tokutani={name:"徳谷トマトの生産者たち（生産者番号制・高知市一宮）",kana:"とくたにとまと",pref:"高知県",city:"高知市一宮徳谷",person:"約11生産者（No.52ほか）",rank:"A",
+ summary:"生産者番号で指名買いされる塩トマトの聖地。No.52は最高峰と名指しされる存在。",
+ discovery:"Web検索で裏取り済み（2026年7月）。徳谷トマトは高知市一宮徳谷地区（かつての海底）の約11生産者が栽培し、出荷箱に生産者番号が記される指名買い文化を確認。特に「No.52」は最高峰と紹介され、番号22・27・39・88・99の4生産者グループは「徳谷はじまりトマト」ブランドを展開（山本浩寿氏の生産者限定販売も確認）。JA高知市の地域団体商標。",
+ diff:"海底由来の塩分土壌で水分吸収が抑えられ、小玉に糖度と酸が凝縮。生産者番号で味を指名買いできる、本サイトの思想（誰が作ったかで選ぶ）を体現する産地。",
+ restaurants:[{name:"高級果実店・百貨店（高島屋等）での取り扱い",note:"通販ページで確認",guide:false}],
+ order:{online:"竹田青果・高知の産直EC等で番号指定購入可（冬〜春）",wholesale:"JA高知市・仲買経由",watch:"冬〜春の出荷期監視に好適"},
+ sns:{site:"取扱店ページで確認",instagram:"—",x:"—"},
+ evidence:[["生産者番号制・地域団体商標（公式情報）","primary"],["No.52等の指名買い文化（取扱店で確認）","primary"]],
+ checks:["各番号の生産者名"]};
+(function(){
+  const m=PRODUCERS.matsutake;
+  m.name="国産松茸（岩泉まつたけ事業協同組合ほか）";
+  m.discovery+="／追加調査（2026年7月）：岩手県岩泉町では1993年設立の岩泉まつたけ事業協同組合が産地化を進め、公式オンラインショップで天然岩泉まつたけを販売していることを確認。";
+  m.order.online="岩泉まつたけ事業協同組合のオンラインショップあり（確認済み・時価）";
+  m.unid=false;
+  m.evidence.push(["岩泉まつたけ事業協同組合の公式ショップ確認","primary"]);
+  m.checks=["長野側の出荷組合の特定"];
+})();
+
+ITEMS.push(
+{name:"明石鯛（昼網・明石浦じめ）",p:"akashiura",g:"鯛",c:"魚介",al:["たい","真鯛","桜鯛"],tg:["昼網","活け締め"],d:"11時のセリで活魚のまま買われ、その日の夜に店へ。急流で身の締まった鯛は寿司・天ぷらの主役。",se:"通年（桜鯛は春）",hero:true},
+{name:"明石だこ",p:"akashiura",g:"たこ",c:"魚介",al:["タコ","蛸","真だこ"],tg:["昼網","地域ブランド"],d:"明石海峡の急流と豊富な餌で「立って歩く」と言われる身の締まり。たこしゃぶ・天ぷら・煮蛸で主役。",se:"夏最盛",hero:true},
+{name:"ひみ寒ぶり",p:"himi",g:"ぶり",c:"魚介",al:["寒ブリ","鰤","ブリ"],tg:["ブランド宣言制度","販売証明書つき"],d:"判定委員会の「宣言」期間に氷見港でセリにかけられた定置網ぶりだけが名乗れる。1本ずつ販売証明書つき。冬の主役。",se:"冬（宣言期間）",hero:true,mg:true},
+{name:"関さば",p:"sekiaji",g:"さば",c:"魚介",al:["サバ","鯖"],tg:["一本釣り","活け越し"],d:"急流育ちを一本釣り。刺身で出せるさばの代名詞。",se:"秋〜冬",hero:true},
+{name:"関あじ",p:"sekiaji",g:"あじ",c:"魚介",al:["アジ","鯵"],tg:["一本釣り","活け越し"],d:"ブランド魚の先駆け。締まった身と上品な脂。",se:"春〜夏",hero:true},
+{name:"比内地鶏",p:"hinai",g:"地鶏・銘柄鶏",c:"肉・家禽",al:["地鶏","きりたんぽ"],tg:["日本三大地鶏"],d:"放し飼い長期飼育の歯応えと濃い旨味。たかむらの首皮焼きは一羽から一枚の幻の逸品。伊達鶏と地鶏比較ができる。",se:"通年",hero:true,sp:"日本料理たかむら（秋田・DR2021）の首皮焼き"},
+{name:"生じゅんさい",p:"junsai",g:"じゅんさい",c:"山菜・花",al:["蓴菜","ジュンサイ"],tg:["生産日本一","手摘み"],d:"小舟から一芽ずつ手摘み。瓶詰と別物のぷるぷる食感で椀・酢の物の主役。",se:"5〜8月",hero:true}
+);
+
+SYNONYMS.push(
+["たい","鯛","真鯛","桜鯛","明石鯛"],
+["たこ","タコ","蛸","明石だこ"],
+["ぶり","ブリ","鰤","寒ぶり","寒ブリ","ひみ寒ぶり"],
+["さば","サバ","鯖","関さば"],
+["あじ","アジ","鯵","関あじ"],
+["じゅんさい","蓴菜","ジュンサイ"],
+["比内地鶏","きりたんぽ"]
+);
+
+RESTAURANTS.push(
+{name:"片折",place:"石川県金沢市",badge:"DR2021・超予約困難",note:"店主・片折卓矢氏（氷見出身）が毎日夜明け前に氷見・能登（珠洲・七尾）へ自ら仕入れに向かう究極の地産地消。米は氷見の一等コシヒカリ、鰹節は枕崎特注。",links:["ひみ寒ぶり"]},
+{name:"日本料理たかむら",place:"秋田市",badge:"DR2021・江戸料理",note:"目白「太古八」板長を経て1999年開業。比内地鶏の首皮焼き（一羽から一枚・完全事前予約）、じゅんさいの椀など秋田食材×江戸料理の流儀。",links:["比内地鶏","生じゅんさい"]}
+);
+
+(function(){ITEMS.forEach(it=>{if(!it.sn)it.sn=seasonsOf(it.se);});})();
+</script>
+
+<script>
 /* ══════════ 正規化・同義語エンジン ══════════ */
 function norm(s){
   if(!s)return"";
@@ -2232,7 +2379,8 @@ function renderIngredients(){
     const open=state.q||arr.length<=6||multi>1?"open":"";
     const offers=g.items.sort((a,b)=>(PRODUCERS[a.p].rank>PRODUCERS[b.p].rank?1:-1)||((b.score||0)-(a.score||0))).map(it=>{
       const pr=PRODUCERS[it.p];
-      return `<div class="offer">${rankSeal(pr.rank)}
+      const sk=encodeURIComponent(it.p+"||"+it.name);
+      return `<div class="offer">${rankSeal(pr.rank)}<button class="star-btn ${stars.has(it.p+"||"+it.name)?"on":""}" data-sk="${sk}" onclick="toggleStar(this)" title="仕入れ候補に追加">★</button>
         <div class="offer-head"><span class="offer-producer" onclick="openModal('${it.p}')">${esc(pr.name)}</span><span class="offer-place">${esc(pr.pref)} ${esc(pr.city)}</span>${pr.unid?`<span class="mini-tag" style="border-style:dashed;color:#7a5a2a;background:rgba(169,138,68,.08)">農家特定できず・EC/市場で購入可</span>`:""}</div>
         <div class="offer-name">品名：<b>${hl(it.name)}</b>${it.sp?` <span class="mini-tag" style="color:#fff;border-color:var(--shu);background:var(--shu)">一品専門店｜${esc(it.sp)}</span>`:""}${it.mg?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.12)">丸ごと一皿</span>`:""}${it.hero?` <span class="mini-tag" style="color:var(--shu-deep);border-color:var(--shu);background:rgba(178,58,32,.07)">主役級</span>`:""}</div>
         <div class="sec"><span class="sec-label">何が違うか</span><p>${hl(it.d)}</p></div>
@@ -2310,6 +2458,70 @@ function renderRestaurants(){
       <div class="resto-note">${esc(r.note)}</div>
       ${r.links.length?`<div class="resto-links">${r.links.map(l=>`<span class="pc-item-tag" onclick="jumpSearch('${esc(l)}')">${esc(l)} →</span>`).join("")}</div>`:`<div style="font-size:.72rem;color:var(--sumi-faint)">仕入れ先の特定は今後の調査対象</div>`}
     </div>`).join("");
+}
+
+/* ══════════ 仕入れ候補リスト（★・ブラウザ保存） ══════════ */
+let stars=new Set();
+try{stars=new Set(JSON.parse(localStorage.getItem("shokuzaiStars")||"[]"));}catch(e){}
+function saveStars(){try{localStorage.setItem("shokuzaiStars",JSON.stringify([...stars]));}catch(e){}}
+function toggleStar(btn){
+  const k=decodeURIComponent(btn.dataset.sk);
+  if(stars.has(k))stars.delete(k);else stars.add(k);
+  saveStars();btn.classList.toggle("on",stars.has(k));updateFloatStar();
+}
+function updateFloatStar(){
+  const f=document.getElementById("floatStar");
+  f.style.display=stars.size?"flex":"none";
+  const n=f.querySelector(".n");if(n)n.textContent=stars.size;
+}
+function starEntries(){
+  return [...stars].map(k=>{
+    const [p,name]=k.split("||");
+    const it=ITEMS.find(i=>i.p===p&&i.name===name);
+    return it?{k,it,pr:PRODUCERS[p]}:null;
+  }).filter(Boolean);
+}
+function openStarList(){
+  const es=starEntries();
+  const byP={};es.forEach(e=>{(byP[e.it.p]=byP[e.it.p]||[]).push(e);});
+  const body=Object.keys(byP).map(p=>{
+    const pr=PRODUCERS[p];
+    return `<div style="margin-bottom:1rem">
+      <div style="font-family:var(--serif);font-weight:700;color:var(--shu-deep);font-size:1rem">${esc(pr.name)}<span style="font-size:.74rem;color:var(--sumi-faint)">　${esc(pr.pref)} ${esc(pr.city)}</span></div>
+      <div style="font-size:.76rem;color:var(--sumi-soft);margin:.15rem 0 .3rem">通販：${esc(pr.order.online)}／業務用：${esc(pr.order.wholesale)}</div>
+      ${byP[p].map(e=>`<div class="star-list-item"><b>${esc(e.it.name)}</b><span style="font-size:.74rem;color:var(--sumi-faint)">${esc(e.it.se)}</span><button class="rm" onclick="removeStar('${encodeURIComponent(e.k)}')">はずす</button></div>`).join("")}
+    </div>`;
+  }).join("");
+  document.getElementById("modalBody").innerHTML=`<div class="producer-card">
+    <div class="pc-head"><div class="pc-name">仕入れ候補リスト<small>${es.length}品（この端末のブラウザに保存されています）</small></div></div>
+    ${es.length?body:`<p style="color:var(--sumi-faint)">まだ候補がありません。食材カードの★ボタンで追加できます。</p>`}
+    ${es.length?`<div style="display:flex;gap:.6rem;margin-top:1rem;flex-wrap:wrap">
+      <button class="copy-btn" onclick="copyStarList()">リストをテキストでコピー</button>
+      <button class="copy-btn" onclick="if(confirm('候補リストを空にしますか？')){stars.clear();saveStars();updateFloatStar();openStarList();render();}">全部はずす</button>
+    </div><div id="copyMsg" style="font-size:.75rem;color:var(--midori);margin-top:.4rem"></div>`:""}
+  </div>`;
+  document.getElementById("modalBack").classList.add("show");
+  document.body.style.overflow="hidden";
+}
+function removeStar(ek){
+  stars.delete(decodeURIComponent(ek));saveStars();updateFloatStar();openStarList();render();
+}
+function copyStarList(){
+  const es=starEntries();
+  const lines=["【仕入れ候補リスト】食材帖より（"+es.length+"品）",""];
+  const byP={};es.forEach(e=>{(byP[e.it.p]=byP[e.it.p]||[]).push(e);});
+  Object.keys(byP).forEach(p=>{
+    const pr=PRODUCERS[p];
+    lines.push("■ "+pr.name+"（"+pr.pref+" "+pr.city+"）");
+    byP[p].forEach(e=>lines.push("・"+e.it.name+"（"+e.it.se+"）"));
+    lines.push("　通販: "+pr.order.online);
+    lines.push("　業務用: "+pr.order.wholesale);
+    lines.push("");
+  });
+  lines.push("出典: https://masafumi331.github.io/shokuzai-cho/");
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>{
+    const m=document.getElementById("copyMsg");if(m)m.textContent="コピーしました。LINEやメールに貼り付けできます。";
+  }).catch(()=>{const m=document.getElementById("copyMsg");if(m)m.textContent="コピーに失敗しました。";});
 }
 
 /* ══════════ 地域ビュー ══════════ */
@@ -2461,8 +2673,15 @@ document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
   render();
 }));
 
+const fs=document.createElement("button");
+fs.id="floatStar";fs.className="float-star";
+fs.innerHTML=`仕入れ候補<span class="n">0</span>`;
+fs.addEventListener("click",openStarList);
+document.body.appendChild(fs);
+
 buildChips();
 render();
+updateFloatStar();
 </script>
 </body>
 </html>
