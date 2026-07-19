@@ -2676,8 +2676,11 @@ function searchItems(){
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* ドメイン文字列を自動でクリック可能なリンクにする（裏取り済みURLのみデータに入っている） */
 const DOMAIN_RE=/((?:[a-z0-9][a-z0-9\-]*\.)+(?:co\.jp|or\.jp|ne\.jp|com|net|org|jp))(\/[^\s　、。）)]*)?/gi;
+/* 相手側のHTTPS証明書が正しく設定されていない（httpのみ正常な）サイト。これらだけhttpでリンクする */
+const HTTP_ONLY=new Set(["rucora831.com","kamakurarenbai.com"]);
+function urlScheme(m){return HTTP_ONLY.has(String(m).split("/")[0].toLowerCase())?"http":"https";}
 function linkifyText(raw){
-  return esc(raw).replace(DOMAIN_RE,m=>`<a href="https://${m}" target="_blank" rel="noopener" class="ext-link">${m}</a>`);
+  return esc(raw).replace(DOMAIN_RE,m=>`<a href="${urlScheme(m)}://${m}" target="_blank" rel="noopener" class="ext-link">${m}</a>`);
 }
 function snsHandle(val,base){
   if(!val)return "—";
@@ -2687,7 +2690,7 @@ function snsHandle(val,base){
 function producerUrl(pr){
   const src=(pr.sns.site||"")+" "+(pr.order.online||"")+" "+(pr.order.wholesale||"");
   const m=src.match(/((?:[a-z0-9][a-z0-9\-]*\.)+(?:co\.jp|or\.jp|ne\.jp|com|net|org|jp))(\/[^\s　、。）)]*)?/i);
-  return m?("https://"+m[0]):"";
+  return m?(urlScheme(m[0])+"://"+m[0]):"";
 }
 /* 確認済みURLがあれば直リンク、なければ公式サイトのGoogle検索リンクを返す（全生産者に必ずリンクを付ける） */
 function siteLinkBtn(pr,label){
