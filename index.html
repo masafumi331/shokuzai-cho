@@ -1931,6 +1931,119 @@ RESTAURANTS.push(
 </script>
 
 <script>
+/* 追加リサーチ枠9：連続受賞農家・出汁と調味の名品（2026年7月Web検索で裏取り済み） */
+Object.assign(PRODUCERS,{
+endo:{name:"遠藤五一氏（山形県高畠町）",kana:"えんどうごいち",pref:"山形県",city:"東置賜郡高畠町",person:"遠藤五一氏",rank:"A",
+ summary:"米・食味分析鑑定コンクールで金賞を連続受賞し、殿堂入り（ダイヤモンド褒賞）。「日本一の米農家」と呼ばれる匠。",
+ discovery:"Web検索で裏取り済み（2026年7月）。日本最大規模の「米・食味分析鑑定コンクール国際大会」で品種別金賞（2003年）、総合部門金賞を連続受賞（2004〜2006年）し、2007年に殿堂入りにあたるダイヤモンド褒賞を受賞（Wikipedia掲載）。つや姫マイスターとつや姫大使の両称号を持つのは日本で遠藤氏ただ一人。",
+ diff:"特別栽培（減農薬・減化学肥料）のつや姫・コシヒカリ。連続金賞という「再現性のあるおいしさ」が客観的に証明されている稀有な米農家。酢飯・白飯・うな重の土台として最上級の選択肢。",
+ restaurants:[],
+ order:{online:"取扱米穀店・EC（越後ファーム等）で購入可",wholesale:"取扱店経由・要問い合わせ",watch:"新米（秋）の販売開始監視に好適"},
+ sns:{site:"取扱店・紹介記事多数",instagram:"—",x:"—"},
+ evidence:[["コンクール金賞連続受賞・ダイヤモンド褒賞（客観的評価）","primary"],["Wikipedia・取扱店で確認","secondary"]],
+ checks:["業務用ロットの可否"]},
+kanda:{name:"カンダファーム（福島県猪苗代町）",kana:"かんだふぁーむ",pref:"福島県",city:"耶麻郡猪苗代町",person:"",rank:"B",
+ summary:"第26回米・食味分析鑑定コンクール国際総合部門金賞（日本一）。会津産ゆうだい21の新星。",
+ discovery:"Web検索で裏取り済み（2026年7月）。2021年の初出品以来、出品した全コンクールで決勝進出し、第26回（2023年）で最高賞の国際総合部門金賞を受賞したことを確認。産直EC・ふるさと納税で購入可。",
+ diff:"注目品種「ゆうだい21」（宇都宮大学育成）を会津・猪苗代の気候で栽培。冷めてもおいしいとされる品種特性は弁当・鮨との相性も良い。",
+ restaurants:[],
+ order:{online:"食べチョク・ふるさと納税で購入可（確認済み）",wholesale:"要問い合わせ",watch:"新米（秋）の販売開始監視に好適"},
+ sns:{site:"産直ECページあり",instagram:"要確認",x:"要確認"},
+ evidence:[["コンクール金賞（客観的評価）","primary"]],
+ checks:["業務用取引条件"]},
+yukihotaka:{name:"雪ほたか（群馬県川場村）",kana:"ゆきほたか",pref:"群馬県",city:"利根郡川場村",person:"",rank:"B",
+ summary:"武尊山の雪解け水で育つ川場村のブランドコシヒカリ。コンクール受賞歴を公式サイトで公開。",
+ discovery:"Web検索で裏取り済み（2026年7月）。川場村のブランド米「雪ほたか」は、米・食味分析鑑定コンクール等での受賞歴を公式サイトで一覧公開している。個別生産農家は組合方式のため未特定。",
+ diff:"火山灰土壌と武尊山伏流水、寒暖差という産地条件。村ぐるみのブランド管理で品質を維持。道の駅「川場田園プラザ」（関東屈指の人気道の駅）で購入でき、出張立ち寄りにも向く。",
+ restaurants:[],
+ order:{online:"公式・道の駅川場田園プラザ・ECで購入可",wholesale:"要問い合わせ",watch:"新米（秋）監視に好適"},
+ sns:{site:"yukihotaka.jp（確認済み）",instagram:"—",x:"—"},
+ evidence:[["受賞歴の公式公開（客観的評価）","primary"],["個別農家は未特定","unverified"]],
+ checks:["個別生産農家の特定"],unid:true},
+kaneshichi:{name:"金七商店（鹿児島県枕崎市）",kana:"かねしちしょうてん",pref:"鹿児島県",city:"枕崎市",person:"瀨﨑祐介氏",rank:"A",
+ summary:"全国鰹節類品評会で最高賞・農林水産大臣賞。カビ付け蔵にモーツァルトを流す本枯節「クラシック節」。",
+ discovery:"Web検索で裏取り済み（2026年7月）。「クラシック節」が全国鰹節類品評会で最高賞の農林水産大臣賞を受賞。カビ付け工程でクラシック音楽（モーツァルト）を流す独自製法で、生切りから約6か月かける本枯節。茅乃舎（久原本家）との共同開発「金七鰹だし」も公式リリースで確認。",
+ diff:"半年をかける本枯節は澄んだ深い旨味の出汁になる。うなぎ・焼き鳥のタレ、蕎麦つゆ、椀物まで、店の味の土台を一段引き上げる調味の核。",
+ restaurants:[{name:"茅乃舎（久原本家）との共同開発商品",note:"公式プレスリリースで確認",guide:false}],
+ order:{online:"公式サイト・取扱店（住吉酒販等）で購入可",wholesale:"要問い合わせ",watch:"—"},
+ sns:{site:"kaneshichi.co.jp（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["農林水産大臣賞（品評会最高賞）","primary"],["茅乃舎共同開発（公式リリース）","primary"]],
+ checks:["業務用規格・ロット"]},
+tsukahara:{name:"塚原牧場（茨城県境町）",kana:"つかはらぼくじょう",pref:"茨城県",city:"猿島郡境町",person:"",rank:"A",
+ summary:"純粋種・梅山豚の国内約100頭のほぼ全てを保有する唯一の牧場。約300日かけて育てる「幻の豚」。",
+ discovery:"Web検索で裏取り済み（2026年7月）。中国・太湖豚系の純粋種「梅山豚」の国内約100頭のほぼ全てを保有する唯一の生産者であることを公式サイトで確認。通常の約2倍となる約300日の飼育で、ミシュラン星付き店や百貨店での取り扱いが紹介されている。",
+ diff:"ジューシーな赤身とキレの良い上質な脂。純粋種の希少性（国内約100頭）と長期飼育による味の設計で、とんかつ・しゃぶしゃぶ・焼肉で豚が主役になる。",
+ restaurants:[{name:"ミシュラン星付き店・百貨店での取り扱い",note:"個別店名は要確認",guide:true}],
+ order:{online:"公式オンラインショップあり（確認済み）",wholesale:"要問い合わせ",watch:"—"},
+ sns:{site:"meishanton.com（確認済み）",instagram:"あり",x:"要確認"},
+ evidence:[["公式サイト・通販確認（一次情報）","primary"],["採用店の個別名は要確認","unverified"]],
+ checks:["採用店の具体名","業務用ロット"]},
+nakahora:{name:"なかほら牧場（岩手県岩泉町）",kana:"なかほらぼくじょう",pref:"岩手県",city:"下閉伊郡岩泉町",person:"中洞正氏",rank:"B",
+ summary:"標高700〜850mの北上山地で通年昼夜の自然放牧。「幸せな牛からおいしい牛乳」の山地酪農。",
+ discovery:"Web検索で裏取り済み（2026年7月）。中洞正氏が実践する山地酪農（通年昼夜の自然放牧、野シバ主体）と、生乳100kgからわずか4kgしか作れない手作業のグラスフェッドバターを公式サイトで確認。TV紹介（青空レストラン等）の言及も多数。",
+ diff:"化学肥料を使わない山の草を食む牛の生乳は季節で風味が変わる。グラスフェッドバターはβカロテン・不飽和脂肪酸が豊富で香りが軽やか。バターが主役になるトースト・ステーキ仕上げに。",
+ restaurants:[],
+ order:{online:"公式オンラインストアあり（確認済み）",wholesale:"要問い合わせ",watch:"—"},
+ sns:{site:"nakahora-bokujou.jp（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["公式サイト・通販確認（一次情報）","primary"],["名店採用は未確認","unverified"]],
+ checks:["名店採用例","業務用価格"]},
+mitani:{name:"三谷製糖羽根さぬき本舗（香川県東かがわ市）",kana:"みたにせいとう",pref:"香川県",city:"東かがわ市馬宿",person:"",rank:"B",
+ summary:"文化元年（1804年）創業、220余年。古来の製法を守り続ける讃岐和三盆の老舗。",
+ discovery:"Web検索で裏取り済み（2026年7月）。1804年創業以来、伝統製法で讃岐和三盆糖を作り続けていることを公式サイトで確認。高島屋「味百選」掲載。",
+ diff:"竹糖（在来のサトウキビ）を石臼で搾り、「研ぎ」と呼ばれる手作業を重ねて仕上げる和三盆は、上品な甘みと口どけが唯一無二。和菓子だけでなく、タレの隠し味やデザートで砂糖自体が主役になる。",
+ restaurants:[],
+ order:{online:"公式通販あり（確認済み）",wholesale:"要問い合わせ",watch:"—"},
+ sns:{site:"wasanbon.com（確認済み）",instagram:"要確認",x:"要確認"},
+ evidence:[["公式サイト・220年の歴史（一次情報）","primary"],["高島屋 味百選掲載","secondary"]],
+ checks:["業務用規格"]},
+ariake:{name:"有明海の一番摘み海苔（佐賀・福岡ほか）",kana:"ありあけのり",pref:"佐賀県",city:"有明海沿岸（佐賀・福岡・熊本）",person:"",rank:"B",
+ summary:"国内最大の海苔産地・有明海。最初に摘む「一番摘み」は柔らかく口どけと旨味が別格。",
+ discovery:"編集部追加調査。有明海は国内最大の海苔産地として公知。その年最初に摘採する「一番摘み（初摘み）」は葉が柔らかく旨味が濃いとされ、高級鮨店の多くが有明産を使うことで知られる。個別の漁家・問屋は未特定。",
+ diff:"干満差の大きい有明海の支柱式養殖は、海苔が日光を浴びる時間が長く味が濃くなるとされる。口どけと甘みは手巻き・軍艦の完成度を直接左右する。",
+ restaurants:[],
+ order:{online:"産地問屋・百貨店・ECで購入可",wholesale:"海苔問屋経由",watch:"新海苔（初摘み・冬）の監視に好適"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["国内最大産地（公知の事実）","secondary"],["漁家・問屋は未特定","unverified"]],
+ checks:["漁家・問屋の特定","等級の見極め"],unid:true},
+rausu:{name:"羅臼昆布の生産者（北海道羅臼町）",kana:"らうすこんぶ",pref:"北海道",city:"目梨郡羅臼町",person:"",rank:"B",
+ summary:"「だしの王様」。濃厚で香り高いだしがとれる知床・羅臼の昆布。",
+ discovery:"編集部追加調査。羅臼昆布は濃厚なだしがとれる高級昆布として公知。知床半島・羅臼沖の限られた海域で採れ、天日干し等の手間のかかる製品化が行われる。個別の漁家は未特定。",
+ diff:"黄色みのある濃厚なだしは香りとコクが強く、椀物・鍋・タレの土台に向く。利尻（澄んだだし）・真昆布（上品な甘み）との使い分けで店の出汁設計が決まる。",
+ restaurants:[],
+ order:{online:"昆布問屋・EC・百貨店で購入可",wholesale:"昆布問屋経由",watch:"—"},
+ sns:{site:"—",instagram:"—",x:"—"},
+ evidence:[["高級昆布産地（公知の事実）","secondary"],["漁家は未特定","unverified"]],
+ checks:["漁家・浜の特定","等級の見極め"],unid:true}
+});
+
+ITEMS.push(
+{name:"特別栽培 つや姫・コシヒカリ（遠藤五一）",p:"endo",g:"米",c:"豆・穀果",al:["つや姫","コシヒカリ","白米","新米"],tg:["金賞連続受賞","殿堂入り","特別栽培"],d:"米・食味コンクール金賞を連続受賞し殿堂入り（ダイヤモンド褒賞）。つや姫マイスター＋大使は日本で唯一人。酢飯・うな重の土台に最上級。",se:"秋新米（通年販売）",hero:true},
+{name:"会津産ゆうだい21（カンダファーム）",p:"kanda",g:"米",c:"豆・穀果",al:["ゆうだい21","白米"],tg:["日本一受賞","注目品種"],d:"第26回米・食味分析鑑定コンクール国際総合部門金賞（日本一）。冷めてもおいしいとされる品種特性は鮨・弁当と好相性。",se:"秋新米",hero:true},
+{name:"雪ほたか（川場村コシヒカリ）",p:"yukihotaka",g:"米",c:"豆・穀果",al:["コシヒカリ","ブランド米"],tg:["受賞歴多数","地域ブランド"],d:"武尊山の雪解け水と寒暖差。受賞歴を公式公開する村ぐるみのブランド米。道の駅川場田園プラザで購入可＝出張立ち寄り向き。",se:"秋新米",hero:false},
+{name:"クラシック節（本枯節）",p:"kaneshichi",g:"鰹節",c:"調味料",al:["かつお節","鰹節","削り節","出汁","だし"],tg:["農林水産大臣賞","伝統製法"],d:"品評会最高賞・農林水産大臣賞。モーツァルトを流す蔵で約6か月かける本枯節。タレ・つゆ・椀物の土台が一段上がる。",se:"通年",hero:true},
+{name:"梅山豚",p:"tsukahara",g:"豚",c:"肉・家禽",al:["めいしゃんとん","豚肉","ポーク","とんかつ"],tg:["希少品（国内約100頭）","長期飼育"],d:"純粋種の国内約100頭をほぼ全て保有する唯一の牧場。約300日飼育のジューシーな赤身と上質な脂。ミシュラン店採用の紹介あり。",se:"通年",hero:true},
+{name:"グラスフェッドバター",p:"nakahora",g:"バター",c:"卵・乳製品",al:["バター","放牧バター","発酵バター"],tg:["山地酪農","無添加"],d:"通年昼夜の自然放牧。生乳100kgから4kgしか作れない手作業バター。βカロテン豊富で香りが軽い。",se:"通年",hero:true},
+{name:"山地酪農牛乳",p:"nakahora",g:"牛乳",c:"卵・乳製品",al:["牛乳","ミルク","放牧牛乳"],tg:["山地酪農"],d:"山の草を食む牛の生乳。季節で風味が変わる。",se:"通年",hero:false},
+{name:"讃岐和三盆",p:"mitani",g:"和三盆",c:"調味料",al:["わさんぼん","砂糖","干菓子"],tg:["1804年創業","伝統製法"],d:"竹糖を石臼で搾り「研ぎ」の手作業で仕上げる。上品な甘みと口どけで、砂糖自体が主役になる。",se:"通年",hero:true},
+{name:"一番摘み海苔（有明海）",p:"ariake",g:"海苔",c:"魚介",al:["のり","初摘み","焼き海苔"],tg:["最大産地","冬季新物"],d:"最初に摘む一番摘みは柔らかく口どけと旨味が別格。手巻き・軍艦の完成度を直接左右する。",se:"新海苔は冬",hero:true},
+{name:"羅臼昆布",p:"rausu",g:"昆布",c:"魚介",al:["こんぶ","だし昆布","出汁"],tg:["だしの王様","天日干し"],d:"濃厚で香り高いだし。利尻・真昆布との使い分けで店の出汁設計が決まる。",se:"通年（漁は夏）",hero:true}
+);
+
+SYNONYMS.push(
+["海苔","焼き海苔","初摘み","一番摘み"],
+["こんぶ","昆布","だし昆布","羅臼","利尻"],
+["かつおぶし","かつお節","鰹節","本枯節","削り節","クラシック節"],
+["わさんぼん","和三盆"],
+["バター","グラスフェッド","放牧バター","発酵バター"],
+["ぶた","豚","豚肉","ポーク","梅山豚","とんかつ"],
+["つや姫","ゆうだい21","コシヒカリ","雪ほたか","ブランド米","米"],
+["ぎゅうにゅう","牛乳","ミルク","生乳"]
+);
+
+(function(){ITEMS.forEach(it=>{if(!it.sn)it.sn=seasonsOf(it.se);});})();
+</script>
+
+<script>
 /* ══════════ 正規化・同義語エンジン ══════════ */
 function norm(s){
   if(!s)return"";
@@ -1989,13 +2102,14 @@ ITEMS.forEach((it,i)=>{
   ];
 });
 
-let state={q:"",cat:null,buy:null,season:null,tab:"ingredients"};
+let state={q:"",cat:null,buy:null,season:null,hideUnid:false,tab:"ingredients"};
 
 function searchItems(){
   const qn=norm(state.q);
   let list=ITEMS.filter(it=>
     (!state.cat||it.c===state.cat)&&
     (!state.season||it.sn.has(state.season))&&
+    (!state.hideUnid||!PRODUCERS[it.p].unid)&&
     (!state.buy||BUYF.find(b=>b[0]===state.buy)[1](it)));
   if(!qn){list.forEach(it=>{it.score=0;it.why=[]});return list;}
   const toks=norm(state.q)?state.q.trim().split(/[\s　]+/).map(norm).filter(Boolean):[];
@@ -2119,11 +2233,12 @@ function renderProducers(){
   const keys=Object.keys(PRODUCERS).sort((a,b)=>(PRODUCERS[a].rank>PRODUCERS[b].rank?1:-1));
   document.getElementById("tabN2").textContent=keys.length;
   const qn=norm(state.q);
-  const filtered=qn?keys.filter(k=>{
+  let filtered=qn?keys.filter(k=>{
     const pr=PRODUCERS[k];
     return [pr.name,pr.kana,pr.pref,pr.city,pr.person,pr.summary,pr.diff].some(f=>norm(f).includes(qn))
       ||ITEMS.some(i=>i.p===k&&(norm(i.name).includes(qn)||norm(i.g).includes(qn)));
   }):keys;
+  if(state.hideUnid)filtered=filtered.filter(k=>!PRODUCERS[k].unid);
   document.getElementById("resultMeta").innerHTML=`<b>${filtered.length}</b>生産者 ${state.q?`「${esc(state.q)}」で絞り込み`:"（判定A→B順）"}`;
   document.getElementById("viewProducers").innerHTML=filtered.length?filtered.map(k=>producerCardHTML(k)).join(""):`<div class="no-hit"><span class="big">〇</span>該当する生産者がいません</div>`;
 }
@@ -2162,6 +2277,7 @@ function restoPref(place){
 function renderRegions(){
   const qn=norm(state.q);
   const keys=Object.keys(PRODUCERS).filter(k=>{
+    if(state.hideUnid&&PRODUCERS[k].unid)return false;
     if(!qn)return true;
     const pr=PRODUCERS[k];
     return [pr.name,pr.kana,pr.pref,pr.city,pr.person,pr.summary].some(f=>norm(f).includes(qn))
@@ -2264,8 +2380,10 @@ function buildChips(){
   }).join("");
   sc.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{state.season=state.season===b.dataset.season?null:b.dataset.season;buildChips();render();}));
   const bc=document.getElementById("buyChips");
-  bc.innerHTML=BUYF.map(([n])=>`<button class="chip ${state.buy===n?"on":""}" data-buy="${n}">${n}</button>`).join("");
-  bc.querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{state.buy=state.buy===b.dataset.buy?null:b.dataset.buy;buildChips();render();}));
+  bc.innerHTML=BUYF.map(([n])=>`<button class="chip ${state.buy===n?"on":""}" data-buy="${n}">${n}</button>`).join("")
+    +`<button class="chip ${state.hideUnid?"on shu":""}" id="unidChip" style="border-style:${state.hideUnid?"solid":"dashed"}">${state.hideUnid?"☑":"☐"} 未特定農家を除外</button>`;
+  bc.querySelectorAll(".chip[data-buy]").forEach(b=>b.addEventListener("click",()=>{state.buy=state.buy===b.dataset.buy?null:b.dataset.buy;buildChips();render();}));
+  document.getElementById("unidChip").addEventListener("click",()=>{state.hideUnid=!state.hideUnid;buildChips();render();});
 }
 
 const si=document.getElementById("searchInput");
